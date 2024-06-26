@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
+        question_items: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
         question_type: {
             type: DataTypes.ENUM('multiple_choice', 'Open_Ended'),
             allowNull: false

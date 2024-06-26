@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Box, Typography, TextField, Button } from '@mui/material';
+import { Box, Typography, TextField, Button, Fab, Tooltip } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import http from '../http';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -53,7 +54,7 @@ function EditQuiz() {
         }
     });
     const handleEditQuestions = () => {
-        navigate(`/questions/${id}`);
+        navigate(`/quizzes/${id}/questions`);
     };
 
     return (
@@ -109,13 +110,20 @@ function EditQuiz() {
                             <Button variant="contained" onClick={handleEditQuestions}>
                                 Edit Questions
                             </Button>
-                            <Button variant="contained" type="submit">
+                            <Button variant="contained" type="submit" sx={{ ml: 3 }}>
                                 Update
                             </Button>
                         </Box>
                     </Box>
                 )
             }
+            <Tooltip title="Go Back">
+                <Link to={`/quizzes`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                    <Fab color="primary" aria-label="add">
+                        <ArrowBackIcon />
+                    </Fab>
+                </Link>
+            </Tooltip>
         </Box>
     );
 }

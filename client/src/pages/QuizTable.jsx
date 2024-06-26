@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
+import {Dialog, DialogActions, DialogContent, DialogContentText,
+    DialogTitle } from '@mui/material'
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -178,13 +180,16 @@ function EnhancedTableToolbar(props) {
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-            ) : (
+            ) 
+            : 
+            (
                 <Tooltip title="Filter list">
                     <IconButton>
                         <FilterListIcon />
                     </IconButton>
                 </Tooltip>
-            )}
+            )
+            }
         </Toolbar>
     );
 }

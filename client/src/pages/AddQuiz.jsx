@@ -1,16 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, TextField, Button } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
+import { Box, Typography, TextField, Button, Fab, Tooltip } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import http from '../http';
 
-function AddTutorial() {
+function AddQuiz() {
     const navigate = useNavigate();
 
     const formik = useFormik({
@@ -94,8 +95,15 @@ function AddTutorial() {
                     </Button>
                 </Box>
             </Box>
+            <Tooltip title="Go Back">
+                <Link to={`/quizzes`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                    <Fab color="primary" aria-label="add">
+                        <ArrowBackIcon />
+                    </Fab>
+                </Link>
+            </Tooltip>
         </Box>
     );
 }
 
-export default AddTutorial;
+export default AddQuiz;
