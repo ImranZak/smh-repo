@@ -173,15 +173,17 @@ router.post("/populate", async (req, res) => {
                 name: "John Doe",
                 email: "johndoe@smhstaff.com",
                 phoneNumber: "12345678",
-                password: "Password123",
-                role: "Admin"
+                password: "SMHStaff2024",
+                role: "Admin",
+                department: "IT"
             },
             {
                 name: "Jane Smith",
                 email: "janesmith@smhstaff.com",
                 phoneNumber: "98765432",
-                password: "Password456",
-                role: "Staff"
+                password: "SMHStaff2024",
+                role: "Staff",
+                department: "HR"
             }
         ];
 

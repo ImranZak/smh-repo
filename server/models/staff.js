@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         phoneNumber: {
-            type: DataTypes.INTEGER(),
+            type: DataTypes.STRING(13),
             allowNull: false
         },
         password: {
