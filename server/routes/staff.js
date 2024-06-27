@@ -4,11 +4,15 @@ const { Staff } = require('../models');
 const { Op } = require("sequelize");
 const yup = require("yup");
 
+// Custom regex for validation
+const emailRegex = /^[a-zA-Z0-9._%+-]+@smhstaff\.com$/;
+
 router.post("/", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100).required(),
+        email: yup.string().trim().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         role: yup.string().trim().min(3).max(500).required()
     });
     try {
@@ -70,6 +74,7 @@ router.put("/:id", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100),
+        email: yup.string().trim().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         role: yup.string().trim().min(3).max(500)
     });
     try {
