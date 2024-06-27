@@ -1,22 +1,20 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import HomePage from './components/HomePage';
+import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import DataEntry from './components/DataEntry';
-import Navbar from './components/Navbar';
+import { Route, Routes } from 'react-router-dom';
 
-function App() {
+const App = () => {
   return (
-    <div>
+    <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/data-entry" element={<DataEntry />} />
-        {/* Add other routes here */}
+        <Route path="/" element={<Dashboard />} />
       </Routes>
-    </div>
+    </>
   );
-}
+};
 
 export default App;

@@ -11,3 +11,49 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* index.css */
+.layout {
+  background: #fff;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+}
+
+.layout .react-grid-item {
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.layout .react-grid-placeholder {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px dashed #2e7d32;
+}
+/* Adjust grid layout for different screen sizes */
+@media (max-width: 600px) {
+  .layout {
+    width: 100%;
+  }
+}
+
+@media (min-width: 600px) {
+  .layout {
+    width: 600px;
+  }
+}
+
+@media (min-width: 960px) {
+  .layout {
+    width: 960px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .layout {
+    width: 1280px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .layout {
+    width: 1920px;
+  }
+}

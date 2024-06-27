@@ -20,7 +20,7 @@ const DataEntry = () => {
 
   const fetchEntries = async () => {
     try {
-      const result = await axios.get('http://localhost:3000/api/usage');  // Ensure this matches your backend endpoint
+      const result = await axios.get('http://localhost:3000/api/usage');
       setEntries(result.data);
     } catch (error) {
       console.error('Error fetching entries:', error);
@@ -30,7 +30,7 @@ const DataEntry = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/api/usage', { date, type, usage });  // Ensure this matches your backend endpoint
+      await axios.post('http://localhost:3000/api/usage', { date, type, usage });
       fetchEntries();
       setDate('');
       setType('energy');
@@ -42,16 +42,16 @@ const DataEntry = () => {
 
   const handleClearData = async () => {
     try {
-      await axios.delete('http://localhost:3000/api/usage');  // Ensure this matches your backend endpoint
+      await axios.delete('http://localhost:3000/api/usage');
       fetchEntries();
     } catch (error) {
       console.error('Error clearing data:', error);
     }
   };
 
-  const handleUpdateData = async (id, date, type, usage) => {
+  const handleUpdateData = async (id, field, value) => {
     try {
-      await axios.put(`http://localhost:3000/api/usage/${id}`, { date, type, usage });  // Ensure this matches your backend endpoint
+      await axios.put(`http://localhost:3000/api/usage/${id}`, { [field]: value });
       fetchEntries();
     } catch (error) {
       console.error('Error updating data:', error);
@@ -81,18 +81,7 @@ const DataEntry = () => {
       <Typography variant="h4" gutterBottom>Enter Usage Data</Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <TextField
-              label="Date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Type"
               select
@@ -105,6 +94,17 @@ const DataEntry = () => {
               <MenuItem value="water">Water</MenuItem>
             </TextField>
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              required
+            />
+          </Grid>
           <Grid item xs={12}>
             <TextField
               label="Usage"
@@ -116,21 +116,27 @@ const DataEntry = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">Submit</Button>
+            <Button type="submit" variant="contained" color="primary" style={{ backgroundColor: '#2e7d32' }}>Submit</Button>
           </Grid>
         </Grid>
       </form>
-      <Button variant="contained" color="secondary" onClick={handleClearData} style={{ marginTop: '20px' }}>Clear Data</Button>
-      <Select
-        value={filterType}
-        onChange={(e) => setFilterType(e.target.value)}
-        displayEmpty
-        style={{ marginTop: '20px' }}
-      >
-        <MenuItem value="">All</MenuItem>
-        <MenuItem value="energy">Energy</MenuItem>
-        <MenuItem value="water">Water</MenuItem>
-      </Select>
+      <Grid container spacing={3} alignItems="center" style={{ marginTop: '20px' }}>
+        <Grid item>
+          <Button variant="contained" color="secondary" style={{ backgroundColor: '#2e7d32' }} onClick={handleClearData}>Clear Data</Button>
+        </Grid>
+        <Grid item>
+          <Select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            displayEmpty
+            style={{ marginLeft: '10px' }}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="energy">Energy</MenuItem>
+            <MenuItem value="water">Water</MenuItem>
+          </Select>
+        </Grid>
+      </Grid>
       <TableContainer component={Paper} style={{ marginTop: '20px' }}>
         <Table>
           <TableHead>
@@ -170,27 +176,26 @@ const DataEntry = () => {
                 <TableCell>
                   <TextField
                     type="date"
-                    value={entry.date.split('T')[0]}
-                    onChange={(e) => handleUpdateData(entry.id, e.target.value, entry.type, entry.usage)}
+                    value={new Date(entry.date).toISOString().substring(0, 10)}
+                    onChange={(e) => handleUpdateData(entry.id, 'date', e.target.value)}
                     fullWidth
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    select
+                  <Select
                     value={entry.type}
-                    onChange={(e) => handleUpdateData(entry.id, entry.date, e.target.value, entry.usage)}
+                    onChange={(e) => handleUpdateData(entry.id, 'type', e.target.value)}
                     fullWidth
                   >
                     <MenuItem value="energy">Energy</MenuItem>
                     <MenuItem value="water">Water</MenuItem>
-                  </TextField>
+                  </Select>
                 </TableCell>
                 <TableCell>
                   <TextField
-                    type="number"
                     value={entry.usage}
-                    onChange={(e) => handleUpdateData(entry.id, entry.date, entry.type, e.target.value)}
+                    onChange={(e) => handleUpdateData(entry.id, 'usage', e.target.value)}
+                    type="number"
                     fullWidth
                   />
                 </TableCell>
