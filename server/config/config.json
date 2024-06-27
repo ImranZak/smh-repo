@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "smh_user",
+    "password": "smh_password",
+    "database": "smh",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "smh_user",
+    "password": "smh_password",
+    "database": "smh",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "smh_user",
+    "password": "smh_password",
+    "database": "smh",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

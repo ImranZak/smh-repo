@@ -7,16 +7,29 @@ const Usage = sequelize.define('Usage', {
         autoIncrement: true,
         primaryKey: true,
     },
+    date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
     type: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+            isIn: [['energy', 'water']],
+        },
     },
-    value: {
+    usage: {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    timestamp: {
+    createdAt: {
         type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
         defaultValue: DataTypes.NOW,
     },
 });

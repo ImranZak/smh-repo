@@ -1,14 +1,18 @@
 const express = require('express');
-const sequelize = require('./utils/database');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const usageRoutes = require('./routes/usageRoutes');
-
 const app = express();
 
-app.use(express.json());
+// Middleware
+app.use(cors({ origin: 'http://localhost:3001' }));  
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Routes
 app.use('/api/usage', usageRoutes);
 
-sequelize.sync()
-    .then(result => {
-        app.listen(3000, () => console.log('Server is running on port 3000'));
-    })
-    .catch(err => console.log(err));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

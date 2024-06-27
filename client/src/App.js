@@ -1,37 +1,22 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import Dashboard from './components/Dashboard';
+import DataEntry from './components/DataEntry';
 import Navbar from './components/Navbar';
-import CommunityDashboard from './pages/CommunityDashboard';
-import './App.css';
-import logo from './logo.svg'; // Ensure this import is correct
 
 function App() {
-    return (
-        <Router>
-            <div className="App">
-                <Navbar />
-                <Routes>
-                    <Route path="/dashboard" element={<CommunityDashboard />} />
-                    <Route path="/" element={
-                        <header className="App-header">
-                            <img src={logo} className="App-logo" alt="logo" />
-                            <p>
-                                Edit <code>src/App.js</code> and save to reload.
-                            </p>
-                            <a
-                                className="App-link"
-                                href="https://reactjs.org"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Learn React
-                            </a>
-                        </header>
-                    } />
-                </Routes>
-            </div>
-        </Router>
-    );
+  return (
+    <div>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/data-entry" element={<DataEntry />} />
+        {/* Add other routes here */}
+      </Routes>
+    </div>
+  );
 }
 
 export default App;
