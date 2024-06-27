@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(100),
             allowNull: false
         },
+        // TODO: birth date
         email: {
             type: DataTypes.STRING(100),
             allowNull: false
@@ -12,14 +13,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(20),
             allowNull: false
         },
+        password: {
+            type: DataTypes.STRING(100),
+            allowNull: false
+        },
         role: {
             type: DataTypes.TEXT,
             allowNull: false
-        },
-        salary: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: false
         }
+        // TODO: date joined
     }, {
         tableName: 'staff'
     });
