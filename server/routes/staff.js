@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100).required(),
-        description: yup.string().trim().min(3).max(500).required()
+        role: yup.string().trim().min(3).max(500).required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -25,19 +25,23 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
     let condition = {};
     let search = req.query.search;
+    let strong_search = req.query.strong_search;
     if (search) {
         condition[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
-            { description: { [Op.like]: `%${search}%` } }
+            { role: { [Op.like]: `%${search}%` } }
         ];
     }
-    // You can add condition for other columns here
-    // e.g. condition.columnName = value;
-    // yes
+    if (strong_search) {
+        condition[Op.or] = [
+            { name: strong_search },
+            { role: strong_search }
+        ];
+    }
     
     let list = await Staff.findAll({
         where: condition,
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'ASC']]
     });
     res.json(list);
 });
@@ -66,7 +70,7 @@ router.put("/:id", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         title: yup.string().trim().min(3).max(100),
-        description: yup.string().trim().min(3).max(500)
+        role: yup.string().trim().min(3).max(500)
     });
     try {
         data = await validationSchema.validate(data,
@@ -114,5 +118,29 @@ router.delete("/:id", async (req, res) => {
         });
     }
 });
+
+// router.delete("/", async (req, res) => {
+//     let id = req.params.id;
+//     // Check id not found
+//     let staff = await Staff.findByPk(id);
+//     if (!staff) {
+//         res.sendStatus(404);
+//         return;
+//     }
+
+//     let num = await Staff.destroy({
+//         where: { id: id }
+//     })
+//     if (num == 1) {
+//         res.json({
+//             message: "Staff was deleted successfully."
+//         });
+//     }
+//     else {
+//         res.status(400).json({
+//             message: `Cannot delete staff with id ${id}.`
+//         });
+//     }
+// });
 
 module.exports = router;
