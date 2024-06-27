@@ -22,7 +22,6 @@ function App() {
   const handleClose = () => {
     setAnchorEl(null); // Close the menu
   };
-
   return (
     <ThemeProvider theme={theme}>
       <Router>

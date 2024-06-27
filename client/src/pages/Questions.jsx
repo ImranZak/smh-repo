@@ -73,9 +73,14 @@ function Questions() {
         return null;
     };
 
+    const formatQuestionType = (questionType) => {
+        if (!questionType) return '';
+        return questionType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    };
+
     return (
         <Box>
-            <Typography variant="h4" component="div">
+            <Typography variant="h4" component="div" sx={{ mt: 3, mb: 3 }}>
                 Questions
             </Typography>
             <Box display="flex" flexDirection="column" gap={2}>
@@ -96,7 +101,7 @@ function Questions() {
                                     {question.question_text}
                                 </Typography>
                                 <Typography sx={{ mb: 1.5, mt: 1.5 }} color="text.secondary">
-                                    {question.question_type}
+                                    {formatQuestionType(question.question_type)}
                                 </Typography>
                                 {renderQuestionItems(question)}
                                 <Typography sx={{ mt: 3 }}>
@@ -113,20 +118,23 @@ function Questions() {
                     ))
                 )}
             </Box>
-            <Tooltip title="Add Question">
-                <Link to={`/quizzes/${quizId}/addquestion`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
-                    <Fab color="primary" aria-label="add">
-                        <AddIcon />
-                    </Fab>
-                </Link>
-            </Tooltip>
-            <Tooltip title="Go Back">
-                <Link to={`/quizzes`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, left: 16 }}>
-                    <Fab color="primary" aria-label="add">
-                        <ArrowBackIcon />
-                    </Fab>
-                </Link>
-            </Tooltip>
+            <Box sx={{ position: 'fixed', bottom: 16, right: 16, display: 'flex', gap: 2 }}>
+                <Tooltip title="Go Back">
+                    <Link to={`/quizzes`} style={{ textDecoration: 'none' }}>
+                        <Fab color="primary" aria-label="back" sx={{ width: 56, height: 56 }}>
+                            <ArrowBackIcon />
+                        </Fab>
+                    </Link>
+                </Tooltip>
+                <Tooltip title="Add Question">
+                    <Link to={`/quizzes/${quizId}/addquestion`} style={{ textDecoration: 'none' }}>
+                        <Fab color="primary" aria-label="add" sx={{ width: 56, height: 56 }}>
+                            <AddIcon />
+                        </Fab>
+                    </Link>
+                </Tooltip>
+
+            </Box>
             <Dialog open={deleteModalOpen} onClose={handleCloseModal}>
                 <DialogTitle>Confirm Delete</DialogTitle>
                 <DialogContent>

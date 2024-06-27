@@ -52,7 +52,7 @@ const stableSort = (array, comparator) => {
 };
 
 const headCells = [
-    { id: 'id', numeric: true, disablePadding: true, label: 'Quiz ID' },
+    { id: 'id', numeric: true, disablePadding: true, label: 'Quiz Id' },
     { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
