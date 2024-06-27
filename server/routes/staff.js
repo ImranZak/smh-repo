@@ -4,6 +4,7 @@ const { Staff } = require('../models');
 const { Op } = require("sequelize");
 const yup = require("yup");
 
+
 // Custom regex for validation
 
 // Uses staff domain
@@ -15,6 +16,8 @@ const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 // Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces, and special characters allowed :) 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$/
 
+
+// Create Staff
 router.post("/", async (req, res) => {
     let data = req.body;
     // Validate request body
@@ -36,6 +39,7 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Get All Staff (With Optional Query)
 router.get("/", async (req, res) => {
     let condition = {};
     let search = req.query.search;
@@ -60,6 +64,7 @@ router.get("/", async (req, res) => {
     res.json(list);
 });
 
+// Get Staff By Id
 router.get("/:id", async (req, res) => {
     let id = req.params.id;
     let staff = await Staff.findByPk(id);
@@ -71,6 +76,7 @@ router.get("/:id", async (req, res) => {
     res.json(staff);
 });
 
+// Update Staff By Id
 router.put("/:id", async (req, res) => {
     let id = req.params.id;
     // Check id not found
@@ -110,6 +116,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// Delete Staff By Id
 router.delete("/:id", async (req, res) => {
     let id = req.params.id;
     // Check id not found
@@ -133,5 +140,23 @@ router.delete("/:id", async (req, res) => {
         });
     }
 });
+
+// Delete All Staff
+router.delete("/", async (req, res) => {
+    try {
+        await Staff.destroy({
+            where: {},
+            truncate: true
+        });
+        res.json({
+            message: "All staff were deleted successfully."
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Failed to delete all staff."
+        });
+    }
+});
+
 
 module.exports = router;
