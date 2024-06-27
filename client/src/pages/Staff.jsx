@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import { AccessTime, Search, Clear, Edit, Delete } from '@mui/icons-material';
+import { Box, Typography, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Search, Clear, Edit, Delete } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
 import global from '../global';
@@ -11,6 +11,8 @@ function Staff() {
     const [staffList, setStaffList] = useState([]);
     const [search, setSearch] = useState('');
     const [strong, setStrong] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState('');
 
     const onSearchChange = (e) => { 
         setSearch(e.target.value); 
@@ -59,8 +61,22 @@ function Staff() {
         navigate(`/update-staff/${id}`)
     };
 
-    const handleDelete = (id) => {
-        navigate(`/delete-staff/${id}`)
+    const deleteStaff = () => {
+        http.delete(`/staff/${deleteId}`)
+            .then((res) => {
+                console.log(res.data);
+                handleClose();
+                getStaff()
+            });
+    }
+
+    const handleOpen = (id) => {
+        setOpen(true);
+        setDeleteId(id)
+    };
+      
+    const handleClose = () => {
+        setOpen(false);
     };
 
     return (
@@ -114,8 +130,8 @@ function Staff() {
                                     <IconButton variant="contained" color="primary" onClick={() => handleUpdate(staff.id)}>
                                         <Edit />    
                                     </IconButton>
-                                    <IconButton variant="contained" color="secondary" onClick={() => handleDelete(staff.id)}>
-                                        <Delete />
+                                    <IconButton variant="contained" color="secondary" onClick={() => handleOpen(staff.id)}>
+                                        <Delete />  
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
@@ -123,6 +139,25 @@ function Staff() {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>
+                    Delete Tutorial
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this tutorial?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" color="inherit" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" color="error" onClick={deleteStaff}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
