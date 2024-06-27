@@ -46,10 +46,10 @@ router.get("/", async (req, res) => {
 
     let condition = {};
     let search = req.query.search;
-    let strong = convertToBoolean(req.query.strong);
+    let strong = req.query.strong ?? false;
     if (search) {
         // bool: strong -> if true check for exactly matching variables (Op.eq)
-        if (strong) {
+        if (convertToBoolean(strong)) {
             condition[Op.or] = [
                 { name: search },
                 { email: search },
