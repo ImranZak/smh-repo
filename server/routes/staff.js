@@ -158,5 +158,33 @@ router.delete("/", async (req, res) => {
     }
 });
 
+// Populate Staff
+router.post("/populate", async (req, res) => {
+    try {
+        const staffData = [
+            {
+                name: "John Doe",
+                email: "johndoe@smhstaff.com",
+                phoneNumber: "12345678",
+                password: "Password123",
+                role: "Admin"
+            },
+            {
+                name: "Jane Smith",
+                email: "janesmith@smhstaff.com",
+                phoneNumber: "98765432",
+                password: "Password456",
+                role: "Staff"
+            }
+        ];
+
+        const result = await Staff.bulkCreate(staffData);
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({
+            message: "Failed to populate staff."
+        });
+    }
+});
 
 module.exports = router;
