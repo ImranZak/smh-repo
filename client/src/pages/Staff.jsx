@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { AccessTime, Search, Clear, Edit, Delete } from '@mui/icons-material';
 import http from '../http';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import global from '../global';
 
 function Staff() {
+    const navigate = useNavigate();
     const [staffList, setStaffList] = useState([]);
     const [search, setSearch] = useState('');
     const [strong, setStrong] = useState(false);
@@ -55,13 +56,11 @@ function Staff() {
 
     // Example handlers
     const handleUpdate = (id) => {
-        console.log('Update', id);
-        // Implement update logic here
+        navigate(`/update-staff/${id}`)
     };
 
     const handleDelete = (id) => {
-        console.log('Delete', id);
-        // Implement delete logic here
+        navigate(`/delete-staff/${id}`)
     };
 
     return (

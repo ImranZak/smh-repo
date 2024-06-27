@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces").required(),
         role: yup.string().trim().min(3).max(500).required(),
-        department: yup.string().trim().min(3).max(500).required()
+        department: yup.string().trim().min(2).max(500).required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -104,7 +104,7 @@ router.put("/:id", async (req, res) => {
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces").required(),
         role: yup.string().trim().min(3).max(500).required(),
-        department: yup.string().trim().min(3).max(500).required()
+        department: yup.string().trim().min(2).max(500).required()
     });
     try {
         data = await validationSchema.validate(data,

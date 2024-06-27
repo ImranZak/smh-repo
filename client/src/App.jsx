@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import StaffTheme from './themes/StaffTheme';
 import Staff from './pages/Staff';
 import CreateStaff from './pages/CreateStaff';
+import UpdateStaff from './pages/UpdateStaff';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path={"/"} element={<Staff />} />
             <Route path={"/staff"} element={<Staff />} />
             <Route path={"/create-staff"} element={<CreateStaff />} />
+            <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
           </Routes>
         </Container>
       </ThemeProvider>

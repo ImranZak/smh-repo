@@ -38,7 +38,7 @@ function CreateStaff() {
             .max(500, 'Role must be at most 500 characters')
             .required('Role is required'),
             department: yup.string().trim()
-            .min(3, 'Department must be at least 3 characters')
+            .min(2, 'Department must be at least 2 characters')
             .max(500, 'Department must be at most 500 characters')
             .required('Department is required')
         }),
@@ -131,6 +131,7 @@ function CreateStaff() {
                     helperText={formik.touched.department && formik.errors.department}
                 />
                 <Button
+                    sx={{ mt: 2 }}
                     variant="contained"
                     color="primary"
                     type="submit"
