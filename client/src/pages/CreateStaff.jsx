@@ -138,6 +138,14 @@ function CreateStaff() {
                     disabled={!formik.isValid || formik.isSubmitting}>
                     Create
                 </Button>
+                <Button
+                    sx={{ mt: 2, ml: 2 }}
+                    variant="contained"
+                    type="submit"
+                    color="neutral"
+                    onClick={() => navigate("/staff")}>
+                    Back
+                </Button>
             </Box>
         </Box>
     )
