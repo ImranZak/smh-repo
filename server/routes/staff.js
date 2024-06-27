@@ -42,23 +42,31 @@ router.post("/", async (req, res) => {
 
 // Get All Staff (With Optional Query)
 router.get("/", async (req, res) => {
+    const convertToBoolean = (str) => str.toLowerCase() === 'true';
+
     let condition = {};
     let search = req.query.search;
-    let strong_search = req.query.strong_search;
+    let strong = convertToBoolean(req.query.strong);
     if (search) {
-        condition[Op.or] = [
-            { name: { [Op.like]: `%${search}%` } },
-            { email: { [Op.like]: `%${search}%` } },
-            { phoneNumber: { [Op.like]: `%${search}%` } },
-            { role: { [Op.like]: `%${search}%` } },
-            { department: { [Op.like]: `%${search}%` } }
-        ];
-    }
-    if (strong_search) {
-        condition[Op.or] = [
-            { name: strong_search },
-            { role: strong_search }
-        ];
+        // bool: strong -> if true check for exactly matching variables (Op.eq)
+        if (strong) {
+            condition[Op.or] = [
+                { name: search },
+                { email: search },
+                { phoneNumber: search },
+                { role: search },
+                { department: search }
+            ];
+        }
+        else {
+            condition[Op.or] = [
+                { name: { [Op.like]: `%${search}%` } },
+                { email: { [Op.like]: `%${search}%` } },
+                { phoneNumber: { [Op.like]: `%${search}%` } },
+                { role: { [Op.like]: `%${search}%` } },
+                { department: { [Op.like]: `%${search}%` } }
+            ];
+        }
     }
     
     let list = await Staff.findAll({
