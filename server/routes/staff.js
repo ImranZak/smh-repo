@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
     if (search) {
         condition[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
-            { email: { [Op.like]: `%${search}%` } }
+            { email: { [Op.like]: `%${search}%` } },
             { phoneNumber: { [Op.like]: `%${search}%` } },
             { role: { [Op.like]: `%${search}%` } },
             { department: { [Op.like]: `%${search}%` } }
