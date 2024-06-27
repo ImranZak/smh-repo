@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(20),
             allowNull: false
         },
+        // TODO: homeAddress
         password: {
             type: DataTypes.STRING(100),
             allowNull: false
@@ -29,5 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName: 'staff'
     });
+
+    // TODO: User Table
+
     return Staff;
 }
