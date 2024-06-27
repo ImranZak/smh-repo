@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(100),
             allowNull: false
         },
-        phone_number: {
-            type: DataTypes.STRING(20),
+        phoneNumber: {
+            type: DataTypes.INTEGER(),
             allowNull: false
         },
         password: {
