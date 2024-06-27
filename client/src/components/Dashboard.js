@@ -13,9 +13,10 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Card, CardContent, Typography, MenuItem, Select, Button, Grid, Container, IconButton, useMediaQuery, useTheme } from '@mui/material';
+import { Card, CardContent, Typography, MenuItem, Select, Button, Grid, Container, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // Register Chart.js components
 ChartJS.register(
@@ -33,9 +34,8 @@ const Dashboard = () => {
   const [data, setData] = useState([]);
   const [charts, setCharts] = useState([]);
   const [layout, setLayout] = useState([]);
+  const isMobile = useMediaQuery('(max-width:600px)');
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,7 +141,7 @@ const Dashboard = () => {
         onLayoutChange={(layout) => setLayout(layout)}
         cols={12}
         rowHeight={30}
-        width={isMobile ? 300 : 1200}
+        width={1200}
         draggableHandle=".card-drag-handle"
         resizeHandles={['se', 'sw']}
       >

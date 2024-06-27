@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Container, TextField, Button, Grid, Typography, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel, Select, MenuItem
+  TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel, Select, MenuItem, Alert
 } from '@mui/material';
+import { parseISO, isValid } from 'date-fns';
 
 const DataEntry = () => {
   const [date, setDate] = useState('');
@@ -13,6 +14,7 @@ const DataEntry = () => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('date');
   const [filterType, setFilterType] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchEntries();
@@ -29,12 +31,20 @@ const DataEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const parsedDate = parseISO(date);
+
+    if (!isValid(parsedDate)) {
+      setErrorMessage('Invalid date entered. Please enter a valid date.');
+      return;
+    }
+
     try {
       await axios.post('http://localhost:3000/api/usage', { date, type, usage });
       fetchEntries();
       setDate('');
       setType('energy');
       setUsage('');
+      setErrorMessage('');
     } catch (error) {
       console.error('Error submitting data:', error);
     }
@@ -103,6 +113,7 @@ const DataEntry = () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              error={!!errorMessage}
             />
           </Grid>
           <Grid item xs={12}>
@@ -120,9 +131,14 @@ const DataEntry = () => {
           </Grid>
         </Grid>
       </form>
+      {errorMessage && (
+        <Grid item xs={12}>
+          <Alert severity="error">{errorMessage}</Alert>
+        </Grid>
+      )}
       <Grid container spacing={3} alignItems="center" style={{ marginTop: '20px' }}>
         <Grid item>
-          <Button variant="contained" color="secondary" style={{ backgroundColor: '#2e7d32' }} onClick={handleClearData}>Clear Data</Button>
+          <Button variant="contained" color="secondary" onClick={handleClearData} style={{ backgroundColor: '#2e7d32' }}>Clear Data</Button>
         </Grid>
         <Grid item>
           <Select
