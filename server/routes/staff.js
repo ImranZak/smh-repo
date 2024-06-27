@@ -42,14 +42,12 @@ router.post("/", async (req, res) => {
 
 // Get All Staff (With Optional Query)
 router.get("/", async (req, res) => {
-    const convertToBoolean = (str) => str.toLowerCase() === 'true';
-
     let condition = {};
     let search = req.query.search;
     let strong = req.query.strong ?? false;
     if (search) {
         // bool: strong -> if true check for exactly matching variables (Op.eq)
-        if (convertToBoolean(strong)) {
+        if (strong == "true") {
             condition[Op.or] = [
                 { name: search },
                 { email: search },

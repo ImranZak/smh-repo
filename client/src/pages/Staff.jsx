@@ -1,20 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from 'react-router-dom';
+import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { AccessTime, Search, Clear, Edit, Delete } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
 import global from '../global';
 
 function Staff() {
     const [staffList, setStaffList] = useState([]);
+    const [search, setSearch] = useState('');
+    const [strong, setStrong] = useState(false);
 
-    useEffect(() => {
+    const onSearchChange = (e) => { 
+        setSearch(e.target.value); 
+    };
+
+    const onStrongChange = () => { 
+        if (strong) {
+            setStrong(false); 
+        } else {
+            setStrong(true); 
+        }
+    };
+
+    const getStaff = () => {
         http.get('/staff').then((res) => {
             setStaffList(res.data);
         });
+    };
+    
+    const searchStaff = () => {
+        http.get(`/staff?search=${search}&strong=${strong}`).then((res) => {
+            setStaffList(res.data);
+        });
+    };
+    
+    useEffect(() => {
+        getStaff();
     }, []);
+    
+    const onSearchKeyDown = (e) => {
+        if (e.key === "Enter") {
+            searchStaff();
+        }
+    };
+    
+    const onClickSearch = () => {
+        searchStaff();
+    };
+
+    const onClickClear = () => {
+        setSearch(''); getStaff();
+    };
 
     // Example handlers
     const handleUpdate = (id) => {
@@ -32,6 +69,24 @@ function Staff() {
             <Typography variant="h5" sx={{ my: 2 }}>
                 Staff
             </Typography>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Input value={search} placeholder="Search" onChange={onSearchChange} onKeyDown={onSearchKeyDown} />
+                <IconButton color="primary" onClick={onClickSearch}>
+                    <Search />
+                </IconButton>
+                <IconButton color="primary" onClick={onClickClear} >
+                    <Clear />
+                </IconButton>
+                <Input type='checkbox' onChange={onStrongChange} sx={{ ml: 1 }} />
+                <Typography variant="body1" sx={{ ml: 1}}>Exact Search</Typography>
+                <Box sx={{ flexGrow: 1 }} />
+                <Link to="/create-staff" style={{ textDecoration: 'none' }}>
+                    <Button variant='contained'>Create</Button>
+                </Link>
+            </Box>
+
+
             <TableContainer component={Paper}>
                 <Table aria-label="staff table">
                     <TableHead>
@@ -58,10 +113,10 @@ function Staff() {
                                 <TableCell align="right">{staff.phoneNumber}</TableCell>
                                 <TableCell align="center">
                                     <IconButton variant="contained" color="primary" onClick={() => handleUpdate(staff.id)}>
-                                        <EditIcon />    
+                                        <Edit />    
                                     </IconButton>
                                     <IconButton variant="contained" color="secondary" onClick={() => handleDelete(staff.id)}>
-                                        <DeleteIcon />
+                                        <Delete />
                                     </IconButton>
                                 </TableCell>
                             </TableRow>

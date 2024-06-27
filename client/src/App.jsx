@@ -2,8 +2,9 @@ import './App.css';
 import { Container, AppBar, Toolbar, Typography } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import StaffTheme from './themes/Staff';
+import StaffTheme from './themes/StaffTheme';
 import Staff from './pages/Staff';
+import CreateStaff from './pages/CreateStaff';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route path={"/"} element={<Staff />} />
             <Route path={"/staff"} element={<Staff />} />
+            <Route path={"/create-staff"} element={<CreateStaff />} />
           </Routes>
         </Container>
       </ThemeProvider>
