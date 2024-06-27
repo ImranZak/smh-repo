@@ -16,8 +16,8 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-const tutorialRoute = require('./routes/tutorial');
-app.use("/tutorial", tutorialRoute);
+const staffRoute = require('./routes/staff');
+app.use("/staff", staffRoute);
 
 const db = require('./models');
 db.sequelize.sync({ alter: true })
