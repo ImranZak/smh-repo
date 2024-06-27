@@ -69,7 +69,7 @@ router.put("/:id", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
-        title: yup.string().trim().min(3).max(100),
+        name: yup.string().trim().min(3).max(100),
         role: yup.string().trim().min(3).max(500)
     });
     try {
@@ -118,29 +118,5 @@ router.delete("/:id", async (req, res) => {
         });
     }
 });
-
-// router.delete("/", async (req, res) => {
-//     let id = req.params.id;
-//     // Check id not found
-//     let staff = await Staff.findByPk(id);
-//     if (!staff) {
-//         res.sendStatus(404);
-//         return;
-//     }
-
-//     let num = await Staff.destroy({
-//         where: { id: id }
-//     })
-//     if (num == 1) {
-//         res.json({
-//             message: "Staff was deleted successfully."
-//         });
-//     }
-//     else {
-//         res.status(400).json({
-//             message: `Cannot delete staff with id ${id}.`
-//         });
-//     }
-// });
 
 module.exports = router;
