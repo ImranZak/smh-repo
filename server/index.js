@@ -12,7 +12,7 @@ app.use(cors({
 
 // Simple Route
 app.get("/", (req, res) => {
-    res.send("Welcome to the learning space.");
+    res.send("Welcome to Sustainability Management Hub (SMH)");
 });
 
 // Routes
