@@ -11,10 +11,10 @@ function App() {
           <Toolbar disableGutters={true}>
             <Link to="/">
               <Typography variant="h6" component="div">
-                Learning
+                SMH
               </Typography>
             </Link>
-            <Link to="/tutorials" ><Typography>Tutorials</Typography></Link>
+            <Link to="/tutorials" ><Typography>Users</Typography></Link>
           </Toolbar>
         </Container>
       </AppBar>
