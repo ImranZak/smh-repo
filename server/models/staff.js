@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         role: {
             type: DataTypes.TEXT,
             allowNull: false
+        },
+        department: {
+            type: DataTypes.TEXT,
+            allowNull: false
         }
         // TODO: date joined
     }, {

@@ -14,7 +14,7 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@smhstaff\.com$/;
 const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 
 // Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces, and special characters allowed :) 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$/
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,100}$/
 
 
 // Create Staff
@@ -26,7 +26,8 @@ router.post("/", async (req, res) => {
         email: yup.string().trim().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces").required(),
-        role: yup.string().trim().min(3).max(500).required()
+        role: yup.string().trim().min(3).max(500).required(),
+        department: yup.string().trim().min(3).max(500).required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -47,7 +48,10 @@ router.get("/", async (req, res) => {
     if (search) {
         condition[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
-            { role: { [Op.like]: `%${search}%` } }
+            { email: { [Op.like]: `%${search}%` } }
+            { phoneNumber: { [Op.like]: `%${search}%` } },
+            { role: { [Op.like]: `%${search}%` } },
+            { department: { [Op.like]: `%${search}%` } }
         ];
     }
     if (strong_search) {
@@ -93,7 +97,8 @@ router.put("/:id", async (req, res) => {
         email: yup.string().trim().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces").required(),
-        role: yup.string().trim().min(3).max(500).required()
+        role: yup.string().trim().min(3).max(500).required(),
+        department: yup.string().trim().min(3).max(500).required()
     });
     try {
         data = await validationSchema.validate(data,
