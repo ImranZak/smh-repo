@@ -45,9 +45,7 @@ function UpdateStaff() {
             phoneNumber: yup.string().trim()
             .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
             .required('Phone number is required'),
-            password: yup.string().trim()
-            .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,100}$/, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces")
-            .required('Password is required'),
+            password: yup.string().trim(),
             role: yup.string().trim()
             .min(3, 'Role must be at least 3 characters')
             .max(500, 'Role must be at most 500 characters')
@@ -112,18 +110,6 @@ function UpdateStaff() {
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
                             helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
-                        />
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            autoComplete="off"
-                            label="Password"
-                            name="password"
-                            type="password"
-                            value={formik.values.password}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            error={formik.touched.password && Boolean(formik.errors.password)}
-                            helperText={formik.touched.password && formik.errors.password}
                         />
                         <TextField
                             fullWidth
