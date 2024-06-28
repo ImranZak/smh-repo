@@ -1,5 +1,6 @@
-import React from 'react'
-import { Box, Typography, TextField, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, TextField, Button, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useFormik } from 'formik'; 
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup'; 
@@ -7,6 +8,8 @@ import http from '../http';
 
 function CreateStaff() {
     const navigate = useNavigate();
+    
+    const [showPassword, setShowPassword] = useState(false);
 
     const formik = useFormik({
         initialValues: { 
@@ -102,11 +105,18 @@ function CreateStaff() {
                     autoComplete="off"
                     label="Password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"} // Add showPassword state
                     value={formik.values.password}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
+                    InputProps={{ // Add InputProps prop
+                        endAdornment: (
+                            <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        )
+                    }}
                 />
                 <TextField
                     fullWidth
