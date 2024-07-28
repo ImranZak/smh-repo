@@ -1,8 +1,8 @@
+// EnhancedTableUser.js
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
-import {Dialog, DialogActions, DialogContent, DialogContentText,
-    DialogTitle } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -22,7 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { Link,  useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import http from '../http';
 
 function descendingComparator(a, b, orderBy) {
@@ -55,12 +55,11 @@ const headCells = [
     { id: 'id', numeric: true, disablePadding: true, label: 'Quiz Id' },
     { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-    { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
     { id: 'actions', numeric: false, disablePadding: false, label: '' },
 ];
 
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -68,22 +67,11 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        color="primary"
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={rowCount > 0 && numSelected === rowCount}
-                        onChange={onSelectAllClick}
-                        inputProps={{
-                            'aria-label': 'select all Quiz',
-                        }}
-                    />
-                </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
                         align={headCell.id === 'id' ? 'left' : (headCell.numeric ? 'right' : 'left')}
-                        padding={headCell.disablePadding ? 'none' : 'normal'}
+                        padding='normal'
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel
@@ -106,42 +94,13 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
-    numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
 };
 
 function EnhancedTableToolbar(props) {
-    const { numSelected, rows, setRows, selected, setSelected } = props;
-    const navigate = useNavigate();
-
-    const handleDeleteSelected = () => {
-        const selectedIds = rows.filter((row) => selected.includes(row.id)).map((row) => row.id);
-
-        const deletePromises = selectedIds.map(id =>
-            http.delete(`/quiz/${id}`)
-        );
-
-        Promise.all(deletePromises)
-            .then((responses) => {
-                console.log('All selected items deleted:', responses);
-
-                // Filter out deleted rows
-                const updatedRows = rows.filter((row) => !selectedIds.includes(row.id));
-                
-                // Update state with the remaining rows
-                setRows(updatedRows);
-                setSelected([]);
-                // Reload the page
-                window.location.reload();
-            })
-            .catch((error) => {
-                console.error('Error deleting selected items:', error);
-            });
-    }
+    const { numSelected, rows, setRows } = props;
 
     return (
         <Toolbar
@@ -154,59 +113,27 @@ function EnhancedTableToolbar(props) {
                 }),
             }}
         >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    Quizzes
-                </Typography>
-            )}
-
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton onClick={handleDeleteSelected}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) 
-            : 
-            (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )
-            }
+            <Typography
+                sx={{ flex: '1 1 100%' }}
+                variant="h6"
+                id="tableTitle"
+                component="div"
+            >
+                Quizzes
+            </Typography>
         </Toolbar>
     );
 }
-
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
     rows: PropTypes.array.isRequired,
     setRows: PropTypes.func.isRequired,
-    selected: PropTypes.array.isRequired,
-    setSelected: PropTypes.func.isRequired,
 };
 
 export default function EnhancedTable({ rows }) {
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('id');
-    const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -214,34 +141,6 @@ export default function EnhancedTable({ rows }) {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-    };
-
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
-
-    const handleClick = (event, id) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-        setSelected(newSelected);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -252,8 +151,6 @@ export default function EnhancedTable({ rows }) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-    const isSelected = (id) => selected.indexOf(id) !== -1;
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -269,63 +166,31 @@ export default function EnhancedTable({ rows }) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar
-                    numSelected={selected.length}
-                    rows={rows}
-                    setRows={() => {}}
-                    selected={selected}
-                    setSelected={setSelected}
-                />
+                <EnhancedTableToolbar numSelected={0} rows={rows} setRows={() => {}} />
                 <TableContainer>
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
                         <EnhancedTableHead
-                            numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={rows.length}
                         />
                         <TableBody>
                             {visibleRows.map((row, index) => {
-                                const isItemSelected = isSelected(row.id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
                                         tabIndex={-1}
                                         key={row.id}
-                                        selected={isItemSelected}
                                     >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                color="primary"
-                                                checked={isItemSelected}
-                                                inputProps={{
-                                                    'aria-labelledby': labelId,
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            padding="none"
-                                        >
-                                            {row.id}
-                                        </TableCell>
+                                        <TableCell align="center">{row.id}</TableCell>
                                         <TableCell align="left">{row.title}</TableCell>
                                         <TableCell align="left">{row.description}</TableCell>
-                                        <TableCell align="left">{row.status}</TableCell>
                                         <TableCell align="left">
-                                            <Link to={`/editquiz/${row.id}`}>
-                                                <IconButton>
-                                                    <EditIcon />
-                                                </IconButton>
+                                            <Link to={`/takequiz/${row.id}`}>
+                                                Take Quiz
                                             </Link>
                                         </TableCell>
                                     </TableRow>

@@ -109,7 +109,7 @@ function Questions() {
                                 </Typography>
                             </CardContent>
                             <CardActions sx={{ mt: 1 }}>
-                                <Link to={`/quizzes/${quizId}/editquestion/${question.id}`}>
+                                <Link to={`/quizzesStaff/${quizId}/editquestion/${question.id}`}>
                                     <Button size="small">Edit</Button>
                                 </Link>
                                 <Button size="small" onClick={() => handleDeleteQuestion(question.id)}>Delete</Button>
@@ -120,14 +120,14 @@ function Questions() {
             </Box>
             <Box sx={{ position: 'fixed', bottom: 16, right: 16, display: 'flex', gap: 2 }}>
                 <Tooltip title="Go Back">
-                    <Link to={`/quizzes`} style={{ textDecoration: 'none' }}>
+                    <Link to={`/quizzesStaff`} style={{ textDecoration: 'none' }}>
                         <Fab color="primary" aria-label="back" sx={{ width: 56, height: 56 }}>
                             <ArrowBackIcon />
                         </Fab>
                     </Link>
                 </Tooltip>
                 <Tooltip title="Add Question">
-                    <Link to={`/quizzes/${quizId}/addquestion`} style={{ textDecoration: 'none' }}>
+                    <Link to={`/quizzesStaff/${quizId}/addquestion`} style={{ textDecoration: 'none' }}>
                         <Fab color="primary" aria-label="add" sx={{ width: 56, height: 56 }}>
                             <AddIcon />
                         </Fab>

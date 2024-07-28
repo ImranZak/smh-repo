@@ -56,7 +56,7 @@ const EditQuestion = () => {
             console.log('Payload', payload)
             http.put(`/quiz/question/quizzes/${payload.quizId}/questions/${questionId}`, payload)
                 .then((res) => {
-                    navigate(`/quizzes/${quizId}/questions`);
+                    navigate(`/quizzesStaff/${quizId}/questions`);
                 })
                 .catch((err) => {
                     console.error('Error updating question:', err);
@@ -191,7 +191,7 @@ const EditQuestion = () => {
                 </>
             )}
             <Tooltip title="Go Back">
-                <Link to={`/quizzes/${quizId}/questions`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                <Link to={`/quizzesStaff/${quizId}/questions`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
                     <Fab color="primary" aria-label="add">
                         <ArrowBackIcon />
                     </Fab>

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Typography, Input, IconButton, Tooltip, Fab } from '@mui/material';
+import { Box, Typography, Input, IconButton } from '@mui/material';
 import { Search, Clear } from '@mui/icons-material';
-import AddIcon from '@mui/icons-material/Add';
 import http from '../http';
-import EnhancedTable from './QuizTable';
+import EnhancedTable from './QuizTableUser';
 
 function Quizzes() {
     const [quizzesList, setQuizList] = useState([]);
@@ -25,9 +24,10 @@ function Quizzes() {
     }, []);
 
     const filteredQuizzes = quizzesList.filter(quiz =>
-        quiz.id.toString().includes(search) ||
+        (quiz.id.toString().includes(search) ||
         quiz.title.toLowerCase().includes(search.toLowerCase()) ||
-        quiz.description.toLowerCase().includes(search.toLowerCase())
+        quiz.description.toLowerCase().includes(search.toLowerCase())) &&
+        quiz.status.toLowerCase() === 'active'
     );
 
     return (
@@ -49,15 +49,10 @@ function Quizzes() {
             <div>
                 <EnhancedTable rows={filteredQuizzes} />
             </div>
-            <Tooltip title="Add Quiz">
-                <Link to="/addquiz" style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
-                    <Fab color="primary" aria-label="add">
-                        <AddIcon />
-                    </Fab>
-                </Link>
-            </Tooltip>
         </Box>
-    )
+    );
 }
 
 export default Quizzes;
+
+// EnhancedTableUser.js remains the same as before

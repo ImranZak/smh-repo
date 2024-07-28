@@ -22,6 +22,9 @@ app.use("/quiz", quizRoute);
 const questionRoute = require('./routes/question');
 app.use("/quiz/question", questionRoute);
 
+const userquizhistoryRoute = require('./routes/UserQuizHistory');
+app.use("/user/quiz", userquizhistoryRoute);
+
 const db = require('./models');
 db.sequelize.sync({ alter: true })
     .then(() => {

@@ -49,12 +49,12 @@ function EditQuiz() {
             http.put(`/quiz/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/quizzes");
+                    navigate("/quizzesStaff");
                 });
         }
     });
     const handleEditQuestions = () => {
-        navigate(`/quizzes/${id}/questions`);
+        navigate(`/quizzesStaff/${id}/questions`);
     };
 
     return (
@@ -118,7 +118,7 @@ function EditQuiz() {
                 )
             }
             <Tooltip title="Go Back">
-                <Link to={`/quizzes`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                <Link to={`/quizzesStaff`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
                     <Fab color="primary" aria-label="add">
                         <ArrowBackIcon />
                     </Fab>

@@ -36,7 +36,7 @@ const AddQuestion = () => {
             };
             http.post(`/quiz/question/quizzes/${quizId}/questions`, payload)
                 .then((res) => {
-                    navigate(`/quizzes/${quizId}/questions`);
+                    navigate(`/quizzesStaff/${quizId}/questions`);
                 })
                 .catch((err) => {
                     console.error('Error adding question:', err);
@@ -158,7 +158,7 @@ const AddQuestion = () => {
                 </>
             )}
             <Tooltip title="Go Back">
-                <Link to={`/quizzes/${quizId}/questions`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                <Link to={`/quizzesStaff/${quizId}/questions`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
                     <Fab color="primary" aria-label="add">
                         <ArrowBackIcon />
                     </Fab>

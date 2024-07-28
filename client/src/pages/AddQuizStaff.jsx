@@ -38,7 +38,7 @@ function AddQuiz() {
             http.post("/quiz", data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/quizzes");
+                    navigate("/quizzesStaff");
                 });
         }
     });
@@ -96,7 +96,7 @@ function AddQuiz() {
                 </Box>
             </Box>
             <Tooltip title="Go Back">
-                <Link to={`/quizzes`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                <Link to={`/quizzesStaff`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
                     <Fab color="primary" aria-label="add">
                         <ArrowBackIcon />
                     </Fab>
