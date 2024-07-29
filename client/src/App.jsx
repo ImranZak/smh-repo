@@ -7,6 +7,11 @@ import AddQuestion from './pages/AddQuestion.jsx';
 import EditQuestion from './pages/EditQuestionStaff.jsx';
 import QuizzesUser from './pages/QuizUser.jsx';
 import TakeQuizUser from './pages/TakeQuizUser.jsx';
+import ResourceLibraryStaff from './pages/ResourceLibrary/ResourceLibraryStaff.jsx';
+import AddResource from './pages/ResourceLibrary/AddResourceStaff.jsx';
+import EditResource from './pages/ResourceLibrary/EditResourceStaff.jsx';
+import ResourceContentStaff from './pages/ResourceLibrary/ResourceContentStaff.jsx';
+import AddResourceContentStaff from './pages/ResourceLibrary/AddResourceContentStaff.jsx';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -16,10 +21,11 @@ import theme from './MyTheme/theme.jsx'; // Import your custom theme
 import UserAppBar from './AppBar/UserAppBar.jsx';
 import StaffAppBar from './AppBar/StaffAppBar';
 
+
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
 
-  const navbar_ver = 'user';
+  const navbar_ver = 'staff';
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget); // Open the menu
@@ -43,6 +49,11 @@ function App() {
             <Route path="/quizzesStaff/:quizId/editquestion/:questionId" element={<EditQuestion />} />
             <Route path="/quizzesUser" element={<QuizzesUser />} />
             <Route path="/takequiz/:id" element={<TakeQuizUser />} />
+            <Route path="/ResourceLibraryStaff" element={<ResourceLibraryStaff />} />
+            <Route path="/AddResource" element={<AddResource />} />
+            <Route path="/EditResource/:id" element={<EditResource />} />
+            <Route path="/ResourceContentStaff/:postId" element={<ResourceContentStaff />} />
+            <Route path="/ResourceContentStaff/:postId/AddResourceContentStaff" element={<AddResourceContentStaff />} />
           </Routes>
         </Container>
       </Router>

@@ -18,7 +18,7 @@ const StaffAppBar = () => {
             </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
-            <Link to="/reports" className="nav-link">Reports</Link>
+            <Link to="/ResourceLibraryStaff" className="nav-link">Resource Library</Link>
             <Link to="/quizzesStaff" className="nav-link">Quizzes</Link>
             
           </Box>
