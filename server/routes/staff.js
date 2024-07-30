@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Staff } = require('../models');
-const { Op } = require("sequelize");
+const { Op, DATEONLY } = require("sequelize");
 const yup = require("yup");
 
 
@@ -22,12 +22,16 @@ router.post("/", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
+        // TODO: homeAddress validation for all endpoints
         name: yup.string().trim().min(3).max(100).required(),
+        birthDate: yup.date().min('01-01-1920').max('01-01-2020').required(),
         email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
+        homeAddress: yup.string().trim().min(3).max(100).required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed").required(),
         role: yup.string().trim().min(3).max(500).required(),
-        department: yup.string().trim().min(2).max(500).required()
+        department: yup.string().trim().min(2).max(500).required(),
+        joinDate: yup.date().min('01-01-2000').max('01-01-2050').required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -50,19 +54,25 @@ router.get("/", async (req, res) => {
         if (strong == "true") {
             condition[Op.or] = [
                 { name: search },
+                { birthDate: search},
                 { email: search },
                 { phoneNumber: search },
+                { homeAddress: search },
                 { role: search },
-                { department: search }
+                { department: search },
+                { joinDate: search},
             ];
         }
         else {
             condition[Op.or] = [
                 { name: { [Op.like]: `%${search}%` } },
+                { birthDate: { [Op.like]: `%${search}%` } },
                 { email: { [Op.like]: `%${search}%` } },
                 { phoneNumber: { [Op.like]: `%${search}%` } },
+                { homeAddress: { [Op.like]: `%${search}%` } },
                 { role: { [Op.like]: `%${search}%` } },
-                { department: { [Op.like]: `%${search}%` } }
+                { department: { [Op.like]: `%${search}%` } },
+                { joinDate: { [Op.like]: `%${search}%` } },
             ];
         }
     }
@@ -100,11 +110,14 @@ router.put("/:id", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100).required(),
+        birthDate: yup.date().min('01-01-1920').max('01-01-2020').required(),
         email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
+        homeAddress: yup.string().trim().min(3).max(100).required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed").required(),
         role: yup.string().trim().min(3).max(500).required(),
-        department: yup.string().trim().min(2).max(500).required()
+        department: yup.string().trim().min(2).max(500).required(),
+        joinDate: yup.date().min('01-01-2000').max('01-01-2050').required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -177,19 +190,25 @@ router.post("/populate", async (req, res) => {
         const staffData = [
             {
                 name: "John Doe",
+                birthDate: new Date("1992-01-01"),
                 email: "johndoe@smhstaff.com",
                 phoneNumber: "12345678",
+                homeAddress: "123 Sembawang Road",
                 password: "SMHStaff2024",
                 role: "Admin",
-                department: "IT"
+                department: "IT",
+                joinDate: new Date("2020-01-01"),
             },
             {
                 name: "Jane Smith",
+                birthDate: new Date("2002-01-01"),
                 email: "janesmith@smhstaff.com",
+                homeAddress: "123 Sembawang Road",
                 phoneNumber: "98765432",
                 password: "SMHStaff2024",
                 role: "Staff",
-                department: "HR"
+                department: "HR",
+                joinDate: new Date("2024-01-01"),
             }
         ];
 
@@ -197,7 +216,7 @@ router.post("/populate", async (req, res) => {
         res.json(result);
     } catch (err) {
         res.status(500).json({
-            message: "Failed to populate staff."
+            message: `${err}: Failed to populate staff.`
         });
     }
 });
