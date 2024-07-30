@@ -101,17 +101,19 @@ function Staff() {
                 </Link>
             </Box>
 
-
-            <TableContainer component={Paper}>
+            {/* TODO: Add additional info feature so i can hide some of the columns */}
+            <TableContainer component={Paper} sx={{ my: '5%' }}>
                 <Table aria-label="staff table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Name</TableCell>
-                            <TableCell align="right">Created At</TableCell>
+                            <TableCell align="right">Date Joined</TableCell>
                             <TableCell align="right">Role</TableCell>
                             <TableCell align="right">Department</TableCell>
                             <TableCell align="right">Email</TableCell>
                             <TableCell align="right">Phone Number</TableCell>
+                            <TableCell align="right">Date of Birth</TableCell>
+                            <TableCell align="right">Home Address</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -121,11 +123,13 @@ function Staff() {
                                 <TableCell component="th" scope="row">
                                     {staff.name}
                                 </TableCell>
-                                <TableCell align="right">{dayjs(staff.createdAt).format(global.datetimeFormat)}</TableCell>
+                                <TableCell align="right">{dayjs(staff.joinDate).format('D MMM YYYY')}</TableCell>
                                 <TableCell align="right">{staff.role}</TableCell>
                                 <TableCell align="right">{staff.department}</TableCell>
                                 <TableCell align="right">{staff.email}</TableCell>
                                 <TableCell align="right">{staff.phoneNumber}</TableCell>
+                                <TableCell align="right">{staff.birthDate}</TableCell>
+                                <TableCell align="right">{staff.homeAddress }</TableCell>
                                 <TableCell align="center">
                                     <IconButton variant="contained" color="primary" onClick={() => handleUpdate(staff.id)}>
                                         <Edit />    
