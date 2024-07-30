@@ -24,14 +24,14 @@ router.post("/", async (req, res) => {
     let validationSchema = yup.object({
         // TODO: homeAddress validation for all endpoints
         name: yup.string().trim().min(3).max(100).required(),
-        birthDate: yup.date().min('01-01-1920').max('01-01-2020').required(),
+        birthDate: yup.date().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 18, `Maximum birth year is ${(new Date().getFullYear() - 18)}`).required(),
         email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
         homeAddress: yup.string().trim().min(3).max(100).required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed").required(),
         role: yup.string().trim().min(3).max(500).required(),
         department: yup.string().trim().min(2).max(500).required(),
-        joinDate: yup.date().min('01-01-2000').max('01-01-2050').required()
+        joinDate: yup.date().min('01/01/2002', `Minimum join year is 2002`).max(new Date().getFullYear(), `Maximum join year is ${new Date().getFullYear()}`).required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-// Get All Staff (With Optional Query)
+// Get All Staff (With Optional Search Query)
 router.get("/", async (req, res) => {
     let condition = {};
     let search = req.query.search;
@@ -110,14 +110,14 @@ router.put("/:id", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100).required(),
-        birthDate: yup.date().min('01-01-1920').max('01-01-2020').required(),
+        birthDate: yup.date().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 18, `Maximum birth year is ${(new Date().getFullYear() - 18)}`).required(),
         email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
         homeAddress: yup.string().trim().min(3).max(100).required(),
         password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed").required(),
         role: yup.string().trim().min(3).max(500).required(),
         department: yup.string().trim().min(2).max(500).required(),
-        joinDate: yup.date().min('01-01-2000').max('01-01-2050').required()
+        joinDate: yup.date().min('01/01/2002', `Minimum join year is 2002`).max(new Date().getFullYear(), `Maximum join year is ${new Date().getFullYear()}`).required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -186,6 +186,16 @@ router.delete("/", async (req, res) => {
 
 // Populate Staff
 router.post("/populate", async (req, res) => {
+    try {
+        await Staff.destroy({
+            where: {},
+            truncate: true
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Failed to delete all staff."
+        });
+    }
     try {
         const staffData = [
             {
