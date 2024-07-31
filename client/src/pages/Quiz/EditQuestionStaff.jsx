@@ -4,7 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import http from '../http';
+import http from '../../http';
 
 const validationSchema = yup.object({
     question_text: yup.string().trim().required('Question is required'),

@@ -4,7 +4,7 @@ import {
     Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import http from '../http'; // Ensure this is your axios instance
+import http from '../../http'; // Ensure this is your axios instance
 import CircularProgressWithLabel from './QuizCircularProgressWithLabel'; // Import the custom component
 
 function TakeQuizUser() {

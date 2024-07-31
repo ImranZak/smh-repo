@@ -9,7 +9,7 @@ import FormLabel from '@mui/material/FormLabel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import http from '../http';
+import http from '../../http';
 
 function AddQuiz() {
     const navigate = useNavigate();

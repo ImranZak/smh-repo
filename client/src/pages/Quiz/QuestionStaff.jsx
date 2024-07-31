@@ -7,7 +7,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useParams } from 'react-router-dom';
-import http from '../http'; // Assuming this is your axios instance
+import http from '../../http'; // Assuming this is your axios instance
 
 function Questions() {
     const { quizId } = useParams();

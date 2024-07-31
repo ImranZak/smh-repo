@@ -6,7 +6,7 @@ import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
 import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
 import FlashOnOutlinedIcon from '@mui/icons-material/FlashOnOutlined';
 import RecyclingOutlinedIcon from '@mui/icons-material/RecyclingOutlined';
-import http from '../http';
+import http from '../../http';
 import EnhancedTable from './QuizTableUser';
 
 function QuizzesUser() {
