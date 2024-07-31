@@ -22,7 +22,6 @@ router.post("/", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
-        // TODO: homeAddress validation for all endpoints
         name: yup.string().trim().min(3).max(100).required(),
         birthDate: yup.date().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 17, `Maximum birth year is ${(new Date().getFullYear() - 18)}`).required(),
         email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
@@ -197,7 +196,7 @@ router.post("/populate", async (req, res) => {
         });
     }
     try {
-        // TODO: Implement matching roles to department :)`
+        // TODO: Implement department-role requirement to department :P
         const staffData = [
             {
                 name: "John Doe",
