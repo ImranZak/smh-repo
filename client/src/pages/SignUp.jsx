@@ -23,28 +23,40 @@ function SignUp() {
                 .min(3, 'User Name must be at least 3 characters')
                 .max(100, 'User Name must be at most 100 characters')
                 .required('User Name is required'),
-            email: yup.string().trim()
+            email: yup.string().trim()   
                 .min(3, 'Email must be at least 3 characters')
-                .max(50, 'Email must be at most 500 characters')
+                .max(50, 'Email must be at most 50 characters')
                 .required('Email is required'),
             phone: yup.string().trim()
-                .min(3, 'Email must be at least 3 characters')
-                .max(50, 'Email must be at most 500 characters')
-                .required('Email is required'),
+                .min(8, 'Phone number must be at least 8 digits')
+                .max(16, 'Phone number must be at most 16 digits')
+                .required('Phone number is required'),
             nric: yup.string().trim()
-                .min(3, 'Email must be at least 3 characters')
-                .max(50, 'Email must be at most 500 characters')
-                .required('Email is required'),
+                .min(8, 'NRIC must be at least 8 characters')
+                .max(12, 'NRIC must be at most 12 characters')
+                .required('NRIC is required'),
         }),
         onSubmit: (data) => {
-            data.user_name = data.name.trim();
-            data.email = data.description.trim();
-            data.phone = data.description.trim();
-            data.nric = data.description.trim();
+            data.user_name = data.user_name.trim();         
+            data.email = data.email.trim();
+            data.phone = data.phone.trim();
+            data.nric = data.nric.trim();
             http.post("/signup", data)
                 .then((res) => {
                     console.log(res.data);
+                    toast.success('Sign Up Successful!');
                     navigate("/events");
+                })
+                .catch((error) => {
+                    // Check if error response exists
+                    if (error.response && error.response.data && error.response.data.errors) {
+                        const errorMessages = error.response.data.errors.join(', ');
+                        console.error('Error:', errorMessages);
+                        toast.error('Sign Up Failed: ' + errorMessages);
+                    } else {
+                        console.error('Error:', error.message);
+                        toast.error('Sign Up Failed: ' + error.message);
+                    }
                 });
         }
     });

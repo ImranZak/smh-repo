@@ -27,6 +27,7 @@ import StaffAppBar from './AppBar/StaffAppBar';
 import MyTheme from './MyTheme/theme.jsx';
 import StaffEvents from './pages/StaffEvents';
 import SignUp from './pages/SignUp';
+import SignUps from './pages/SignUps';
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
@@ -52,6 +53,7 @@ function App() {
             <Route path={"/editevent/:id"} element={<EditEvent />} />
             <Route path={"/staffevents"} element={<StaffEvents />} />
             <Route path={"/sign-up/:id"} element={<SignUp />} />
+            <Route path={"/signups"} element={<SignUps />} />
             <Route path="/quizzesStaff" element={<Quizzes />} />
             <Route path="/editquiz/:id" element={<EditQuiz />} />
             <Route path="/addquiz" element={<AddQuiz />} />
