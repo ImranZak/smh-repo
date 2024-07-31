@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { Staff } = require('../models');
-const { Op, DATEONLY } = require("sequelize");
+const { Op } = require("sequelize");
 const yup = require("yup");
+const bcrypt = require("bcrypt");
+const { sign } = require('jsonwebtoken'); 
+const { validateToken } = require('../middlewares/auth');
 
 
 // Custom regex for validation
@@ -15,6 +18,68 @@ const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 
 // Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces, and some special characters allowed :) 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,100}$/
+
+
+// Login Staff
+router.post("/login", async (req, res) => {
+    let data = req.body;
+
+    // Validate request body
+    let validationSchema = yup.object({
+        email: yup.string().trim().lowercase().email().max(100).required(),
+        password: yup.string().trim().min(8).max(100).required()
+    });
+
+    try {
+        data = await validationSchema.validate(data,
+            { abortEarly: false });
+
+        // Check email and password
+        let errorMsg = "Email or password is not correct.";
+        let staff = await Staff.findOne({
+            where: { email: data.email }
+        });
+        if (!staff) {
+            res.status(400).json({ message: errorMsg });
+            return;
+        }
+        let match = await bcrypt.compare(data.password, staff.password);
+        if (!match) {
+            res.status(400).json({ message: errorMsg });
+            return;
+        }
+
+        // Return user info
+        let staffInfo = {
+            id: staff.id,
+            email: staff.email,
+            name: staff.name
+        };
+        let accessToken = sign(staffInfo, process.env.APP_SECRET, 
+            { expiresIn: process.env.TOKEN_EXPIRES_IN });
+        res.json({
+            accessToken: accessToken,
+            user: staffInfo
+        });
+    }
+    catch (err) {
+        res.status(400).json({ errors: err.errors });
+        return;
+    }
+});
+
+
+// Authenticate Staff 
+router.get("/auth", validateToken, (req, res) => {
+    let userInfo = {
+        id: req.user.id,
+        email: req.user.email,
+        name: req.user.name,
+    };
+    res.json({ 
+        user: userInfo 
+    });
+});
 
 
 // Create Staff
@@ -35,6 +100,8 @@ router.post("/", async (req, res) => {
     try {
         data = await validationSchema.validate(data,
             { abortEarly: false });
+            
+        data.password = await bcrypt.hash(data.password, 10);
         let result = await Staff.create(data);
         res.json(result);
     }
@@ -122,6 +189,7 @@ router.put("/:id", async (req, res) => {
         data = await validationSchema.validate(data,
             { abortEarly: false });
 
+        data.password = await bcrypt.hash(data.password, 10);
         let num = await Staff.update(data, {
             where: { id: id }
         });
@@ -204,7 +272,7 @@ router.post("/populate", async (req, res) => {
                 email: "johndoe@smhstaff.com",
                 phoneNumber: "12345678",
                 homeAddress: "123 Sembawang Road",
-                password: "SMHStaff2024",
+                password: await bcrypt.hash("SMHStaff2024", 10),
                 role: "Web Developer",
                 department: "IT",
                 joinDate: new Date("2020-01-01"),
@@ -215,7 +283,7 @@ router.post("/populate", async (req, res) => {
                 email: "janesmith@smhstaff.com",
                 homeAddress: "123 Sembawang Road",
                 phoneNumber: "98765432",
-                password: "SMHStaff2024",
+                password: await bcrypt.hash("SMHStaff2024", 10),
                 role: "HR Assistant",
                 department: "HR",
                 joinDate: new Date("2024-01-01"),

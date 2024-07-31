@@ -7,15 +7,17 @@ const { sign } = require('jsonwebtoken');
 const { validateToken } = require('../middlewares/auth');
 require('dotenv').config();
 
+
+// Register User
 router.post("/register", async (req, res) => {
     let data = req.body;
 
     // Validate request body 
-    let validationSchema = yup.object({
+    let validationSchema = yup.object({ 
         // TODO: Update this to match staff model AFTER review 2
         name: yup.string().trim().min(3).max(50).required()
         .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , ."),
-        email: yup.string().trim().lowercase().email().max(50).required(),
+        email: yup.string().trim().lowercase().email().max(50).matches(/^(?!.*@smhstaff\.com$).+$/, "Invalid email").required(),
         password: yup.string().trim().min(8).max(50).required()
         .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/, "password at least 1 letter and 1 number")
     });
@@ -42,6 +44,8 @@ router.post("/register", async (req, res) => {
     res.json({ message: `Email ${result.email} was registered successfully.` });
 });
 
+
+// Login User
 router.post("/login", async (req, res) => {
     let data = req.body;
 
@@ -89,6 +93,8 @@ router.post("/login", async (req, res) => {
     }
 });
 
+
+// Authenticate User
 router.get("/auth", validateToken, (req, res) => {
     let userInfo = {
         id: req.user.id,
