@@ -1,19 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { upload } = require('../middlewares/upload');
+const { upload } = require('../middlewares/Upload');
 
-
-router.post('/upload', (req, res) => {
-    upload(req, res, (err) => {
-        if (err) {
-            res.status(400).json(err);
-        }
-        else if (req.file == undefined) {
+// POST: Upload a file
+router.post('/upload', upload, (req, res) => {
+    try {
+        if (req.file) {
+            res.status(201).json({ filename: req.file.filename });
+        } else {
             res.status(400).json({ message: "No file uploaded" });
         }
-        else {
-            res.json({ filename: req.file.filename });
-        }
-    })
+    } catch (err) {
+        console.error('Error in POST /upload:', err);
+        res.status(500).json({ error: err.message });
+    }
 });
+
 module.exports = router;

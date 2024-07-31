@@ -17,6 +17,21 @@ app.get("/", (req, res) => {
     res.send("Welcome to the learning space.");
 });
 // Routes
+const quizRoute = require('./routes/quiz');
+app.use("/quiz", quizRoute);
+
+const questionRoute = require('./routes/question');
+app.use("/quiz/question", questionRoute);
+
+const userquizhistoryRoute = require('./routes/UserQuizHistory');
+app.use("/user/quiz", userquizhistoryRoute);
+
+const resource = require('./routes/resource');
+app.use("/resource", resource);
+
+const resourceContent = require('./routes/resourceContent');
+app.use("/resourceContent", resourceContent);
+
 const eventRoute = require('./routes/event');
 app.use("/event", eventRoute);
 
