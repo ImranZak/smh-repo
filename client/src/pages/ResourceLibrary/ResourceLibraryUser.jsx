@@ -7,11 +7,11 @@ import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
 import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
 import FlashOnOutlinedIcon from '@mui/icons-material/FlashOnOutlined';
 import RecyclingOutlinedIcon from '@mui/icons-material/RecyclingOutlined';
-import http from '../http';
-import EnhancedTable from './QuizTableStaff';
+import http from '../../http';
+import EnhancedTable from './ResourceLibraryTableUser';
 
-function QuizzesStaff() {
-    const [quizzesList, setQuizList] = useState([]);
+function ResourcesUser() {
+    const [resourcesList, setResourcesList] = useState([]);
     const [search, setSearch] = useState('');
     const [selectedTag, setSelectedTag] = useState('');
 
@@ -19,27 +19,28 @@ function QuizzesStaff() {
         setSearch(e.target.value);
     };
 
-    const getQuizzes = () => {
-        http.get('/quiz').then((res) => {
-            setQuizList(res.data);
+    const getResources = () => {
+        http.get('/resource').then((res) => {
+            setResourcesList(res.data);
         });
     };
 
     useEffect(() => {
-        getQuizzes();
+        getResources();
     }, []);
 
-    const filteredQuizzes = quizzesList.filter(quiz =>
-        (quiz.id.toString().includes(search) ||
-            quiz.title.toLowerCase().includes(search.toLowerCase()) ||
-            quiz.description.toLowerCase().includes(search.toLowerCase())) &&
-        (selectedTag ? quiz.tag === selectedTag : true)
+    const filteredResources = resourcesList.filter(resource =>
+        resource.status === 'Active' &&
+        (resource.id.toString().includes(search) ||
+        resource.title.toLowerCase().includes(search.toLowerCase()) ||
+        resource.description.toLowerCase().includes(search.toLowerCase())) &&
+        (selectedTag ? resource.tag === selectedTag : true)
     );
 
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Quizzes
+                Resources
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Input value={search} placeholder="Search by ID, Title or Description"
@@ -88,17 +89,10 @@ function QuizzesStaff() {
                 </Button>
             </Box>
             <div>
-                <EnhancedTable rows={filteredQuizzes} />
+                <EnhancedTable rows={filteredResources} />
             </div>
-            <Tooltip title="Add Quiz">
-                <Link to="/addquiz" style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
-                    <Fab color="primary" aria-label="add">
-                        <AddIcon />
-                    </Fab>
-                </Link>
-            </Tooltip>
         </Box>
     );
 }
 
-export default QuizzesStaff;
+export default ResourcesUser;

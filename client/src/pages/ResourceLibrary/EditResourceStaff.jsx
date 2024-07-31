@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Box, Typography, TextField, Button, Fab, Tooltip, MenuItem, FormControl, InputLabel, Select, FormHelperText } from '@mui/material';
+import { Box, Typography, TextField, Button, Fab, Tooltip, MenuItem, FormControl, InputLabel, Select, FormHelperText, Radio, RadioGroup, FormControlLabel, FormLabel } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -16,6 +16,7 @@ function EditResource() {
             title: "",
             description: "",
             tag: "",
+            status: "Active", // Default value for status
         },
         validationSchema: yup.object({
             title: yup.string().trim()
@@ -29,7 +30,8 @@ function EditResource() {
             tag: yup.string().oneOf(
                 ['waste reduction', 'energy conservation', 'water management', 'green living tips'],
                 'Invalid tag selection'
-            ).required('Tag is required')
+            ).required('Tag is required'),
+            status: yup.string().oneOf(["Active", "Inactive"]).required('Status is required'),
         }),
         onSubmit: (data) => {
             data.title = data.title.trim();
@@ -49,8 +51,8 @@ function EditResource() {
         // Fetch the existing resource data when the component mounts
         http.get(`/resource/${id}`)
             .then((res) => {
-                const { title, description, tag } = res.data;
-                formik.setValues({ title, description, tag });
+                const { title, description, tag, status } = res.data;
+                formik.setValues({ title, description, tag, status });
             })
             .catch((error) => {
                 console.error('Error fetching resource data:', error);
@@ -103,6 +105,25 @@ function EditResource() {
                         <MenuItem value="green living tips">Green Living Tips</MenuItem>
                     </Select>
                     <FormHelperText>{formik.touched.tag && formik.errors.tag}</FormHelperText>
+                </FormControl>
+                <FormControl>
+                    <FormLabel id="status-radio-buttons-group-label">Status</FormLabel>
+                    <RadioGroup
+                        row
+                        aria-labelledby="status-radio-buttons-group-label"
+                        name="status"
+                        value={formik.values.status}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    >
+                        <FormControlLabel value="Active" control={<Radio />} label="Active" />
+                        <FormControlLabel value="Inactive" control={<Radio />} label="Inactive" />
+                    </RadioGroup>
+                    {formik.touched.status && formik.errors.status && (
+                        <Typography variant="body2" color="error">
+                            {formik.errors.status}
+                        </Typography>
+                    )}
                 </FormControl>
                 <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                     <Button variant="contained" type="submit" sx={{ mr: 1 }}>

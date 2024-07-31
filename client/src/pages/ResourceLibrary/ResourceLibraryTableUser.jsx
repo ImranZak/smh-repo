@@ -1,8 +1,6 @@
-// EnhancedTableUser.js
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -15,15 +13,8 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { Link, useNavigate } from 'react-router-dom';
-import http from '../http';
+import { Link } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -52,13 +43,12 @@ const stableSort = (array, comparator) => {
 };
 
 const headCells = [
-    { id: 'id', numeric: true, disablePadding: true, label: 'Quiz Id' },
+    { id: 'id', numeric: true, disablePadding: true, label: 'Resource Id' },
     { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-    { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },  // Add this line
+    { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
     { id: 'actions', numeric: false, disablePadding: false, label: '' },
 ];
-
 
 function EnhancedTableHead(props) {
     const { order, orderBy, onRequestSort } = props;
@@ -102,7 +92,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-    const { numSelected, rows, setRows } = props;
+    const { numSelected } = props;
 
     return (
         <Toolbar
@@ -121,7 +111,7 @@ function EnhancedTableToolbar(props) {
                 id="tableTitle"
                 component="div"
             >
-                Quizzes
+                Resources
             </Typography>
         </Toolbar>
     );
@@ -129,11 +119,9 @@ function EnhancedTableToolbar(props) {
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
-    rows: PropTypes.array.isRequired,
-    setRows: PropTypes.func.isRequired,
 };
 
-export default function EnhancedTable({ rows }) {
+export default function ResourceLibraryTableUser({ rows }) {
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('id');
     const [page, setPage] = useState(0);
@@ -168,7 +156,7 @@ export default function EnhancedTable({ rows }) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={0} rows={rows} setRows={() => {}} />
+                <EnhancedTableToolbar numSelected={0} />
                 <TableContainer>
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
                         <EnhancedTableHead
@@ -178,30 +166,26 @@ export default function EnhancedTable({ rows }) {
                             rowCount={rows.length}
                         />
                         <TableBody>
-                            {visibleRows.map((row, index) => {
-                                const labelId = `enhanced-table-checkbox-${index}`;
-
-                                return (
-                                    <TableRow
-                                        hover
-                                        tabIndex={-1}
-                                        key={row.id}
-                                    >
-                                        <TableCell align="center">{row.id}</TableCell>
-                                        <TableCell align="left">{row.title}</TableCell>
-                                        <TableCell align="left">{row.description}</TableCell>
-                                        <TableCell align="left">{row.tag}</TableCell>  
-                                        <TableCell align="left">
-                                            <Link to={`/takequiz/${row.id}`}>
-                                                Take Quiz
-                                            </Link>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
+                            {visibleRows.map((row) => (
+                                <TableRow
+                                    hover
+                                    tabIndex={-1}
+                                    key={row.id}
+                                >
+                                    <TableCell align="center">{row.id}</TableCell>
+                                    <TableCell align="left">{row.title}</TableCell>
+                                    <TableCell align="left">{row.description}</TableCell>
+                                    <TableCell align="left">{row.tag}</TableCell>
+                                    <TableCell align="left">
+                                        <Link to={`/ResourceLibraryUser/ResourceContentUserView/${row.id}`}>
+                                            View Resource
+                                        </Link>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={6} />
+                                    <TableCell colSpan={headCells.length} />
                                 </TableRow>
                             )}
                         </TableBody>
@@ -221,6 +205,6 @@ export default function EnhancedTable({ rows }) {
     );
 }
 
-EnhancedTable.propTypes = {
+ResourceLibraryTableUser.propTypes = {
     rows: PropTypes.array.isRequired,
 };

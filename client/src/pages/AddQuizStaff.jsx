@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Box, Typography, TextField, Button, Fab, Tooltip } from '@mui/material';
+import { Box, Typography, TextField, Button, Fab, Tooltip, MenuItem } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,18 +18,20 @@ function AddQuiz() {
         initialValues: {
             title: "",
             description: "",
-            status: "Active"
+            status: "Active",
+            tag: ""  // Add this line
         },
         validationSchema: yup.object({
             title: yup.string().trim()
-                .min(3, 'Title must be at least 3 characters')
-                .max(100, 'Title must be at most 100 characters')
-                .required('Title is required'),
-            description: yup.string().trim()
-                .min(3, 'Description must be at least 3 characters')
-                .max(500, 'Description must be at most 500 characters')
-                .required('Description is required'),
-            status: yup.string().required('Status is required')
+            .min(3, 'Title must be at least 3 characters')
+            .max(100, 'Title must be at most 100 characters')
+            .required('Title is required'),
+        description: yup.string().trim()
+            .min(3, 'Description must be at least 3 characters')
+            .max(500, 'Description must be at most 500 characters')
+            .required('Description is required'),
+        status: yup.string().oneOf(['Active', 'Inactive'], 'Status must be either Active or Inactive').required('Status is required'),
+        tag: yup.string().trim().oneOf(['waste reduction', 'energy conservation', 'water management', 'green living tips']).required('Tag is required')  // Add this line
         }),
         onSubmit: (data) => {
             data.title = data.title.trim();
@@ -70,6 +72,22 @@ function AddQuiz() {
                     error={formik.touched.description && Boolean(formik.errors.description)}
                     helperText={formik.touched.description && formik.errors.description}
                 />
+                <TextField
+                    select
+                    fullWidth margin="dense"
+                    label="Tag"
+                    name="tag"
+                    value={formik.values.tag}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.tag && Boolean(formik.errors.tag)}
+                    helperText={formik.touched.tag && formik.errors.tag}
+                >
+                    <MenuItem value="waste reduction">Waste Reduction</MenuItem>
+                    <MenuItem value="energy conservation">Energy Vonservation</MenuItem>
+                    <MenuItem value="water management">Water Management</MenuItem>
+                    <MenuItem value="green living tips">Green Living Tips</MenuItem>
+                </TextField>
                 <FormControl>
                     <FormLabel id="status-radio-buttons-group-label">Status</FormLabel>
                     <RadioGroup

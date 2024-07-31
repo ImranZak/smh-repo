@@ -3,34 +3,26 @@ const router = express.Router();
 const { ResourceContent } = require('../models');
 const { Op } = require("sequelize");
 const yup = require("yup");
-const { upload } = require('../middlewares/upload');
+const { upload } = require('../middlewares/Upload');
 
 // POST: Create a new resource content
-router.post("/:postId", upload, async (req, res) => {
+router.post("/:postId", async (req, res) => {
     const { postId } = req.params;
     let data = req.body;
 
     const validationSchema = yup.object({
-        type: yup.string().oneOf(['text', 'videoLink', 'image', 'video', 'file']).required()
+        type: yup.string().oneOf(['text', 'videoLink', 'image', 'video', 'file']).required(),
     });
 
     try {
         // Validate request body
         data = await validationSchema.validate(data, { abortEarly: false });
 
-        // Handle file upload if present
-        if (req.file) {
-            data.filePath = req.file.path;
-            data.fileName = req.file.filename; // Use filename instead of originalname
-        } else if (data.type !== 'text' && data.type !== 'videoLink') {
-            return res.status(400).json({ message: "No file uploaded" });
-        }
-
         // Add postId to the data object
         data.resourceId = postId;
 
         // Create new resource content
-        const resourceContent = await ResourceContent.create(data);
+        let resourceContent = await ResourceContent.create(data);
         res.status(201).json(resourceContent);
     } catch (err) {
         console.error('Error in POST /resourceContent/:postId:', err); // Add detailed logging
@@ -49,8 +41,8 @@ router.get("/:postId", async (req, res) => {
 
     if (search) {
         condition[Op.or] = [
-            { fileName: { [Op.like]: `%${search}%` } },
-            { filePath: { [Op.like]: `%${search}%` } }
+            { resourceId: { [Op.like]: `%${search}%` } },
+            { type: { [Op.like]: `%${search}%` } },
         ];
     }
 
@@ -67,7 +59,7 @@ router.get("/:postId", async (req, res) => {
 });
 
 // GET: Retrieve a single resource content by ID
-router.get("/:id", async (req, res) => {
+router.get("/one/:id", async (req, res) => {
     const { id } = req.params;
 
     try {

@@ -56,8 +56,10 @@ const headCells = [
     { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+    { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },  // Add this line
     { id: 'actions', numeric: false, disablePadding: false, label: '' },
 ];
+
 
 function EnhancedTableHead(props) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -315,6 +317,7 @@ export default function EnhancedTable({ rows }) {
                                         <TableCell align="left">{row.title}</TableCell>
                                         <TableCell align="left">{row.description}</TableCell>
                                         <TableCell align="left">{row.status}</TableCell>
+                                        <TableCell align="left">{row.tag}</TableCell>
                                         <TableCell align="left">
                                             <Link to={`/editquiz/${row.id}`}>
                                                 <IconButton>

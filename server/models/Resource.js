@@ -12,6 +12,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('waste reduction', 'energy conservation', 'water management', 'green living tips'),
             allowNull: false
         },
+        status: {
+            type: DataTypes.ENUM('Active', 'Inactive'), // Adjust the type to STRING
+            allowNull: false,
+            validate: {
+                isIn: [['Active', 'Inactive']] // Enforce the allowed values at the database level
+            }
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,

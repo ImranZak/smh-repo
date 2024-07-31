@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Box, Typography, TextField, Button, Fab, Tooltip, MenuItem, FormControl, InputLabel, Select, FormHelperText } from '@mui/material';
+import { Box, Typography, TextField, Button, Fab, Tooltip, MenuItem, FormControl, InputLabel, Select, FormHelperText, Radio, RadioGroup, FormControlLabel, FormLabel } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -14,6 +14,7 @@ function AddResource() {
             title: "",
             description: "",
             tag: "",
+            status: "Active", // Default value for status
         },
         validationSchema: yup.object({
             title: yup.string().trim()
@@ -27,7 +28,8 @@ function AddResource() {
             tag: yup.string().oneOf(
                 ['waste reduction', 'energy conservation', 'water management', 'green living tips'],
                 'Invalid tag selection'
-            ).required('Tag is required')
+            ).required('Tag is required'),
+            status: yup.string().oneOf(["Active", "Inactive"]).required('Status is required'),
         }),
         onSubmit: (data) => {
             data.title = data.title.trim();
@@ -86,6 +88,25 @@ function AddResource() {
                     </Select>
                     <FormHelperText>{formik.touched.tag && formik.errors.tag}</FormHelperText>
                 </FormControl>
+                <FormControl>
+                    <FormLabel id="status-radio-buttons-group-label">Status</FormLabel>
+                    <RadioGroup
+                        row
+                        aria-labelledby="status-radio-buttons-group-label"
+                        name="status"
+                        value={formik.values.status}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    >
+                        <FormControlLabel value="Active" control={<Radio />} label="Active" />
+                        <FormControlLabel value="Inactive" control={<Radio />} label="Inactive" />
+                    </RadioGroup>
+                    {formik.touched.status && formik.errors.status && (
+                        <Typography variant="body2" color="error">
+                            {formik.errors.status}
+                        </Typography>
+                    )}
+                </FormControl>
                 <Box sx={{ mt: 2 }}>
                     <Button variant="contained" type="submit">
                         Add
@@ -93,7 +114,7 @@ function AddResource() {
                 </Box>
             </Box>
             <Tooltip title="Go Back">
-                <Link to={`/ResourceLibraryStaff`} style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                <Link to="/ResourceLibraryStaff" style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
                     <Fab color="primary" aria-label="back">
                         <ArrowBackIcon />
                     </Fab>

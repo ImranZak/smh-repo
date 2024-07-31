@@ -9,10 +9,17 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.STRING(10), // Adjust the type to STRING
+            type: DataTypes.ENUM('Active', 'Inactive'), // Adjust the type to STRING
             allowNull: false,
             validate: {
                 isIn: [['Active', 'Inactive']] // Enforce the allowed values at the database level
+            }
+        },
+        tag: {
+            type: DataTypes.ENUM('waste reduction', 'energy conservation', 'water management', 'green living tips'), // Adjust the type to STRING
+            allowNull: false,
+            validate: {
+                isIn: [['waste reduction', 'energy conservation', 'water management', 'green living tips']] // Enforce the allowed values at the database level
             }
         }
     }, {

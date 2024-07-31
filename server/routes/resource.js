@@ -12,6 +12,7 @@ router.post("/", async (req, res) => {
     const validationSchema = yup.object({
         title: yup.string().trim().max(255).required(),
         description: yup.string().trim().required(),
+        status: yup.string().trim().oneOf(["Active", "Inactive"]).required(),
         tag: yup.string().trim().oneOf(['waste reduction', 'energy conservation', 'water management', 'green living tips']).required()
     });
 
@@ -39,7 +40,8 @@ router.get("/", async (req, res) => {
     if (search) {
         condition[Op.or] = [
             { title: { [Op.like]: `%${search}%` } },
-            { description: { [Op.like]: `%${search}%` } }
+            { description: { [Op.like]: `%${search}%` } },
+            { status: { [Op.like]: `%${search}%` } },
         ];
     }
 
@@ -94,6 +96,7 @@ router.put("/:id", async (req, res) => {
         const validationSchema = yup.object({
             title: yup.string().trim().max(255).required(),
             description: yup.string().trim().required(),
+            status: yup.string().trim().oneOf(["Active", "Inactive"]).required(),
             tag: yup.string().trim().oneOf(['waste reduction', 'energy conservation', 'water management', 'green living tips']).required()
         });
 

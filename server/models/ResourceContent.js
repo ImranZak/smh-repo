@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         data: {
             type: DataTypes.TEXT,
-            allowNull: false
         },
     }, {
         tableName: 'ResourceContent'

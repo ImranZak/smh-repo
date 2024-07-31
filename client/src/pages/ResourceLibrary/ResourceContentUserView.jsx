@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Box, Typography, Tooltip, Fab, Card, CardContent, CardMedia, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button
+    Box, Typography, Card, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, Button, Tooltip, Fab
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import http from '../../http'; // Assuming this is your axios instance
 
-function ResourceContentStaff() {
+function ResourceContentView() {
     const [resource, setResource] = useState({});
     const [resourceContents, setResourceContents] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
-    const [deleteId, setDeleteId] = useState(null);
-    const { postId } = useParams();
+    const { id } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         // Fetch resource details
-        http.get(`/resource/${postId}`)
+        http.get(`/resource/${id}`)
             .then((res) => {
                 setResource({
                     title: res.data.title,
@@ -31,35 +27,14 @@ function ResourceContentStaff() {
             });
 
         // Fetch resource contents
-        http.get(`/resourceContent/${postId}`)
+        http.get(`/resourceContent/${id}`)
             .then((res) => {
                 setResourceContents(res.data);
             })
             .catch((err) => {
                 console.error('Error fetching resource contents:', err.response?.data || err.message);
             });
-    }, [postId]);
-
-    const handleDelete = (id) => {
-        setDeleteId(id);
-        setOpenDialog(true);
-    };
-
-    const confirmDelete = () => {
-        http.delete(`/resourceContent/${deleteId}/${postId}`)
-            .then(() => {
-                setResourceContents(prevContents => prevContents.filter(content => content.id !== deleteId));
-                setOpenDialog(false);
-                setDeleteId(null);
-            })
-            .catch((err) => {
-                console.error('Error deleting resource content:', err.response?.data || err.message);
-            });
-    };
-
-    const handleEdit = (id) => {
-        navigate(`/ResourceContentStaff/${postId}/EditResourceContentStaff/${id}`);
-    };
+    }, [id]);
 
     const getEmbedUrl = (url) => {
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -81,14 +56,6 @@ function ResourceContentStaff() {
                         <CardContent>
                             <Typography variant="body1">{content.data}</Typography>
                         </CardContent>
-                        <CardContent>
-                            <IconButton onClick={() => handleEdit(content.id)}>
-                                <EditIcon />
-                            </IconButton>
-                            <IconButton onClick={() => handleDelete(content.id)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </CardContent>
                     </Card>
                 );
             case 'image':
@@ -101,14 +68,6 @@ function ResourceContentStaff() {
                             alt={imageUrl}
                             sx={{ width: '100%', height: 'auto' }}
                         />
-                        <CardContent>
-                            <IconButton onClick={() => handleEdit(content.id)}>
-                                <EditIcon />
-                            </IconButton>
-                            <IconButton onClick={() => handleDelete(content.id)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </CardContent>
                     </Card>
                 );
             case 'videoLink':
@@ -132,14 +91,6 @@ function ResourceContentStaff() {
                                 allowFullScreen
                             />
                         </Box>
-                        <CardContent>
-                            <IconButton onClick={() => handleEdit(content.id)}>
-                                <EditIcon />
-                            </IconButton>
-                            <IconButton onClick={() => handleDelete(content.id)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </CardContent>
                     </Card>
                 );
             case 'video':
@@ -151,14 +102,6 @@ function ResourceContentStaff() {
                             controls
                             sx={{ width: '100%', height: 'auto' }}
                         />
-                        <CardContent>
-                            <IconButton onClick={() => handleEdit(content.id)}>
-                                <EditIcon />
-                            </IconButton>
-                            <IconButton onClick={() => handleDelete(content.id)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </CardContent>
                     </Card>
                 );
             case 'file':
@@ -168,12 +111,6 @@ function ResourceContentStaff() {
                             <Typography variant="body1">
                                 <a href={`${import.meta.env.VITE_FILE_BASE_URL}${content.data}`} download>Click this link to download the file on this resource!</a>
                             </Typography>
-                            <IconButton onClick={() => handleEdit(content.id)}>
-                                <EditIcon />
-                            </IconButton>
-                            <IconButton onClick={() => handleDelete(content.id)}>
-                                <DeleteIcon />
-                            </IconButton>
                         </CardContent>
                     </Card>
                 );
@@ -196,35 +133,13 @@ function ResourceContentStaff() {
             <Box>
                 {resourceContents.map((content) => renderContent(content))}
             </Box>
-            <Box sx={{ position: 'fixed', bottom: 16, right: 16 }}>
-                <Tooltip title="Go Back">
-                    <Fab color="primary" onClick={() => navigate(-1)}>
-                        <ArrowBackIcon />
-                    </Fab>
-                </Tooltip>
-                <Tooltip title="Add Content">
-                    <Fab color="primary" aria-label="add" onClick={() => navigate(`/ResourceContentStaff/${postId}/AddResourceContentStaff`)} sx={{ ml:1 }}>
-                        <AddIcon />
-                    </Fab>
-                </Tooltip>
-            </Box>
-
-            {/* Confirmation Dialog */}
-            <Dialog
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
-            >
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogContent>
-                    <Typography>Are you sure you want to delete this content?</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-                    <Button onClick={confirmDelete} color="primary">Confirm</Button>
-                </DialogActions>
-            </Dialog>
+            <Tooltip title="Go Back" style={{ textDecoration: 'none', position: 'fixed', bottom: 16, right: 16 }}>
+                <Fab color="primary" onClick={() => navigate(-1)}>
+                    <ArrowBackIcon />
+                </Fab>
+            </Tooltip>
         </Box>
     );
 }
 
-export default ResourceContentStaff;
+export default ResourceContentView;

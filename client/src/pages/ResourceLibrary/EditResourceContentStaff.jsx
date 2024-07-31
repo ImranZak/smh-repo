@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, TextField, Button, MenuItem, FormControl, InputLabel, Select, FormHelperText, Tooltip, Fab } from '@mui/material';
+import { Box, Typography, TextField, Button, MenuItem, FormControl, InputLabel, Select, FormHelperText, Tooltip, Fab, CardMedia, Icon } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import ImageIcon from '@mui/icons-material/Image';
+import VideoFileIcon from '@mui/icons-material/VideoFile';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import http from '../../http';
 
-function AddResourceContent() {
+function EditResourceContent() {
   const navigate = useNavigate();
-  const { postId } = useParams();
-  const [inputData, setInputData] = useState(null);
+  const { postId, id } = useParams();
+  const [inputData, setInputData] = useState('');
+  const [Resource, setResourceList] = useState({
+    resourceId: postId,
+    type: '',
+    data: null
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -17,25 +25,49 @@ function AddResourceContent() {
       data: ''
     },
     validationSchema: yup.object({
-      type: yup.string().oneOf(['text', 'videoLink', 'image', 'video', 'file']).required('Content type is required'),
+      type: yup.string().oneOf(['text', 'image', 'videoLink', 'video', 'file']).required('Content type is required'),
       data: yup.string().required('Content is required')
     }),
-    onSubmit: (data) => {
-      http.post(`/resourceContent/${postId}`, data)
-        .then((res) => {
-          console.log(res.data);
+    onSubmit: (values) => {
+      const data = {
+        type: values.type,
+        resourceId: postId,
+        data: values.data
+      };
+      http.put(`/resourceContent/${id}/${postId}`, data)
+        .then(() => {
           navigate(`/ResourceContentStaff/${postId}`);
         })
         .catch((error) => {
-          console.error('Error adding resource content:', error);
+          console.error('Error updating resource content:', error);
         });
     }
   });
 
+  useEffect(() => {
+    http.get(`/resourceContent/one/${id}`)
+      .then((res) => {
+        const contentData = res.data;
+        setResourceList({
+          resourceId: contentData.resourceId,
+          type: contentData.type,
+          data: contentData.data 
+        });
+        formik.setValues({
+            type: contentData.type,
+            data: contentData.data 
+          });
+        setInputData(contentData.data || '');
+      })
+      .catch((error) => {
+        console.error('Error fetching resource content:', error);
+      });
+  }, [id]);
+
   const onFileChange = (e) => {
-    let file = e.target.files[0];
+    const file = e.target.files[0];
     if (file) {
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('file', file);
       http.post('/file/upload', formData, {
         headers: {
@@ -43,8 +75,8 @@ function AddResourceContent() {
         }
       })
         .then((res) => {
-          formik.setFieldValue('data', res.data.filename);
-          setInputData(res.data.filename);
+            formik.setFieldValue('data', res.data.filename);
+            setInputData(res.data.filename);
         })
         .catch((error) => {
           console.error('Error uploading file:', error);
@@ -52,10 +84,27 @@ function AddResourceContent() {
     }
   };
 
+  const getFileIcon = (fileName) => {
+    const extension = fileName.split('.').pop();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return <ImageIcon />;
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+        return <VideoFileIcon />;
+      default:
+        return <InsertDriveFileIcon />;
+    }
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Add Resource Content
+        Edit Resource Content
       </Typography>
       <form onSubmit={formik.handleSubmit}>
         <FormControl fullWidth margin="normal">
@@ -64,8 +113,8 @@ function AddResourceContent() {
             labelId="type-label"
             id="type"
             name="type"
-            value={formik.values.type}
-            onChange={formik.handleChange}
+            value={formik.values.type} // Bind Select value to Formik values
+            onChange={formik.handleChange} // Ensure onChange updates Formik values
             error={formik.touched.type && Boolean(formik.errors.type)}
           >
             <MenuItem value="text">Text</MenuItem>
@@ -107,6 +156,28 @@ function AddResourceContent() {
 
         {(formik.values.type === 'image' || formik.values.type === 'video' || formik.values.type === 'file') && (
           <FormControl fullWidth margin="normal">
+            {inputData && formik.values.type === 'image' && (
+              <CardMedia
+                component="img"
+                image={`${import.meta.env.VITE_FILE_BASE_URL}${inputData}`}
+                alt={inputData}
+                sx={{ mb: 2, width: '100%', height: 'auto' }}
+              />
+            )}
+            {inputData && formik.values.type === 'video' && (
+              <CardMedia
+                component="video"
+                src={`${import.meta.env.VITE_FILE_BASE_URL}${inputData}`}
+                controls
+                sx={{ mb: 2, width: '100%', height: 'auto' }}
+              />
+            )}
+            {inputData && formik.values.type === 'file' && (
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                {getFileIcon(inputData)}
+                <Typography variant="body2" sx={{ ml: 1 }}>{inputData}</Typography>
+              </Box>
+            )}
             <Button
               variant="contained"
               component="label"
@@ -119,13 +190,6 @@ function AddResourceContent() {
                 onChange={onFileChange}
               />
             </Button>
-            {inputData && (
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                {formik.values.type === 'image' && <img src={`${import.meta.env.VITE_FILE_BASE_URL}${inputData}`} alt="Preview" style={{ maxWidth: '100%', height: 'auto' }} />}
-                {formik.values.type === 'video' && <video src={`${import.meta.env.VITE_FILE_BASE_URL}${inputData}`} controls style={{ maxWidth: '100%', height: 'auto' }} />}
-                {formik.values.type === 'file' && <Typography variant="body2">{inputData}</Typography>}
-              </Typography>
-            )}
           </FormControl>
         )}
 
@@ -142,4 +206,4 @@ function AddResourceContent() {
   );
 }
 
-export default AddResourceContent;
+export default EditResourceContent;

@@ -61,7 +61,7 @@ const UserAppBar = () => {
                 <Link to="/quizzesUser" className="dropdown-link">Quizzes</Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
-                <Link to="/educational-materials" className="dropdown-link">Educational Materials</Link>
+                <Link to="/ResourceLibraryUser" className="dropdown-link">Educational Materials</Link>
               </MenuItem>
             </Menu>
             <Link to="/profile" className="nav-link profile-link">

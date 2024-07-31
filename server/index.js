@@ -4,6 +4,8 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 
 // Enable CORS
 app.use(cors({
@@ -30,6 +32,9 @@ app.use("/resource", resource);
 
 const resourceContent = require('./routes/resourceContent');
 app.use("/resourceContent", resourceContent);
+
+const fileRoute = require('./routes/file');
+app.use("/file", fileRoute);
 
 const db = require('./models');
 db.sequelize.sync({ alter: true })

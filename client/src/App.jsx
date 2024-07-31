@@ -12,6 +12,9 @@ import AddResource from './pages/ResourceLibrary/AddResourceStaff.jsx';
 import EditResource from './pages/ResourceLibrary/EditResourceStaff.jsx';
 import ResourceContentStaff from './pages/ResourceLibrary/ResourceContentStaff.jsx';
 import AddResourceContentStaff from './pages/ResourceLibrary/AddResourceContentStaff.jsx';
+import EditResourceContentStaff from './pages/ResourceLibrary/EditResourceContentStaff.jsx';
+import ResourceLibraryUser from './pages/ResourceLibrary/ResourceLibraryUser.jsx';
+import ResourceContentUserView from './pages/ResourceLibrary/ResourceContentUserView.jsx';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -25,7 +28,7 @@ import StaffAppBar from './AppBar/StaffAppBar';
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
 
-  const navbar_ver = 'staff';
+  const navbar_ver = 'user';
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget); // Open the menu
@@ -54,6 +57,9 @@ function App() {
             <Route path="/EditResource/:id" element={<EditResource />} />
             <Route path="/ResourceContentStaff/:postId" element={<ResourceContentStaff />} />
             <Route path="/ResourceContentStaff/:postId/AddResourceContentStaff" element={<AddResourceContentStaff />} />
+            <Route path="/ResourceContentStaff/:postId/EditResourceContentStaff/:id" element={<EditResourceContentStaff />} />
+            <Route path="/ResourceLibraryUser" element={<ResourceLibraryUser />} />
+            <Route path="/ResourceLibraryUser/ResourceContentUserView/:id" element={<ResourceContentUserView />} />
           </Routes>
         </Container>
       </Router>

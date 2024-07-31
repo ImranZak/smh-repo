@@ -10,7 +10,8 @@ router.post("/", async (req, res) => {
     let validationSchema = yup.object({
         title: yup.string().trim().max(100).required(),
         description: yup.string().trim().required(),
-        status: yup.string().trim().oneOf(["Active", "Inactive"]).required()
+        status: yup.string().trim().oneOf(["Active", "Inactive"]).required(),
+        tag: yup.string().trim().oneOf(['waste reduction', 'energy conservation', 'water management', 'green living tips']).required()
     });
     try {
         data = await validationSchema.validate(data,
@@ -34,7 +35,8 @@ router.get("/", async (req, res) => {
         condition[Op.or] = [
             { title: { [Op.like]: `%${search}%` } },
             { description: { [Op.like]: `%${search}%` } },
-            { status: { [Op.like]: `%${search}%` } }
+            { status: { [Op.like]: `%${search}%` } },
+            { tag: { [Op.like]: `%${search}%` } }
         ];
     }
     // You can add condition for other columns here
@@ -76,7 +78,8 @@ router.put("/:id", async (req, res) => {
     let validationSchema = yup.object({
         title: yup.string().trim().max(100).required(),
         description: yup.string().trim().required(),
-        status: yup.string().trim().oneOf(["Active", "Inactive"]).required()
+        status: yup.string().trim().oneOf(["Active", "Inactive"]).required(),
+        tag: yup.string().trim().oneOf(['waste reduction', 'energy conservation', 'water management', 'green living tips']).required()
     });
     try {
 
