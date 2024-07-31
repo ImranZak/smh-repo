@@ -16,7 +16,6 @@
     "@mui/icons-material": "^5.15.20",
     "@mui/material": "^5.15.20",
     "axios": "^1.7.2",
-    "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
     "formik": "^2.4.6",

@@ -8,6 +8,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import MyTheme from './themes/MyTheme';
 import StaffEvents from './pages/StaffEvents';
 import SignUp from './pages/SignUp';
+import SignUps from './pages/SignUps';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
                 </Link>
                 <Link to="/events" ><Typography>Events</Typography></Link>
                 <Link to="/staffevents" ><Typography> Staff Events</Typography></Link>
+                <Link to="/signups" ><Typography> Sign Up Details</Typography></Link>
                 <Box sx={{ flexGrow: 1 }}></Box>
               </Toolbar>
             </Container>
@@ -35,6 +37,7 @@ function App() {
               <Route path={"/editevent/:id"} element={<EditEvent />} />
               <Route path={"/staffevents"} element={<StaffEvents />} />
               <Route path={"/sign-up/:id"} element={<SignUp />} />
+              <Route path={"/signups"} element={<SignUps />} />
             </Routes>
           </Container>
         </ThemeProvider>
