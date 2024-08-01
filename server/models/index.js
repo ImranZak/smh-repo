@@ -1,16 +1,14 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const usageRoutes = require('./routes/usageRoutes'); // Adjust the path as necessary
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../utils/database');
 
-const app = express();
-const port = 3000;
+const db = {};
 
-app.use(cors());
-app.use(bodyParser.json());
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-app.use('/api', usageRoutes);
+db.Friend = require('./Friend')(sequelize, DataTypes);
+db.Message = require('./Message')(sequelize, DataTypes);
+db.Notification = require('./Notification')(sequelize, DataTypes);
+db.Usage = require('./Usage')(sequelize, DataTypes);
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+module.exports = db;
