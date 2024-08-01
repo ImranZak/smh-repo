@@ -4,7 +4,11 @@ import { Box, Typography, Input, IconButton, Table, TableBody, TableCell, TableC
 import { Search, Clear, Edit, Delete } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
+<<<<<<< HEAD
 import global from '../global';
+=======
+import global from '../global'
+>>>>>>> main
 
 function Staff() {
     const navigate = useNavigate();
@@ -123,7 +127,11 @@ function Staff() {
                                 <TableCell component="th" scope="row">
                                     {staff.name}
                                 </TableCell>
+<<<<<<< HEAD
                                 <TableCell align="right">{dayjs(staff.joinDate).format('D MMM YYYY')}</TableCell>
+=======
+                                <TableCell align="right">{dayjs(staff.joinDate).format('YYYY-MM-DD')}</TableCell>
+>>>>>>> main
                                 <TableCell align="right">{staff.role}</TableCell>
                                 <TableCell align="right">{staff.department}</TableCell>
                                 <TableCell align="right">{staff.email}</TableCell>
@@ -134,7 +142,11 @@ function Staff() {
                                     <IconButton variant="contained" color="primary" onClick={() => handleUpdate(staff.id)}>
                                         <Edit />    
                                     </IconButton>
+<<<<<<< HEAD
                                     <IconButton variant="contained" color="secondary" onClick={() => handleOpen(staff.id)}>
+=======
+                                    <IconButton variant="contained" color="danger" onClick={() => handleOpen(staff.id)}>
+>>>>>>> main
                                         <Delete />  
                                     </IconButton>
                                 </TableCell>

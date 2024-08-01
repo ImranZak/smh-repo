@@ -17,7 +17,7 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@smhstaff\.com$/;
 const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 
 // Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces, and some special characters allowed :) 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,100}$/
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/;
 
 
 // Login Staff

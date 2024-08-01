@@ -255,7 +255,10 @@ function CreateStaff() {
                 <Button
                     sx={{ mt: 2, ml: 2 }}
                     variant="contained"
+<<<<<<< HEAD
                     type="submit"
+=======
+>>>>>>> main
                     color="neutral"
                     onClick={() => navigate("/staff")}>
                     Back
