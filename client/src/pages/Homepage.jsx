@@ -1,9 +1,9 @@
 import React from 'react'
 
-function User() {
+function Homepage() {
   return (
     <div>Welcome to Sustainability Management Hub!</div>
   )
 }
 
-export default User
+export default Homepage

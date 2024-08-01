@@ -1,77 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; 
-import { Box, Typography, TextField, Button, MenuItem } from '@mui/material';
+import { Box, Typography, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
 import http from '../http';
 
-function UpdateStaff() {
+function UpdateUser() {
     const navigate = useNavigate();
 
     const { id } = useParams();
 
-    const [staff, setStaff] = useState({
+    const [user, setUser] = useState({
         name: "", 
         email: "",
         birthDate: "",
         phoneNumber: "",
-        homeAddress: "",
-        password: "",
-        role: "",
-        department: "",
-        joinDate: ""
+        mailingAddress: "",
+        password: ""
     });
 
-    const [loading, setLoading] = useState(true);
-
-    const roles = [
-        {
-          value: 'Social Media Manager',
-          label: 'Social Media Manager',
-        },
-        {
-          value: 'Web Developer',
-          label: 'Web Developer',
-        },
-        {
-          value: 'System Admin',
-          label: 'System Admin',
-        },
-        {
-          value: 'HR Assistant',
-          label: 'HR Assistant',
-        },
-    ];
-
-    const departments = [
-        {
-            value: 'IT',
-            label: 'IT',
-          },
-          {
-            value: 'HR',
-            label: 'HR',
-          },
-          {
-            value: 'Admin',
-            label: 'Admin',
-          },
-          {
-            value: 'Publicity',
-            label: 'Publicity',
-          },
-    ];            
+    const [loading, setLoading] = useState(true);   
 
     useEffect(() => {
-        http.get(`/staff/${id}`).then((res) => {
+        http.get(`/user/${id}`).then((res) => {
             console.log(res.data);
-            setStaff(res.data); 
+            setUser(res.data); 
             setLoading(false);
         });
     }, []);
 
     const formik = useFormik({
-        initialValues: staff,
+        initialValues: user,
         enableReinitialize: true,
         validationSchema: yup.object({
             name: yup.string()
@@ -80,54 +39,41 @@ function UpdateStaff() {
             birthDate: yup
                 .date()
                 .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
-                .max(new Date().getFullYear() - 17, `Minimum birth year is ${(new Date().getFullYear() - 18)}`)
+                .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
                 .required(),
             email: yup.string()
                 .email('Invalid email format')
                 .max(100, 'Email must be at most 100 characters')
-                .matches(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/, 'Email must be from @smhstaff.com').required()
                 .required('Email is required'),
             phoneNumber: yup.string()
                 .max(20, 'Phone number must be at most 20 characters')
                 .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
                 .required('Phone number is required'),
-            homeAddress: yup.string()
+            mailingAddress: yup.string()
                 .max(100, 'Home address must be at most 100 characters')
                 .required('Home address is required'),
-            password: yup.string(),
-            role: yup.string()
-                .required('Role is required'),
-            department: yup.string()
-                .required('Department is required'),
-            joinDate: yup
-            .date()
-            .min('01/01/2002', `Maximum join year is 2002`)
-            .max(new Date().getFullYear()+1, `Minimum join year is ${new Date().getFullYear()}`)
-            .required()
+            password: yup.string()
         }),
         onSubmit: (data) => {
             data.name = data.name.trim();
             data.birthDate = data.birthDate
             data.email = data.email.trim();
             data.phoneNumber = data.phoneNumber.trim();
-            data.homeAddress = data.homeAddress.trim();
+            data.mailingAddress = data.mailingAddress.trim();
             data.password = data.password.trim();
-            data.role = data.role.trim();
-            data.department = data.department.trim();
-            data.birthDate = data.birthDate
-            http.put(`/staff/${id}`, data).then((res) => {
+            http.put(`/user/${id}`, data).then((res) => {
                 console.log(res.data);
-                navigate("/staff");
+                navigate("/users");
             }).catch((error) => {
                 console.error("Error submitting form:", error);
             });
         }
     });
-    
+
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Update Staff
+                Update User
             </Typography>
             {
                 !loading && (
@@ -182,64 +128,17 @@ function UpdateStaff() {
                             fullWidth
                             margin="dense"
                             autoComplete="off"
-                            label="Home Address"
-                            name="homeAddress"
-                            value={formik.values.homeAddress}
+                            label="Mailing Address"
+                            name="mailingAddress"
+                            value={formik.values.mailingAddress}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            error={formik.touched.homeAddress && Boolean(formik.errors.homeAddress)}
-                            helperText={formik.touched.homeAddress && formik.errors.homeAddress}
-                        />
-                        <TextField
-                            fullWidth
-                            select
-                            margin="dense"
-                            autoComplete="off"
-                            label="Role"
-                            name="role"
-                            value={formik.values.role}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            error={formik.touched.role && Boolean(formik.errors.role)}
-                            helperText={formik.touched.role && formik.errors.role}
-                        >
-                            {roles.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <TextField
-                            fullWidth
-                            select
-                            margin="dense"
-                            autoComplete="off"
-                            label="Department"
-                            name="department"
-                            value={formik.values.department}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            error={formik.touched.department && Boolean(formik.errors.department)}
-                            helperText={formik.touched.department && formik.errors.department}
-                        >
-                            {departments.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            autoComplete="off"
-                            label="Join Date"
-                            name="joinDate"
-                            type='date'
-                            value={formik.values.joinDate || "dd/mm/yyyy"}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            error={formik.touched.joinDate && Boolean(formik.errors.joinDate)}
-                            helperText={formik.touched.joinDate && formik.errors.joinDate}
+                            error={formik.touched.mailingAddress && Boolean(formik.errors.mailingAddress)}
+                            helperText={formik.touched.mailingAddress && formik.errors.mailingAddress}
                         />
                         <Button
                             sx={{ mt: 2 }}
                             variant="contained"
+                            color="primary"
                             type="submit"
                             disabled={!formik.isValid || formik.isSubmitting}>
                             Update
@@ -248,7 +147,7 @@ function UpdateStaff() {
                             sx={{ mt: 2, ml: 2 }}
                             variant="contained"
                             color="neutral"
-                            onClick={() => navigate("/staff")}>
+                            onClick={() => navigate("/users")}>
                             Back
                         </Button>
                     </Box>
@@ -258,4 +157,4 @@ function UpdateStaff() {
     );
 }
 
-export default UpdateStaff
+export default UpdateUser
