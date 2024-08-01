@@ -19,9 +19,20 @@ function TakeQuizUser() {
     const [resultModalOpen, setResultModalOpen] = useState(false);
     const [score, setScore] = useState(0);
     const [totalQuestions, setTotalQuestions] = useState(0);
+    const [quizDetails, setQuizDetails] = useState({ title: '', description: '' });
 
     useEffect(() => {
         if (id) {
+            console.log('Fetching quiz details for quiz ID:', id);
+            http.get(`/quiz/${id}`)
+                .then((res) => {
+                    console.log('Quiz details fetched:', res.data);
+                    setQuizDetails(res.data);
+                })
+                .catch((err) => {
+                    console.error('Error fetching quiz details:', err);
+                });
+
             console.log('Fetching questions for quiz ID:', id);
             http.get(`/quiz/question/quizzes/${id}/questions`)
                 .then((res) => {
@@ -133,9 +144,10 @@ function TakeQuizUser() {
         const historyData = {
             quizid: parseInt(id, 10),
             userid: user.id, // Use user ID from context
-            title: `Quiz ${id} Results`,
-            description: `User's results for quiz ${id}`,
-            score: Math.round(score) // Ensure this is an integer between 0 and 100
+            title: `Quiz ${quizDetails.title}`,
+            description: quizDetails.description,
+            score: Math.round(score), // Ensure this is an integer between 0 and 100
+            dateTaken: new Date().toISOString() // Include the current date as dateTaken
         };
         console.log("score number:", score, 'Posting quiz history:', historyData);
 
@@ -179,88 +191,61 @@ function TakeQuizUser() {
 
     return (
         <Box>
-            <Typography variant="h4" component="div" sx={{ mt: 3, mb: 3 }}>
-                Questions
-            </Typography>
-            <Box display="flex" flexDirection="column" gap={2}>
-                {questions.length === 0 ? (
-                    <Card sx={{ mt: 6, minWidth: 275, backgroundColor: '#f0f0f0', minHeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <CardContent>
-                            <Typography variant="h5" component="div" color="textSecondary" textAlign="center">
-                                Currently no questions in quiz
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    questions.map((question) => (
-                        <Card key={question.id} sx={{ minWidth: 275 }}>
-                            <CardContent>
-                                <Typography variant="h5" component="div">
-                                    {question.question_text}
-                                </Typography>
-                                {renderQuestionItems(question)}
-                            </CardContent>
-                        </Card>
-                    ))
-                )}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h4">{quizDetails.title}</Typography>
             </Box>
-            <Box display="flex" justifyContent="space-between" sx={{ mt: 3 }}>
-                <Button variant="contained" color="primary" onClick={handleQuitQuiz}>
-                    Quit Quiz
-                </Button>
-                <Button variant="contained" color="secondary" onClick={handleOpenSubmitModal}>
-                    Submit
-                </Button>
+            {questions.map((question, index) => (
+                <Card key={question.id} sx={{ mb: 2 }}>
+                    <CardContent>
+                        <Typography variant="h6">{`${index + 1}. ${question.question_text}`}</Typography>
+                        {renderQuestionItems(question)}
+                    </CardContent>
+                </Card>
+            ))}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                <Button variant="contained" color="secondary" onClick={handleQuitQuiz}>Quit</Button>
+                <Button variant="contained" color="primary" onClick={handleOpenSubmitModal}>Submit</Button>
             </Box>
-
-            {/* Quit Confirmation Dialog */}
-            <Dialog open={quitModalOpen} onClose={handleCloseQuitModal}>
-                <DialogTitle>Confirm Quit</DialogTitle>
+            <Dialog
+                open={quitModalOpen}
+                onClose={handleCloseQuitModal}
+            >
+                <DialogTitle>Quit Quiz</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to quit the quiz? All progress will be lost.
-                    </DialogContentText>
+                    <DialogContentText>Are you sure you want to quit the quiz?</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseQuitModal} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleConfirmQuit} color="secondary">
-                        Quit
-                    </Button>
+                    <Button onClick={handleCloseQuitModal} color="primary">Cancel</Button>
+                    <Button onClick={handleConfirmQuit} color="primary">Confirm</Button>
                 </DialogActions>
             </Dialog>
-
-            {/* Submit Confirmation Dialog */}
-            <Dialog open={submitModalOpen} onClose={handleCloseSubmitModal}>
-                <DialogTitle>Confirm Submit</DialogTitle>
+            <Dialog
+                open={submitModalOpen}
+                onClose={handleCloseSubmitModal}
+            >
+                <DialogTitle>Submit Quiz</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to submit the quiz?
-                    </DialogContentText>
+                    <DialogContentText>Are you sure you want to submit the quiz?</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseSubmitModal} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleConfirmSubmit} color="secondary">
-                        Submit
-                    </Button>
+                    <Button onClick={handleCloseSubmitModal} color="primary">Cancel</Button>
+                    <Button onClick={handleConfirmSubmit} color="primary">Confirm</Button>
                 </DialogActions>
             </Dialog>
+            <Dialog
+                open={resultModalOpen}
+                onClose={handleCloseResultModal}
+            >
 
-            {/* Result Dialog */}
-            <Dialog open={resultModalOpen} onClose={handleCloseResultModal}>
                 <DialogTitle>Quiz Result</DialogTitle>
+                <Box sx={{ width: '100%', mt: 2, display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgressWithLabel value={score} />
+                </Box>
                 <DialogContent>
-                    <DialogContentText>
-                        Your score: {Math.round(score)}%
-                    </DialogContentText>
+                    <DialogContentText>Your score: {Math.round(score)}%</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseResultModal} color="primary">
-                        Close
-                    </Button>
+                    <Button onClick={handleCloseResultModal} color="primary">Close</Button>
                 </DialogActions>
             </Dialog>
         </Box>
@@ -268,3 +253,4 @@ function TakeQuizUser() {
 }
 
 export default TakeQuizUser;
+

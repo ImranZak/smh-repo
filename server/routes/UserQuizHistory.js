@@ -8,18 +8,19 @@ const yup = require('yup');
 router.post('/userhistory/:quizid', async (req, res) => {
     let data = req.body;
     const { quizid } = req.params;
-    const { userid, title, description, score } = data;
+    const { userid, title, description, score, dateTaken } = data;
 
     let validationSchema = yup.object({
         quizid: yup.number().integer().required(),
         userid: yup.number().integer().required(),
         title: yup.string().trim().max(100).required(),
         description: yup.string().trim().required(),
-        score: yup.number().integer().min(0).max(100).required()
+        score: yup.number().integer().min(0).max(100).required(),
+        dateTaken: yup.date().required()
     });
 
     try {
-        data = await validationSchema.validate({ quizid, userid, title, description, score }, { abortEarly: false });
+        data = await validationSchema.validate({ quizid, userid, title, description, score, dateTaken }, { abortEarly: false });
         data.quizid = parseInt(quizid, 10);
 
         console.log('Data to be inserted:', data); // Log data to be inserted
@@ -49,20 +50,22 @@ router.get('/userhistory/:id', async (req, res) => {
 // Update a specific quiz history record
 router.put('/userhistory/:quizid', async (req, res) => {
     const { quizid, id } = req.params;
-    let data = req.body
+    let data = req.body;
 
     let validationSchema = yup.object({
         quizid: yup.number().integer().required(),
         userid: yup.number().integer().required(),
         title: yup.string().trim().max(100).required(),
         description: yup.string().trim().required(),
-        score: yup.number().integer().min(0).max(100).required()
+        score: yup.number().integer().min(0).max(100).required(),
+        dateTaken: yup.date().required()
     });
+
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
         data.quizid = parseInt(quizid, 10);
         data.userid = parseInt(userid, 10);
-        let [num] = await UserQuizHistory.update(data, { where: { id: id, quizid: quizid, userid: userid} });
+        let [num] = await UserQuizHistory.update(data, { where: { id: id, quizid: quizid, userid: userid } });
         if (num === 1) {
             res.json({ message: "User's quiz history was updated successfully." });
         } else {

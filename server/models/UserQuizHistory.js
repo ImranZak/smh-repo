@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'users', // Reference to the users table
+                model: 'users',
                 key: 'id'
             },
             onDelete: 'CASCADE'
@@ -40,6 +40,13 @@ module.exports = (sequelize, DataTypes) => {
                 isInt: true,
                 min: 0,
                 max: 100
+            }
+        },
+        dateTaken: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            validate: {
+                isDate: true
             }
         }
     }, {

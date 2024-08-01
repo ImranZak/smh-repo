@@ -52,11 +52,10 @@ const stableSort = (array, comparator) => {
 };
 
 const headCells = [
-    { id: 'id', numeric: true, disablePadding: true, label: 'Quiz Id' },
+    { id: 'id', numeric: true, disablePadding: true, label: 'History Id' },
     { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-    { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },  // Add this line
-    { id: 'actions', numeric: false, disablePadding: false, label: '' },
+    { id: 'dateTaken', numeric: false, disablePadding: false, label: 'Date Taken' },  // Add this line
 ];
 
 
@@ -190,12 +189,7 @@ export default function EnhancedTable({ rows }) {
                                         <TableCell align="center">{row.id}</TableCell>
                                         <TableCell align="left">{row.title}</TableCell>
                                         <TableCell align="left">{row.description}</TableCell>
-                                        <TableCell align="left">{row.tag}</TableCell>  
-                                        <TableCell align="left">
-                                            <Link to={`/takequiz/${row.id}`}>
-                                                Take Quiz
-                                            </Link>
-                                        </TableCell>
+                                        <TableCell align="left">{row.dateTaken}</TableCell>  
                                     </TableRow>
                                 );
                             })}

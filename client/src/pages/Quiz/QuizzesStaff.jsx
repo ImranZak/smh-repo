@@ -42,17 +42,13 @@ function QuizzesStaff() {
                 Quizzes
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Input value={search} placeholder="Search by ID, Title or Description"
-                    onChange={onSearchChange} />
-                <IconButton color="primary" onClick={() => { }}>
+                <Input value={search} placeholder="Search by ID, Title or Description" onChange={onSearchChange} />
+                <IconButton color="primary">
                     <Search />
                 </IconButton>
                 <IconButton color="primary" onClick={() => setSearch('')}>
                     <Clear />
                 </IconButton>
-                <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box sx={{ mb: 2 }}>
                 {/* Tag buttons for filtering */}
                 <Button
                     variant={selectedTag === 'waste reduction' ? 'contained' : 'outlined'}
