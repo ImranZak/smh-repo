@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define(
-        "User",
+    const Staff = sequelize.define(
+        "Staff",
         {
             name: {
                 type: DataTypes.STRING(100),
@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             birthDate: {
                 type: DataTypes.DATEONLY(),
-                allowNull: true,
+                allowNull: false,
             },
             email: {
                 type: DataTypes.STRING(100),
@@ -16,28 +16,32 @@ module.exports = (sequelize, DataTypes) => {
             },
             phoneNumber: {
                 type: DataTypes.STRING(20),
-                allowNull: true,
+                allowNull: false,
             },
-            mailingAddress: {
+            homeAddress: {
                 type: DataTypes.STRING(100),
-                allowNull: true,
+                allowNull: false,
             },
             password: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
-            }
+            },
+            role: {
+                type: DataTypes.TEXT,
+                allowNull: false,
+            },
+            department: {
+                type: DataTypes.TEXT,
+                allowNull: false,
+            },
+            joinDate: {
+                type: DataTypes.DATEONLY(),
+                allowNull: false,
+            },
         },
         {
-            tableName: "users"
+            tableName: "staff",
         }
     );
-    User.associate = models => {
-        // Define a one-to-many relationship with UserQuizHistory
-        User.hasMany(models.UserQuizHistory, {
-            foreignKey: 'userid',
-            as: 'quizHistories',
-            onDelete: 'CASCADE'
-        });
-    };
-    return User;
+    return Staff;
 };

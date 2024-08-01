@@ -8,15 +8,13 @@ const { sign } = require('jsonwebtoken');
 const { validateToken } = require('../middlewares/auth');
 
 
-// Custom regex for validation
-
 // Uses staff domain
 const emailRegex = /^[a-zA-Z0-9._%+-]+@smhstaff\.com$/;
 
 // 8-10 digits with optional country code
 const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 
-// Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces, and some special characters allowed :) 
+// Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/;
 
 
@@ -114,33 +112,15 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
     let condition = {};
     let search = req.query.search;
-    let strong = req.query.strong ?? false;
     if (search) {
-        // bool: strong -> if true check for exactly matching variables (Op.eq)
-        if (strong == "true") {
-            condition[Op.or] = [
-                { name: search },
-                { birthDate: search},
-                { email: search },
-                { phoneNumber: search },
-                { homeAddress: search },
-                { role: search },
-                { department: search },
-                { joinDate: search},
-            ];
-        }
-        else {
-            condition[Op.or] = [
-                { name: { [Op.like]: `%${search}%` } },
-                { birthDate: { [Op.like]: `%${search}%` } },
-                { email: { [Op.like]: `%${search}%` } },
-                { phoneNumber: { [Op.like]: `%${search}%` } },
-                { homeAddress: { [Op.like]: `%${search}%` } },
-                { role: { [Op.like]: `%${search}%` } },
-                { department: { [Op.like]: `%${search}%` } },
-                { joinDate: { [Op.like]: `%${search}%` } },
-            ];
-        }
+        condition[Op.or] = [
+            { name: { [Op.like]: `%${search}%` } },
+            { email: { [Op.like]: `%${search}%` } },
+            { phoneNumber: { [Op.like]: `%${search}%` } },
+            { homeAddress: { [Op.like]: `%${search}%` } },
+            { role: { [Op.like]: `%${search}%` } },
+            { department: { [Op.like]: `%${search}%` } }
+        ];
     }
     
     let list = await Staff.findAll({
