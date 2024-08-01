@@ -154,6 +154,7 @@ function TakeQuizUser() {
         http.post(`/user/quiz/userhistory/${id}`, historyData)
             .then((res) => {
                 console.log('Quiz history posted:', res.data);
+                navigate(`/quizzesUser`)
             })
             .catch((err) => {
                 console.error('Error posting quiz history:', err.response ? err.response.data : err);
