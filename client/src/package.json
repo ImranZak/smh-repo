@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "install": "^0.13.0",
+    "react-router-dom": "^6.23.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
