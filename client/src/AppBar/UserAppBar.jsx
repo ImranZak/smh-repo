@@ -1,13 +1,14 @@
 // UserAppBar.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { AppBar, Toolbar, Typography, Container, Box, Button, Menu, MenuItem, Avatar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import UserContext from '../contexts/UserContext';
 
 const UserAppBar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const { isStaff } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -15,6 +16,11 @@ const UserAppBar = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    window.location = "/";
   };
 
   return (
@@ -68,6 +74,22 @@ const UserAppBar = () => {
             <Link to="/profile" className="nav-link profile-link">
               <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </Link>
+            {user && (
+                <>
+                    <Typography>{user.name}</Typography>
+                    <Button onClick={logout}>Logout</Button>
+                </>
+            )}
+            {!user && (
+                <>
+                    <Link to="/register">
+                        <Typography>Register</Typography>
+                    </Link>
+                    <Link to="/login">
+                        <Typography>Login</Typography>
+                    </Link>
+                </>
+            )}
           </Box>
         </Toolbar>
       </Container>

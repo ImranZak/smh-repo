@@ -21,7 +21,7 @@ import EditResourceContentStaff from './pages/ResourceLibrary/EditResourceConten
 import ResourceLibraryUser from './pages/ResourceLibrary/ResourceLibraryUser.jsx';
 import ResourceContentUserView from './pages/ResourceLibrary/ResourceContentUserView.jsx';
 import { ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react'; // Import useState hook for state management
+import { useState, useEffect } from 'react'; // Import useState hook for state management
 import UserAppBar from './AppBar/UserAppBar.jsx';
 import StaffAppBar from './AppBar/StaffAppBar';
 import MyTheme from './MyTheme/theme.jsx';
@@ -35,6 +35,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import User from './pages/User';
 import http from './http';
+import UserContext from './contexts/UserContext';
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
@@ -49,10 +50,10 @@ function App() {
       });
   }}, []);
 
-const logout = () => {
-    localStorage.clear();
-    window.location = "/";
-};
+  const logout = () => {
+      localStorage.clear();
+      window.location = "/";
+  };
 
   const navbar_ver = 'user';
 
@@ -68,10 +69,10 @@ const logout = () => {
     <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>
       <Router>
         <ThemeProvider theme={MyTheme}>
-          {isStaff ? <UserAppBar /> : <StaffAppBar />}
+          {!isStaff ? <UserAppBar /> : <StaffAppBar />}
           <Container>
             <Routes>
-              <Route path={"/"} element={<Events />} />
+              <Route path={"/"} element={<User />} />
               <Route path={"/events"} element={<Events />} />
               <Route path={"/addevent"} element={<AddEvent />} />
               <Route path={"/editevent/:id"} element={<EditEvent />} />
