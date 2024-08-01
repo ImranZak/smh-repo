@@ -66,7 +66,7 @@ function EditEvent() {
             http.put(`/event/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/events");
+                    navigate("/staffevents");
                 });
         }
     });

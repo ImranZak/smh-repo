@@ -20,6 +20,27 @@ router.post("/", async (req, res) => {
         res.json(result);
     }
     catch (err) {
-        res.status(400).json({ errors: err.errors });
+        console.error('Validation or DB Error:', err);
+        res.status(400).json({ errors: err.errors || ['An error occurred'] });
     }
 });
+
+router.get("/", async (req, res) => {
+    let condition = {};
+    let search = req.query.search;
+    if (search) {
+        condition[Op.or] = [
+            { user_name: { [Op.like]: `%${search}%` } },
+            { email: { [Op.like]: `%${search}%` } },
+            { phone: { [Op.like]: `%${search}%` } },
+            { nric: { [Op.like]: `%${search}%` } },
+        ];
+    }
+    let list = await SignUp.findAll({
+        where: condition,
+        order: [['createdAt', 'DESC']],
+    });
+    res.json(list);
+});
+
+module.exports = router;

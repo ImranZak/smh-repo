@@ -55,7 +55,7 @@ function AddEvent() {
             http.post("/event", data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/events");
+                    navigate("/staffevents");
                 });
         }
     })

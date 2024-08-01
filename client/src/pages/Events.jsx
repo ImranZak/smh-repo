@@ -119,7 +119,7 @@ function Events() {
                                             component={Link}
                                             to={`/sign-up/${event.id}`}
                                             sx={{ mt: 2 }}
-                                        >
+                                        >   
                                             Sign Up
                                         </Button>
                                     </CardContent>

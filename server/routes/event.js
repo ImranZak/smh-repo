@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Event, SignUp } = require('../models');
+const { Event } = require('../models');
 const { Op } = require("sequelize");
 const yup = require("yup");
 

@@ -16,16 +16,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(12),
             allowNull: false
         },
-        eventId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'events',
-                key: 'id'
-            },
-            allowNull: false
-        }
     }, {
-        tableName: 'signups'
+        tableName: 'signup'
     });
     return SignUp;
 }

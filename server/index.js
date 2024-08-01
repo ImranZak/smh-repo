@@ -38,6 +38,9 @@ app.use("/event", eventRoute);
 
 const fileRoute = require('./routes/file');
 app.use("/file", fileRoute);
+
+const signupRoute = require('./routes/signup');
+app.use("/signup", signupRoute);
 // Routes
 const staffRoute = require('./routes/staff');
 app.use("/staff", staffRoute);
