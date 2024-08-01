@@ -50,13 +50,6 @@ function App() {
       });
   }}, []);
 
-  const logout = () => {
-      localStorage.clear();
-      window.location = "/";
-  };
-
-  const navbar_ver = 'user';
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget); // Open the menu
   };

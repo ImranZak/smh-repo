@@ -62,7 +62,7 @@ function UpdateStaff() {
           },
     ];            
 
-    useEffect(() => { 
+    useEffect(() => {
         http.get(`/staff/${id}`).then((res) => {
             console.log(res.data);
             setStaff(res.data); 
@@ -94,10 +94,7 @@ function UpdateStaff() {
             homeAddress: yup.string()
                 .max(100, 'Home address must be at most 100 characters')
                 .required('Home address is required'),
-            password: yup.string()
-                .max(100, 'Password must be at most 100 characters')
-                .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,100}$/, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed")
-                .required('Password is required'),
+            password: yup.string(),
             role: yup.string()
                 .required('Role is required'),
             department: yup.string()
@@ -109,6 +106,8 @@ function UpdateStaff() {
             .required()
         }),
         onSubmit: (data) => {
+            console.log("Form is being submitted");
+            console.log("Form data:", data);
             data.name = data.name.trim();
             data.birthDate = data.birthDate
             data.email = data.email.trim();
@@ -118,13 +117,17 @@ function UpdateStaff() {
             data.role = data.role.trim();
             data.department = data.department.trim();
             data.birthDate = data.birthDate
+            console.log("Trimmed data:", data);
             http.put(`/staff/${id}`, data).then((res) => {
                 console.log(res.data);
                 navigate("/staff");
+            }).catch((error) => {
+                console.error("Error submitting form:", error);
             });
         }
     });
-
+    console.log("Formik state:", formik);
+    console.log("Formik errors:", formik.errors);
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
@@ -132,7 +135,7 @@ function UpdateStaff() {
             </Typography>
             {
                 !loading && (
-                    <Box component="form" onSubmit={formik.handleSubmit}>
+                    <Box component="form" onSubmit={formik.handleSubmit} sx={{ marginBottom: '5%' }}>
                         <TextField
                             fullWidth
                             margin="dense"
@@ -248,7 +251,6 @@ function UpdateStaff() {
                         <Button
                             sx={{ mt: 2, ml: 2 }}
                             variant="contained"
-                            type="submit"
                             color="neutral"
                             onClick={() => navigate("/staff")}>
                             Back

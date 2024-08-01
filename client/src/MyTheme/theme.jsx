@@ -6,6 +6,12 @@ const theme = createTheme({
     primary: {
         main: '#2e7d32',
       },
+    neutral: {
+      main: '#CFCFCF',
+    },
+    danger: {
+      main: "#fc4a4a"
+    }
   },
   components: {
     MuiAppBar: {
