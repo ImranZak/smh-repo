@@ -16,6 +16,7 @@ app.use(cors({
 app.get("/", (req, res) => {
     res.send("Welcome to the learning space.");
 });
+
 // Routes
 const quizRoute = require('./routes/quiz');
 app.use("/quiz", quizRoute);
@@ -37,6 +38,11 @@ app.use("/event", eventRoute);
 
 const fileRoute = require('./routes/file');
 app.use("/file", fileRoute);
+// Routes
+const staffRoute = require('./routes/staff');
+app.use("/staff", staffRoute);
+const userRoute = require('./routes/user'); 
+app.use("/user", userRoute);
 
 const db = require('./models');
 db.sequelize.sync({ alter: true })

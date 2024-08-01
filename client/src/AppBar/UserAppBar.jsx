@@ -7,6 +7,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const UserAppBar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const { isStaff } = useContext(UserContext);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,7 +26,7 @@ const UserAppBar = () => {
               Singapore<br />
               Management<br />
               Hub
-            </Link>
+            </Link>  
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <Link to="/dashboard" className="nav-link">Dashboard</Link>

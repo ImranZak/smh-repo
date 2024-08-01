@@ -28,9 +28,31 @@ import MyTheme from './MyTheme/theme.jsx';
 import StaffEvents from './pages/StaffEvents';
 import SignUp from './pages/SignUp';
 import SignUps from './pages/SignUps';
+import Staff from './pages/Staff';
+import CreateStaff from './pages/CreateStaff';
+import UpdateStaff from './pages/UpdateStaff';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import User from './pages/User';
+import http from './http';
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
+  const [user, setUser] = useState(null);
+  const [isStaff, setIsStaff] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      http.get("/user/auth").then((res) => {
+          setUser(res.data.user)
+          setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
+      });
+  }}, []);
+
+const logout = () => {
+    localStorage.clear();
+    window.location = "/";
+};
 
   const navbar_ver = 'user';
 
@@ -41,39 +63,125 @@ function App() {
   const handleClose = () => {
     setAnchorEl(null); // Close the menu
   };
+
   return (
-    <Router>
-      <ThemeProvider theme={MyTheme}>
-        {navbar_ver === 'user' ? <UserAppBar /> : <StaffAppBar />}
-        <Container>
-          <Routes>
-            <Route path={"/"} element={<Events />} />
-            <Route path={"/events"} element={<Events />} />
-            <Route path={"/addevent"} element={<AddEvent />} />
-            <Route path={"/editevent/:id"} element={<EditEvent />} />
-            <Route path={"/staffevents"} element={<StaffEvents />} />
-            <Route path={"/sign-up/:id"} element={<SignUp />} />
-            <Route path={"/signups"} element={<SignUps />} />
-            <Route path="/quizzesStaff" element={<Quizzes />} />
-            <Route path="/editquiz/:id" element={<EditQuiz />} />
-            <Route path="/addquiz" element={<AddQuiz />} />
-            <Route path="/quizzesStaff/:quizId/questions" element={<Questions />} />
-            <Route path="/quizzesStaff/:quizId/addquestion" element={<AddQuestion />} />
-            <Route path="/quizzesStaff/:quizId/editquestion/:questionId" element={<EditQuestion />} />
-            <Route path="/quizzesUser" element={<QuizzesUser />} />
-            <Route path="/takequiz/:id" element={<TakeQuizUser />} />
-            <Route path="/ResourceLibraryStaff" element={<ResourceLibraryStaff />} />
-            <Route path="/AddResource" element={<AddResource />} />
-            <Route path="/EditResource/:id" element={<EditResource />} />
-            <Route path="/ResourceContentStaff/:postId" element={<ResourceContentStaff />} />
-            <Route path="/ResourceContentStaff/:postId/AddResourceContentStaff" element={<AddResourceContentStaff />} />
-            <Route path="/ResourceContentStaff/:postId/EditResourceContentStaff/:id" element={<EditResourceContentStaff />} />
-            <Route path="/ResourceLibraryUser" element={<ResourceLibraryUser />} />
-            <Route path="/ResourceLibraryUser/ResourceContentUserView/:id" element={<ResourceContentUserView />} />
-          </Routes>
-        </Container>
-      </ThemeProvider>
-    </Router>
+    <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>
+      <Router>
+        <ThemeProvider theme={MyTheme}>
+          {isStaff ? <UserAppBar /> : <StaffAppBar />}
+          <Container>
+            <Routes>
+              <Route path={"/"} element={<Events />} />
+              <Route path={"/events"} element={<Events />} />
+              <Route path={"/addevent"} element={<AddEvent />} />
+              <Route path={"/editevent/:id"} element={<EditEvent />} />
+              <Route path={"/staffevents"} element={<StaffEvents />} />
+              <Route path={"/sign-up/:id"} element={<SignUp />} />
+              <Route path={"/signups"} element={<SignUps />} />
+              <Route path="/quizzesStaff" element={<Quizzes />} />
+              <Route path="/editquiz/:id" element={<EditQuiz />} />
+              <Route path="/addquiz" element={<AddQuiz />} />
+              <Route path="/quizzesStaff/:quizId/questions" element={<Questions />} />
+              <Route path="/quizzesStaff/:quizId/addquestion" element={<AddQuestion />} />
+              <Route path="/quizzesStaff/:quizId/editquestion/:questionId" element={<EditQuestion />} />
+              <Route path="/quizzesUser" element={<QuizzesUser />} />
+              <Route path="/takequiz/:id" element={<TakeQuizUser />} />
+              <Route path="/ResourceLibraryStaff" element={<ResourceLibraryStaff />} />
+              <Route path="/AddResource" element={<AddResource />} />
+              <Route path="/EditResource/:id" element={<EditResource />} />
+              <Route path="/ResourceContentStaff/:postId" element={<ResourceContentStaff />} />
+              <Route path="/ResourceContentStaff/:postId/AddResourceContentStaff" element={<AddResourceContentStaff />} />
+              <Route path="/ResourceContentStaff/:postId/EditResourceContentStaff/:id" element={<EditResourceContentStaff />} />
+              <Route path="/ResourceLibraryUser" element={<ResourceLibraryUser />} />
+              <Route path="/ResourceLibraryUser/ResourceContentUserView/:id" element={<ResourceContentUserView />} />
+              <Route path={"/register"} element={<Register />} />
+              <Route path={"/login"} element={<Login />} />
+              <Route path={"/"} element={<User/>} />
+              <Route path={"/staff"} element={<Staff />} />
+              <Route path={"/create-staff"} element={<CreateStaff />} />
+              <Route
+                  path={"/update-staff/:id"}
+                  element={<UpdateStaff />}
+              />
+            </Routes>
+          </Container>
+        </ThemeProvider>
+      </Router>
+    </UserContext.Provider>
   );
+
+// function App() {
+//   const [user, setUser] = useState(null); // global user, not specifically user or staff
+//   const [isStaff, setIsStaff] = useState(false);
+
+//   useEffect(() => {
+//       if (localStorage.getItem("accessToken")) {
+//         http.get("/user/auth").then((res) => {
+//             setUser(res.data.user)
+//             setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
+//         });
+//       }
+//   }, []);
+
+//   const logout = () => {
+//       localStorage.clear();
+//       window.location = "/";
+//   };
+
+//   return (
+//       <Router>
+//           <ThemeProvider theme={StaffTheme}>
+//               <AppBar position="static" className="AppBar">
+//                   <Container>
+//                       <Toolbar disableGutters={true}>
+//                         {/* User logo */}
+//                           { 
+//                             !isStaff && <Link to="/">
+//                               <Typography variant="h6" component="div">
+//                                   SMH
+//                               </Typography>
+//                             </Link>
+//                           }
+//                           { 
+//                             isStaff && <Link to="/">
+//                               <Typography variant="h6" component="div">
+//                                   SMH Dashboard
+//                               </Typography>
+//                             </Link>
+//                           }
+//                           { 
+//                             isStaff && <Link to="/staff">
+//                                 <Typography>Staff</Typography>
+//                             </Link>
+//                           }
+//                           <Box sx={{ flexGrow: 1 }}></Box>
+//                           {user && (
+//                               <>
+//                                   <Typography>{user.name}</Typography>
+//                                   <Button onClick={logout}>Logout</Button>
+//                               </>
+//                           )}
+//                           {!user && (
+//                               <>
+//                                   <Link to="/register">
+//                                       <Typography>Register</Typography>
+//                                   </Link>
+//                                   <Link to="/login">
+//                                       <Typography>Login</Typography>
+//                                   </Link>
+//                               </>
+//                           )}
+//                       </Toolbar>
+//                   </Container>
+//               </AppBar>
+
+//               <Container>
+//                   <Routes>
+//                   </Routes>
+//               </Container>
+//           </ThemeProvider>
+//       </Router>
+//   );
 }
+
 export default App;

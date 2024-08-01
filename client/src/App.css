@@ -79,3 +79,8 @@
   display: block;
   /* Ensure block display for menu items */
 }
+
+.AppBar button {
+  color: inherit;
+  margin-left: 12px;
+}
