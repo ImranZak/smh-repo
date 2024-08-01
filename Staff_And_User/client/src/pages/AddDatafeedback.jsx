@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Typography, TextField, Button, Grid, backdropClasses } from '@mui/material';
+import { Box, Typography, TextField, Button, Grid, backdropClasses, Rating } from '@mui/material';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -61,7 +61,7 @@ function AddDatafeedback() {
             stars.push(
                 <span key={i}
                     style={{ cursor: 'pointer', color: i <= currentRating ? '#ffc107' : '#e4e5e9' }}
-                    onClick={() => formik.handleStarClick('ranking', i)}>
+                    onClick={() => handleStarClick(i)}>
                     ★
                 </span>
             );
@@ -117,9 +117,9 @@ function AddDatafeedback() {
                                 <TextField fullWidth margin="dense" autoComplete="off" multiline minRows={2} label="Improvements" name="improvement"
                                     value={formik.values.improvement} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.improvement && Boolean(formik.errors.improvement)} helperText={formik.touched.improvement && formik.errors.improvement} />
                             </Grid>
-                            <div className='feedback-buttons' style={{textAlign:'right', alignContent:'right'}}>
+                            <div className='feedback-buttons' style={{ textAlign: 'right', alignContent: 'right' }}>
                                 <Grid item xs={12} >
-                                    <Button variant="contained" style={{backgroundColor: '#208130', alignContent:'right'}} type="submit">Submit</Button>
+                                    <Button variant="contained" style={{ backgroundColor: '#208130', alignContent: 'right' }} type="submit">Submit</Button>
                                 </Grid>
                             </div>
 

@@ -37,7 +37,7 @@ function FeedbackDisplay() {
             http.put(`/datafeedback/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/datafeedback");
+                    navigate("/datafeedbackstaff");
                 });
         }
     }
@@ -52,7 +52,7 @@ function FeedbackDisplay() {
         http.delete(`/datafeedback/${id}`)
             .then((res) => {
                 console.log(res.data);
-                navigate("/datafeedback");
+                navigate("/datafeedbackstaff");
             });
     }
 

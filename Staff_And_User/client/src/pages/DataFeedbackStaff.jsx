@@ -6,7 +6,7 @@ import { Search, Clear } from '@mui/icons-material';
 import http from '../http';
 
 
-function DataFeedbacks() {
+function DataFeedbackStaff() {
   const [datafeedbackList, setDataFeedbackList] = useState([]);
   const [search, setSearch] = useState('');
   const onSearchChange = (e) => { setSearch(e.target.value); };
@@ -53,10 +53,10 @@ function DataFeedbacks() {
   return (
     <div style={{ width: '100%' }}>{
       <Box>
-        <div className="feedback-header">
+            <div>
       <Typography variant="h5" sx={{
         my: 2,
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         fontStyle: 'Roboto',
         width: '100%', alignItems: 'center'
@@ -121,4 +121,4 @@ function DataFeedbacks() {
   )
 }
 
-export default DataFeedbacks
+export default DataFeedbackStaff
