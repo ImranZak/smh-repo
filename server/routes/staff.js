@@ -217,10 +217,15 @@ router.delete("/:id", async (req, res) => {
 // Delete All Staff
 router.delete("/", async (req, res) => {
     try {
-        await Staff.destroy({
-            where: {},
-            truncate: true
+        let staffIds = await Staff.findAll({
+            attributes: ['id']
         });
+        
+        for (let i = 0; i < staffIds.length; i++) {
+            await Staff.destroy({
+            where: { id: staffIds[i].id }
+            });
+        }
         res.json({
             message: "All staff were deleted successfully."
         });
@@ -234,14 +239,20 @@ router.delete("/", async (req, res) => {
 // Populate Staff
 router.post("/populate", async (req, res) => {
     try {
-        await Staff.destroy({
-            where: {},
-            truncate: true
+        let staffIds = await Staff.findAll({
+            attributes: ['id']
         });
+        
+        for (let i = 0; i < staffIds.length; i++) {
+            await Staff.destroy({
+            where: { id: staffIds[i].id }
+            });
+        }
     } catch (err) {
         res.status(500).json({
             message: "Failed to delete all staff."
         });
+        return;
     }
     try {
         // TODO: Implement department-role requirement to department :P
