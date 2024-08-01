@@ -7,46 +7,44 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'quizzes',
                 key: 'id'
             },
-            onDelete: 'CASCADE' // Ensure cascading delete
+            onDelete: 'CASCADE'
         },
         userid: {
-            type: DataTypes.INTEGER, // Placeholder for user id
+            type: DataTypes.INTEGER,
             allowNull: false,
-            // Assuming you have a User model, you can add references here:
-            // references: {
-            //     model: 'users',
-            //     key: 'id'
-            // },
-            // onDelete: 'CASCADE'
+            references: {
+                model: 'users', // Reference to the users table
+                key: 'id'
+            },
+            onDelete: 'CASCADE'
         },
         title: {
             type: DataTypes.STRING(100),
             allowNull: false,
             validate: {
-                notEmpty: true, // Ensure the title is not empty
-                len: [1, 100] // Ensure the title length is between 1 and 100 characters
+                notEmpty: true,
+                len: [1, 100]
             }
         },
         description: {
             type: DataTypes.TEXT,
             allowNull: false,
             validate: {
-                notEmpty: true // Ensure the description is not empty
+                notEmpty: true
             }
         },
         score: {
             type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
-                isInt: true, // Ensure the score is an integer
-                min: 0, // Ensure the score is not negative
-                max: 100 // Assuming score is a percentage, ensure it does not exceed 100
+                isInt: true,
+                min: 0,
+                max: 100
             }
         }
     }, {
         tableName: 'UserQuizHistory',
-        timestamps: true, // Add timestamps (createdAt and updatedAt)
-        underscored: true // Use underscored column names
+        timestamps: true,
     });
 
     UserQuizHistory.associate = models => {
@@ -55,12 +53,11 @@ module.exports = (sequelize, DataTypes) => {
             as: 'quiz',
             onDelete: 'CASCADE'
         });
-        // Assuming you have a User model, you can add the association here:
-        // UserQuizHistory.belongsTo(models.User, {
-        //     foreignKey: 'userid',
-        //     as: 'user',
-        //     onDelete: 'CASCADE'
-        // });
+        UserQuizHistory.belongsTo(models.User, {
+            foreignKey: 'userid',
+            as: 'user',
+            onDelete: 'CASCADE'
+        });
     };
 
     return UserQuizHistory;

@@ -36,10 +36,10 @@ router.post('/userhistory/:quizid', async (req, res) => {
 });
 
 // Get all quiz history for the logged-in user
-router.get('/userhistory', async (req, res) => {
+router.get('/userhistory/:id', async (req, res) => {
+    let id = req.params.id;
     try {
-        const userId = 1; // Assuming user ID is available in req.user
-        const history = await UserQuizHistory.findAll({ where: { userid: userId }, order: [['id', 'ASC']]  });
+        const history = await UserQuizHistory.findAll({ where: { userid: id }, order: [['id', 'ASC']]  });
         res.json(history);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -47,9 +47,8 @@ router.get('/userhistory', async (req, res) => {
 });
 
 // Update a specific quiz history record
-router.put('/userhistory/:quizid/:id', async (req, res) => {
+router.put('/userhistory/:quizid', async (req, res) => {
     const { quizid, id } = req.params;
-    const { userid } = 1;
     let data = req.body
 
     let validationSchema = yup.object({

@@ -12,6 +12,7 @@ import AddQuestion from './pages/Quiz/AddQuestion.jsx';
 import EditQuestion from './pages/Quiz/EditQuestionStaff.jsx';
 import QuizzesUser from './pages/Quiz/QuizUser.jsx';
 import TakeQuizUser from './pages/Quiz/TakeQuizUser.jsx';
+import UserQuizHistory from './pages/Quiz/UserQuizHistory.jsx';
 import ResourceLibraryStaff from './pages/ResourceLibrary/ResourceLibraryStaff.jsx';
 import AddResource from './pages/ResourceLibrary/AddResourceStaff.jsx';
 import EditResource from './pages/ResourceLibrary/EditResourceStaff.jsx';
@@ -88,6 +89,7 @@ function App() {
               <Route path="/ResourceContentStaff/:postId/EditResourceContentStaff/:id" element={<EditResourceContentStaff />} />
               <Route path="/ResourceLibraryUser" element={<ResourceLibraryUser />} />
               <Route path="/ResourceLibraryUser/ResourceContentUserView/:id" element={<ResourceContentUserView />} />
+              <Route path="/quizzesUser/history" element={<UserQuizHistory />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
               <Route path={"/"} element={<User/>} />

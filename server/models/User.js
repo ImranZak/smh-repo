@@ -28,8 +28,16 @@ module.exports = (sequelize, DataTypes) => {
             },
         },
         {
-            tableName: "users" 
+            tableName: "users"
         }
     );
+    User.associate = models => {
+        // Define a one-to-many relationship with UserQuizHistory
+        User.hasMany(models.UserQuizHistory, {
+            foreignKey: 'userid',
+            as: 'quizHistories',
+            onDelete: 'CASCADE'
+        });
+    };
     return User;
 };

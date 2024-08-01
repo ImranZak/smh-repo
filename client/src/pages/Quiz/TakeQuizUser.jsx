@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
     Box, Typography, Card, CardContent, Radio, RadioGroup, FormControlLabel, TextField,
     Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button
@@ -6,10 +6,12 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import http from '../../http'; // Ensure this is your axios instance
 import CircularProgressWithLabel from './QuizCircularProgressWithLabel'; // Import the custom component
+import UserContext from '../../contexts/UserContext';
 
 function TakeQuizUser() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useContext(UserContext); // Consume UserContext
     const [questions, setQuestions] = useState([]);
     const [userAnswers, setUserAnswers] = useState({});
     const [quitModalOpen, setQuitModalOpen] = useState(false);
@@ -130,7 +132,7 @@ function TakeQuizUser() {
     const postQuizHistory = () => {
         const historyData = {
             quizid: parseInt(id, 10),
-            userid: 1, // Assuming user ID is 1 for now
+            userid: user.id, // Use user ID from context
             title: `Quiz ${id} Results`,
             description: `User's results for quiz ${id}`,
             score: Math.round(score) // Ensure this is an integer between 0 and 100
@@ -210,51 +212,53 @@ function TakeQuizUser() {
                     Submit
                 </Button>
             </Box>
+
+            {/* Quit Confirmation Dialog */}
             <Dialog open={quitModalOpen} onClose={handleCloseQuitModal}>
                 <DialogTitle>Confirm Quit</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to quit the quiz? Your progress will not be saved.
+                        Are you sure you want to quit the quiz? All progress will be lost.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseQuitModal} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleConfirmQuit} color="primary" autoFocus>
+                    <Button onClick={handleConfirmQuit} color="secondary">
                         Quit
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Submit Confirmation Dialog */}
             <Dialog open={submitModalOpen} onClose={handleCloseSubmitModal}>
-                <DialogTitle>Confirm Submission</DialogTitle>
+                <DialogTitle>Confirm Submit</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to submit your answers? Your responses will be final.
+                        Are you sure you want to submit the quiz?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseSubmitModal} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleConfirmSubmit} color="primary" autoFocus>
+                    <Button onClick={handleConfirmSubmit} color="secondary">
                         Submit
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Result Dialog */}
             <Dialog open={resultModalOpen} onClose={handleCloseResultModal}>
-                <DialogTitle>Quiz Results</DialogTitle>
+                <DialogTitle>Quiz Result</DialogTitle>
                 <DialogContent>
-                    <Box sx={{ width: '100%', mt: 2, display: 'flex', justifyContent: 'center' }}>
-                        <CircularProgressWithLabel value={score} />
-                    </Box>
                     <DialogContentText>
-                        
-                        Your Score is {score.toFixed(2)}%
+                        Your score: {Math.round(score)}%
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseResultModal} color="primary" autoFocus>
+                    <Button onClick={handleCloseResultModal} color="primary">
                         Close
                     </Button>
                 </DialogActions>
