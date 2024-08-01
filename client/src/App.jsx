@@ -1,11 +1,4 @@
 import './App.css';
-<<<<<<< HEAD
-import { useState, useEffect } from 'react';
-import { Container, AppBar, Toolbar, Typography, Box, Button } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import StaffTheme from './themes/StaffTheme';
-=======
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Events from './pages/Events';
@@ -35,7 +28,6 @@ import MyTheme from './MyTheme/theme.jsx';
 import StaffEvents from './pages/StaffEvents';
 import SignUp from './pages/SignUp';
 import SignUps from './pages/SignUps';
->>>>>>> main
 import Staff from './pages/Staff';
 import CreateStaff from './pages/CreateStaff';
 import UpdateStaff from './pages/UpdateStaff';
