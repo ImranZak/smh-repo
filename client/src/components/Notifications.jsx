@@ -8,7 +8,10 @@ const Notification = () => {
 
   useEffect(() => {
     axios.get(`/api/notifications?userId=${mockUserId}`)
-      .then(response => setNotifications(response.data))
+      .then(response => {
+        // Ensure the response data is an array
+        setNotifications(Array.isArray(response.data) ? response.data : []);
+      })
       .catch(error => console.error(error));
   }, []);
 

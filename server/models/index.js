@@ -26,7 +26,7 @@ fs
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const model = require(path.join(__dirname, file));
     db[model.name] = model;
   });
 
@@ -37,10 +37,10 @@ Object.keys(db).forEach(modelName => {
 });
 
 // Include models defined manually
-db.Friend = require('./Friend')(sequelize, Sequelize.DataTypes);
-db.Message = require('./Message')(sequelize, Sequelize.DataTypes);
-db.Notification = require('./Notification')(sequelize, Sequelize.DataTypes);
-db.Usage = require('./Usage')(sequelize, Sequelize.DataTypes);
+db.Friend = require('./Friend');
+db.Message = require('./Message');
+db.Notification = require('./Notification');
+db.Usage = require('./Usage');
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

@@ -32,8 +32,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import FriendList from './Friends';
 import Notification from './Notifications';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Navbar from './Navbar';
+// Remove import of Navbar
+// import Navbar from './Navbar';
 import '../styles/Dashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -61,7 +61,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const result = await axios.get('http://localhost:3000/api/usage');
-        setData(result.data);
+        setData(Array.isArray(result.data) ? result.data : []); // Ensure result.data is an array
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -143,7 +143,6 @@ const Dashboard = () => {
 
   return (
     <Container>
-      <Navbar />
       <Typography variant="h4" gutterBottom>Community Dashboard</Typography>
       <Grid container spacing={2}>
         <Grid item>
