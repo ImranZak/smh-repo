@@ -1,5 +1,7 @@
+// index.js
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
@@ -7,10 +9,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-// Enable CORS
-app.use(cors({
-    origin: process.env.CLIENT_URL
-}));
+// Middleware
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000' }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Simple Route
 app.get("/", (req, res) => {
@@ -18,39 +20,42 @@ app.get("/", (req, res) => {
 });
 
 // Routes
+const usageRoutes = require('./routes/usageRoutes');
+const friendsRoutes = require('./routes/friendsRoutes');
+const messagesRoutes = require('./routes/messagesRoutes');
+const notificationsRoutes = require('./routes/notificationsRoutes');
+const staffRoutes = require('./routes/staff');
 const quizRoute = require('./routes/quiz');
-app.use("/quiz", quizRoute);
-
 const questionRoute = require('./routes/question');
-app.use("/quiz/question", questionRoute);
-
 const userquizhistoryRoute = require('./routes/UserQuizHistory');
-app.use("/user/quiz", userquizhistoryRoute);
-
 const resource = require('./routes/resource');
-app.use("/resource", resource);
-
 const resourceContent = require('./routes/resourceContent');
-app.use("/resourceContent", resourceContent);
-
 const eventRoute = require('./routes/event');
-app.use("/event", eventRoute);
-
 const fileRoute = require('./routes/file');
-app.use("/file", fileRoute);
-
 const signupRoute = require('./routes/signup');
-app.use("/signup", signupRoute);
-// Routes
-const staffRoute = require('./routes/staff');
-app.use("/staff", staffRoute);
 const userRoute = require('./routes/user'); 
+
+app.use('/api/usage', usageRoutes);
+app.use('/api/friends', friendsRoutes);
+app.use('/api/messages', messagesRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/staff', staffRoutes);
+app.use("/quiz", quizRoute);
+app.use("/quiz/question", questionRoute);
+app.use("/user/quiz", userquizhistoryRoute);
+app.use("/resource", resource);
+app.use("/resourceContent", resourceContent);
+app.use("/event", eventRoute);
+app.use("/file", fileRoute);
+app.use("/signup", signupRoute);
 app.use("/user", userRoute);
+
+console.log('Routes have been set up.');
 
 const db = require('./models');
 db.sequelize.sync({ alter: true })
     .then(() => {
-        let port = process.env.APP_PORT;
+        const port = process.env.APP_PORT || 3000;
         app.listen(port, () => {
             console.log(`⚡ Server running on http://localhost:${port}`);
         });

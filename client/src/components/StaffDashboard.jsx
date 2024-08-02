@@ -13,7 +13,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Navbar from './Navbar'; // Make sure Navbar component is correctly imported
 
 const StaffDashboard = () => {
   const [events, setEvents] = useState([]);
@@ -66,7 +65,6 @@ const StaffDashboard = () => {
 
   return (
     <Container>
-      <Navbar />
       <Typography variant="h4" gutterBottom>Staff Dashboard</Typography>
       <Grid container spacing={2}>
         <Grid item>

@@ -32,8 +32,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import FriendList from './Friends';
 import Notification from './Notifications';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-// Remove import of Navbar
-// import Navbar from './Navbar';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'; // Add this import
 import '../styles/Dashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -60,7 +59,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get('http://localhost:3000/api/usage');
+        const result = await axios.get('http://localhost:3001/api/usage');
         setData(Array.isArray(result.data) ? result.data : []); // Ensure result.data is an array
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -114,7 +113,7 @@ const Dashboard = () => {
 
   const handleClearData = async () => {
     try {
-      await axios.delete('http://localhost:3000/api/usage');
+      await axios.delete('http://localhost:3001/api/usage');
       setData([]);
       alert('Data cleared successfully');
     } catch (error) {

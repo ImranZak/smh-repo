@@ -1,3 +1,4 @@
+// usageController.js
 const Usage = require('../models/Usage');
 
 exports.getAllUsage = async (req, res) => {

@@ -1,65 +1,238 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, TextField, Container, Typography } from '@mui/material';
-import Navbar from './Navbar'; // Make sure Navbar component is correctly imported
+import {
+  Container, TextField, Button, Grid, Typography, Table, TableBody,
+  TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel, Select, MenuItem
+} from '@mui/material';
 
 const DataEntry = () => {
-  const [formData, setFormData] = useState({
-    date: '',
-    type: '',
-    usage: ''
-  });
+  const [date, setDate] = useState('');
+  const [type, setType] = useState('energy');
+  const [usage, setUsage] = useState('');
+  const [entries, setEntries] = useState([]); // Ensure entries is an array
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('date');
+  const [filterType, setFilterType] = useState('');
+  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
+  const fetchEntries = async () => {
+    try {
+      const result = await axios.get('http://localhost:3001/api/usage');
+      console.log('Fetched entries:', result.data); // Debugging line
+      setEntries(Array.isArray(result.data) ? result.data : []); // Ensure data is an array
+    } catch (error) {
+      console.error('Error fetching entries:', error);
+    }
+  };
+
+  const isValidDate = (dateString) => {
+    const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    if (!dateString.match(regex)) return false;
+
+    const date = new Date(dateString);
+    const timestamp = date.getTime();
+
+    if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
+    return dateString === date.toISOString().split('T')[0];
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isValidDate(date)) {
+      setError('Please enter a valid date.');
+      return;
+    }
+
     try {
-      await axios.post('http://localhost:3000/api/usage', formData);
-      alert('Data entered successfully');
-      setFormData({ date: '', type: '', usage: '' });
+      await axios.post('http://localhost:3001/api/usage', { date, type, usage });
+      fetchEntries();
+      setDate('');
+      setType('energy');
+      setUsage('');
+      setError('');
     } catch (error) {
-      console.error('Error entering data:', error);
+      console.error('Error submitting data:', error);
     }
   };
 
+  const handleClearData = async () => {
+    try {
+      await axios.delete('http://localhost:3001/api/usage');
+      fetchEntries();
+    } catch (error) {
+      console.error('Error clearing data:', error);
+    }
+  };
+
+  const handleUpdateData = async (id, field, value) => {
+    try {
+      await axios.put(`http://localhost:3001/api/usage/${id}`, { [field]: value });
+      fetchEntries();
+    } catch (error) {
+      console.error('Error updating data:', error);
+    }
+  };
+
+  const handleSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sortedEntries = [...entries]
+    .filter(entry => !filterType || entry.type === filterType)
+    .sort((a, b) => {
+      if (orderBy === 'date') {
+        return (order === 'asc' ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date));
+      } else if (orderBy === 'type') {
+        return (order === 'asc' ? a.type.localeCompare(b.type) : b.type.localeCompare(a.type));
+      } else {
+        return (order === 'asc' ? a.usage - b.usage : b.usage - a.usage);
+      }
+    });
+
   return (
     <Container>
-      <Navbar />
-      <Typography variant="h4" gutterBottom>Data Entry</Typography>
+      <Typography variant="h4" gutterBottom>Enter Usage Data</Typography>
       <form onSubmit={handleSubmit}>
-        <TextField
-          label="Date"
-          name="date"
-          type="date"
-          value={formData.date}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-        />
-        <TextField
-          label="Type"
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Usage"
-          name="usage"
-          type="number"
-          value={formData.usage}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <Button variant="contained" color="primary" type="submit">Submit</Button>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Type"
+              select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              fullWidth
+              required
+            >
+              <MenuItem value="energy">Energy</MenuItem>
+              <MenuItem value="water">Water</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Usage"
+              type="number"
+              value={usage}
+              onChange={(e) => setUsage(e.target.value)}
+              fullWidth
+              required
+            />
+          </Grid>
+          {error && (
+            <Grid item xs={12}>
+              <Typography color="error">{error}</Typography>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="success">Submit</Button>
+          </Grid>
+        </Grid>
       </form>
+      <Grid container spacing={3} alignItems="center" style={{ marginTop: '20px' }}>
+        <Grid item>
+          <Button variant="contained" color="success" onClick={handleClearData}>Clear Data</Button>
+        </Grid>
+        <Grid item>
+          <Select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            displayEmpty
+            style={{ marginLeft: '10px' }}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="energy">Energy</MenuItem>
+            <MenuItem value="water">Water</MenuItem>
+          </Select>
+        </Grid>
+      </Grid>
+      <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sortDirection={orderBy === 'date' ? order : false}>
+                <TableSortLabel
+                  active={orderBy === 'date'}
+                  direction={orderBy === 'date' ? order : 'asc'}
+                  onClick={() => handleSort('date')}
+                >
+                  Date
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sortDirection={orderBy === 'type' ? order : false}>
+                <TableSortLabel
+                  active={orderBy === 'type'}
+                  direction={orderBy === 'type' ? order : 'asc'}
+                  onClick={() => handleSort('type')}
+                >
+                  Type
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sortDirection={orderBy === 'usage' ? order : false}>
+                <TableSortLabel
+                  active={orderBy === 'usage'}
+                  direction={orderBy === 'usage' ? order : 'asc'}
+                  onClick={() => handleSort('usage')}
+                >
+                  Usage
+                </TableSortLabel>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedEntries.map((entry) => {
+              const dateValue = new Date(entry.date);
+              const dateString = !isNaN(dateValue.getTime()) ? dateValue.toISOString().substring(0, 10) : '';
+              return (
+                <TableRow key={entry.id}>
+                  <TableCell>
+                    <TextField
+                      type="date"
+                      value={dateString}
+                      onChange={(e) => handleUpdateData(entry.id, 'date', e.target.value)}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={entry.type}
+                      onChange={(e) => handleUpdateData(entry.id, 'type', e.target.value)}
+                      fullWidth
+                    >
+                      <MenuItem value="energy">Energy</MenuItem>
+                      <MenuItem value="water">Water</MenuItem>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      value={entry.usage}
+                      onChange={(e) => handleUpdateData(entry.id, 'usage', e.target.value)}
+                      type="number"
+                      fullWidth
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 };
