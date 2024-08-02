@@ -1,7 +1,7 @@
 // StaffAppBar.jsx
 
 import React, { useContext } from 'react';
-import { AppBar, Toolbar, Typography, Container, Box, Button } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, Box, Button, Avatar} from '@mui/material';
 import { Link } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
 
@@ -32,7 +32,9 @@ const StaffAppBar = () => {
             <Link to="/quizzesStaff" className="nav-link">Quizzes</Link>
             {user && (
                 <>
-                    <Typography>{user.name}</Typography>
+                    <Link to="/profile" className="nav-link profile-link">
+                      <Avatar/>
+                    </Link>
                     <Button onClick={logout}>Logout</Button>
                 </>
             )}
