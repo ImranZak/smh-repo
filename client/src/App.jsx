@@ -1,9 +1,9 @@
 import './App.css';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Events from './pages/Events';
-import AddEvent from './pages/AddEvent';
-import EditEvent from './pages/EditEvent';
+import Events from './pages/Events/Events.jsx';
+import AddEvent from './pages/Events/AddEvent.jsx';
+import EditEvent from './pages/Events/EditEvent.jsx';
 import Quizzes from './pages/Quiz/QuizzesStaff.jsx';
 import EditQuiz from './pages/Quiz/EditQuizStaff.jsx';
 import AddQuiz from './pages/Quiz/AddQuizStaff.jsx';
@@ -26,18 +26,17 @@ import { useState, useEffect } from 'react'; // Import useState hook for state m
 import UserAppBar from './AppBar/UserAppBar.jsx';
 import StaffAppBar from './AppBar/StaffAppBar';
 import MyTheme from './MyTheme/theme.jsx';
-import StaffEvents from './pages/StaffEvents';
-import SignUp from './pages/SignUp';
-import SignUps from './pages/SignUps';
-import Staff from './pages/Staff';
-import CreateStaff from './pages/CreateStaff';
-import UpdateStaff from './pages/UpdateStaff';
-import Register from './pages/Register';
-import Login from './pages/Login';
+import StaffEvents from './pages/Events/StaffEvents';
+import SignUp from './pages/Events/SignUp';
+import SignUps from './pages/Events/SignUps';
+import Staff from './pages/AccountManagement/Staff';
+import CreateStaff from './pages/AccountManagement/CreateStaff';
+import UpdateStaff from './pages/AccountManagement/UpdateStaff';
+import Register from './pages/AccountManagement/Register';
+import Login from './pages/AccountManagement/Login';
 import Homepage from './pages/Homepage.jsx';
-import Users from './pages/Users.jsx';
-import CreateUser from './pages/CreateUser';
-import UpdateUser from './pages/UpdateUser';
+import Users from './pages/AccountManagement/Users.jsx';
+import UpdateUser from './pages/AccountManagement/UpdateUser';
 import http from './http';
 import UserContext from './contexts/UserContext';
 
@@ -98,7 +97,6 @@ function App() {
               <Route path={"/staff"} element={<Staff />} />
               <Route path={"/users"} element={<Users />} />
               <Route path={"/create-staff"} element={<CreateStaff />} />
-              <Route path={"/create-user"} element={<CreateUser />} />
               <Route path={"/update-staff/:id"} element={<UpdateStaff />}/>
               <Route path={"/update-user/:id"} element={<UpdateUser />}/>
             </Routes>

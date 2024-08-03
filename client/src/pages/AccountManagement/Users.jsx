@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Typography, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Search, Clear, Edit, Delete } from '@mui/icons-material';
-import http from '../http';
+import http from '../../http';
 import dayjs from 'dayjs';
-import global from '../global'
 
-function Staff() {
+function Users() {
     const navigate = useNavigate();
-    const [staffList, setStaffList] = useState([]);
+    const [usersList, setUsersList] = useState([]);
     const [search, setSearch] = useState('');
     const [open, setOpen] = useState(false);
     const [deleteId, setDeleteId] = useState('');
@@ -17,47 +16,47 @@ function Staff() {
         setSearch(e.target.value); 
     };
 
-    const getStaff = () => {
-        http.get('/staff').then((res) => {
-            setStaffList(res.data);
+    const getUsers = () => {
+        http.get('/user').then((res) => {
+            setUsersList(res.data);
         });
     };
     
-    const searchStaff = () => {
-        http.get(`/staff?search=${search}`).then((res) => {
-            setStaffList(res.data);
+    const searchUsers = () => {
+        http.get(`/user?search=${search}`).then((res) => {
+            setUsersList(res.data);
         });
     };
     
     useEffect(() => {
-        getStaff();
+        getUsers();
     }, []);
     
     const onSearchKeyDown = (e) => {
         if (e.key === "Enter") {
-            searchStaff();
+            searchUsers();
         }
     };
     
     const onClickSearch = () => {
-        searchStaff();
+        searchUsers();
     };
 
     const onClickClear = () => {
-        setSearch(''); getStaff();
+        setSearch(''); getUsers();
     };
 
     // Example handlers
     const handleUpdate = (id) => {
-        navigate(`/update-staff/${id}`)
+        navigate(`/update-user/${id}`)
     };
 
-    const deleteStaff = () => {
-        http.delete(`/staff/${deleteId}`)
+    const deleteUsers = () => {
+        http.delete(`/user/${deleteId}`)
             .then((res) => {
                 console.log(res.data);
                 handleClose();
-                getStaff()
+                getUsers()
             });
     }
 
@@ -73,7 +72,7 @@ function Staff() {
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Staff
+                Users
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -84,46 +83,36 @@ function Staff() {
                 <IconButton color="primary" onClick={onClickClear} >
                     <Clear />
                 </IconButton>
-                <Box sx={{ flexGrow: 1 }} />
-                <Link to="/create-staff" style={{ textDecoration: 'none' }}>
-                    <Button variant='contained'>Create</Button>
-                </Link>
             </Box>
 
             {/* TODO: Add additional info feature so i can hide some of the columns */}
             <TableContainer component={Paper} sx={{ my: '5%' }}>
-                <Table aria-label="staff table">
+                <Table aria-label="users table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Name</TableCell>
-                            <TableCell align="right">Date Joined</TableCell>
-                            <TableCell align="right">Role</TableCell>
-                            <TableCell align="right">Department</TableCell>
                             <TableCell align="right">Email</TableCell>
                             <TableCell align="right">Phone Number</TableCell>
                             <TableCell align="right">Date of Birth</TableCell>
-                            <TableCell align="right">Home Address</TableCell>
+                            <TableCell align="right">Mailing Address</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {staffList.map((staff) => (
-                            <TableRow key={staff.id}>
+                        {usersList.map((users) => (
+                            <TableRow key={users.id}>
                                 <TableCell component="th" scope="row">
-                                    {staff.name}
-                                </TableCell>    
-                                <TableCell align="right">{dayjs(staff.joinDate).format('YYYY-MM-DD')}</TableCell>
-                                <TableCell align="right">{staff.role}</TableCell>
-                                <TableCell align="right">{staff.department}</TableCell>
-                                <TableCell align="right">{staff.email}</TableCell>
-                                <TableCell align="right">{staff.phoneNumber}</TableCell>
-                                <TableCell align="right">{staff.birthDate}</TableCell>
-                                <TableCell align="right">{staff.homeAddress }</TableCell>
+                                    {users.name}
+                                </TableCell>
+                                <TableCell align="right">{users.email}</TableCell>
+                                <TableCell align="right">{users.phoneNumber}</TableCell>
+                                <TableCell align="right">{users.birthDate}</TableCell>
+                                <TableCell align="right">{users.mailingAddress }</TableCell>
                                 <TableCell align="center">
-                                    <IconButton variant="contained" color="primary" onClick={() => handleUpdate(staff.id)}>
+                                    <IconButton variant="contained" color="primary" onClick={() => handleUpdate(users.id)}>
                                         <Edit />    
                                     </IconButton>
-                                    <IconButton variant="contained" color="danger" onClick={() => handleOpen(staff.id)}>
+                                    <IconButton variant="contained" color="danger" onClick={() => handleOpen(users.id)}>
                                         <Delete />  
                                     </IconButton>
                                 </TableCell>
@@ -146,7 +135,7 @@ function Staff() {
                     <Button variant="contained" color="inherit" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="error" onClick={deleteStaff}>
+                    <Button variant="contained" color="error" onClick={deleteUsers}>
                         Delete
                     </Button>
                 </DialogActions>
@@ -155,4 +144,4 @@ function Staff() {
     );
 }
 
-export default Staff;
+export default Users;
