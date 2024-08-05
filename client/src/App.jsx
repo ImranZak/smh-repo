@@ -39,6 +39,8 @@ import Users from './pages/AccountManagement/Users.jsx';
 import UpdateUser from './pages/AccountManagement/UpdateUser';
 import http from './http';
 import UserContext from './contexts/UserContext';
+import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
+import UserProfile from './pages/AccountManagement/UserProfile.jsx';
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
@@ -99,6 +101,7 @@ function App() {
               <Route path={"/create-staff"} element={<CreateStaff />} />
               <Route path={"/update-staff/:id"} element={<UpdateStaff />}/>
               <Route path={"/update-user/:id"} element={<UpdateUser />}/>
+              <Route path={"/profile"} element={!isStaff ? <UserProfile /> : <StaffProfile />} />
             </Routes>
           </Container>
         </ThemeProvider>
