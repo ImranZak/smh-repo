@@ -20,7 +20,7 @@ function UserProfile() {
         password: ""
     });
 
-    const [loading, setLoading] = useState(true);   
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         http.get(`/user/${id}`).then((res) => {
