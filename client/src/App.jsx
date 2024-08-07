@@ -101,7 +101,7 @@ function App() {
               <Route path={"/create-staff"} element={<CreateStaff />} />
               <Route path={"/update-staff/:id"} element={<UpdateStaff />}/>
               <Route path={"/update-user/:id"} element={<UpdateUser />}/>
-              <Route path={"/profile"} element={!isStaff ? <UserProfile /> : <StaffProfile />} />
+              <Route path={"/profile/:id"} element={!isStaff ? <UserProfile /> : <StaffProfile />} />
             </Routes>
           </Container>
         </ThemeProvider>

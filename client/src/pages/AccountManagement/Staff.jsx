@@ -46,8 +46,7 @@ function Staff() {
     const onClickClear = () => {
         setSearch(''); getStaff();
     };
-
-    // Example handlers
+    
     const handleUpdate = (id) => {
         navigate(`/update-staff/${id}`)
     };

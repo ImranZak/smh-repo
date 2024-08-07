@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; 
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
 import http from '../../http';
+import UserContext from '../../contexts/UserContext';
 
 function UserProfile() {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ function UserProfile() {
     useEffect(() => {
         http.get(`/user/${id}`).then((res) => {
             console.log(res.data);
-            setUser(res.data); 
+            setUser(res.data)
             setLoading(false);
         });
     }, []);
@@ -47,13 +48,11 @@ function UserProfile() {
                 .required('Email is required'),
             phoneNumber: yup.string()
                 .max(20, 'Phone number must be at most 20 characters')
-                .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
-                .required('Phone number is required'),
+                .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international'),
             mailingAddress: yup.string()
-                .max(100, 'Home address must be at most 100 characters')
-                .required('Home address is required'),
+                .max(100, 'Home address must be at most 100 characters'),
             password: yup.string()
-        }),
+        }), 
         onSubmit: (data) => {
             data.name = data.name.trim();
             data.birthDate = data.birthDate
@@ -119,7 +118,7 @@ function UserProfile() {
                             autoComplete="off"
                             label="Phone Number"
                             name="phoneNumber"
-                            value={formik.values.phoneNumber}
+                            value={formik.values.phoneNumber || ""}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
                             helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
@@ -130,7 +129,7 @@ function UserProfile() {
                             autoComplete="off"
                             label="Mailing Address"
                             name="mailingAddress"
-                            value={formik.values.mailingAddress}
+                            value={formik.values.mailingAddress || ""}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             error={formik.touched.mailingAddress && Boolean(formik.errors.mailingAddress)}
                             helperText={formik.touched.mailingAddress && formik.errors.mailingAddress}
@@ -147,7 +146,7 @@ function UserProfile() {
                             sx={{ mt: 2, ml: 2 }}
                             variant="contained"
                             color="neutral"
-                            onClick={() => navigate("/users")}>
+                            onClick={() => navigate("/")}>
                             Back
                         </Button>
                     </Box>
