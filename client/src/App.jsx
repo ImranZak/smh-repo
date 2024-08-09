@@ -135,6 +135,9 @@ function App() {
               <Route path="/adddatafeedback" element={<AddDatafeedback />} />
               <Route path="/editdatafeedback/:id" element={<EditDataFeedback />} />
               <Route path="/faq" element={<Faq />} />
+
+              {/* Newly Added Route for Feedback */}
+              <Route path="/feedback" element={<AddDatafeedback />} />
             </Routes>
           </Container>
         </ThemeProvider>

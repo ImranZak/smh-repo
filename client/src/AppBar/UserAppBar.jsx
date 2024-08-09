@@ -38,7 +38,7 @@ const UserAppBar = () => {
             <Link to="/dashboard" className="nav-link">Dashboard</Link>
             <Link to="/events" className="nav-link">Events</Link>
             <Link to="/book-facilities" className="nav-link">Book Facilities</Link>
-            <Link to="/incident-reporting" className="nav-link">Incident Reporting</Link>
+            <Link to="/feedback" className="nav-link">Feedback</Link>
             <Button
               className="nav-link"
               aria-controls="menu"

@@ -36,8 +36,9 @@ const Navbar = () => {
           <Box display={{ xs: 'none', md: 'flex' }} alignItems="center">
             <Button color="inherit" onClick={() => handleNavClick('/dashboard')}>Dashboard</Button>
             <Button color="inherit" onClick={() => handleNavClick('/events')}>Events</Button>
-            <Button color="inherit" onClick={() => handleNavClick('/book-facilities')}>Book Facilities</Button>
-            <Button color="inherit" onClick={() => handleNavClick('/incident-reporting')}>Incident Reporting</Button>
+            {/* Consider adding this back once implemented */}
+            {/* <Button color="inherit" onClick={() => handleNavClick('/book-facilities')}>Book Facilities</Button> */}
+            <Button color="inherit" onClick={() => handleNavClick('/feedback')}>Feedback</Button>
             <Button color="inherit" onClick={() => handleNavClick('/envirolearn-community')}>EnviroLearn Community</Button>
             <Button color="inherit" onClick={() => handleNavClick('/login')}>Login</Button>
           </Box>
@@ -64,12 +65,13 @@ const Navbar = () => {
           <ListItem button onClick={() => handleNavClick('/events')}>
             <ListItemText primary="Events" />
           </ListItem>
-          <ListItem button onClick={() => handleNavClick('/book-facilities')}>
+          {/* Consider adding this back once implemented */}
+          {/* <ListItem button onClick={() => handleNavClick('/book-facilities')}>
             <ListItemText primary="Book Facilities" />
-          </ListItem>
-          <ListItem button onClick={() => handleNavClick('/incident-reporting')}>
-            <ListItemText primary="Incident Reporting" />
-          </ListItem>
+          </ListItem> */}
+           <ListItem button onClick={() => handleNavClick('/feedback')}>
+            <ListItemText primary="Feedback" />
+          </ListItem> 
           <ListItem button onClick={() => handleNavClick('/envirolearn-community')}>
             <ListItemText primary="EnviroLearn Community" />
           </ListItem>
