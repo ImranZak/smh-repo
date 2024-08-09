@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
     res.send("Welcome to the learning space.");
 });
 
-// Routes
+// Routes from HEAD branch
 const usageRoutes = require('./routes/usageRoutes');
 const friendsRoutes = require('./routes/friendsRoutes');
 const messagesRoutes = require('./routes/messagesRoutes');
@@ -33,8 +33,12 @@ const resourceContent = require('./routes/resourceContent');
 const eventRoute = require('./routes/event');
 const fileRoute = require('./routes/file');
 const signupRoute = require('./routes/signup');
-const userRoute = require('./routes/user'); 
+const userRoute = require('./routes/user');
 
+// Routes from Feedback branch
+const dataFeedback = require('./routes/datafeedback');
+
+// Apply routes
 app.use('/api/usage', usageRoutes);
 app.use('/api/friends', friendsRoutes);
 app.use('/api/messages', messagesRoutes);
@@ -49,6 +53,7 @@ app.use("/event", eventRoute);
 app.use("/file", fileRoute);
 app.use("/signup", signupRoute);
 app.use("/user", userRoute);
+app.use("/datafeedback", dataFeedback);
 
 console.log('Routes have been set up.');
 

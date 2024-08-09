@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react'; // Import useState hook for state management
 import { ThemeProvider } from '@mui/material/styles';
 import UserContext from './contexts/UserContext';
 import http from './http';
@@ -51,6 +50,14 @@ import Friends from './components/Friends';
 import Messages from './components/Messages';
 import Notifications from './components/Notifications';
 
+// Imported components from Feedback branch
+import DataFeedbackStaff from './pages/DataFeedbackStaff';
+import FeedbackDisplay from './pages/FeedbackDisplay';
+import DataFeedbacks from './pages/DataFeedbacks';
+import AddDatafeedback from './pages/AddDatafeedback';
+import EditDataFeedback from './pages/EditDataFeedback';
+import Faq from './pages/Faq';
+
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
   const [user, setUser] = useState(null);
@@ -59,10 +66,11 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
       http.get("/user/auth").then((res) => {
-          setUser(res.data.user)
-          setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
+        setUser(res.data.user)
+        setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
       });
-  }}, []);
+    }
+  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget); // Open the menu
@@ -110,8 +118,8 @@ function App() {
               <Route path={"/users"} element={<Users />} />
               <Route path={"/create-staff"} element={<CreateStaff />} />
               <Route path={"/create-user"} element={<CreateUser />} />
-              <Route path={"/update-staff/:id"} element={<UpdateStaff />}/>
-              <Route path={"/update-user/:id"} element={<UpdateUser />}/>
+              <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
+              <Route path={"/update-user/:id"} element={<UpdateUser />} />
 
               {/* Routes from Current branch */}
               <Route path="/dashboard" element={<Dashboard />} />
@@ -119,6 +127,14 @@ function App() {
               <Route path="/friends" element={<Friends />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/notifications" element={<Notifications />} />
+
+              {/* Routes from Feedback branch */}
+              <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
+              <Route path="/feedbackdisplay/:id" element={<FeedbackDisplay />} />
+              <Route path="/datafeedback" element={<DataFeedbacks />} />
+              <Route path="/adddatafeedback" element={<AddDatafeedback />} />
+              <Route path="/editdatafeedback/:id" element={<EditDataFeedback />} />
+              <Route path="/faq" element={<Faq />} />
             </Routes>
           </Container>
         </ThemeProvider>
