@@ -7,12 +7,13 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             birthDate: {
-                type: DataTypes.DATEONLY(),
+                type: DataTypes.DATEONLY,
                 allowNull: true,
             },
             email: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
+                unique: true,
             },
             phoneNumber: {
                 type: DataTypes.STRING(20),
@@ -25,19 +26,32 @@ module.exports = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+                defaultValue: DataTypes.NOW,
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+                defaultValue: DataTypes.NOW,
             }
         },
         {
-            tableName: "users"
+            tableName: "users",
+            timestamps: true,  // Ensure timestamps are automatically managed
         }
     );
+
+    // Define the association between User and UserQuizHistory
     User.associate = models => {
-        // Define a one-to-many relationship with UserQuizHistory
         User.hasMany(models.UserQuizHistory, {
             foreignKey: 'userid',
             as: 'quizHistories',
             onDelete: 'CASCADE'
         });
     };
+
     return User;
 };

@@ -25,14 +25,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         date: {
             type: DataTypes.DATE,
-            alllowNull: false
+            allowNull: false
         },
         location: {
             type: DataTypes.STRING,
             allowNull: true,
         },
     }, {
-        tableName: 'events'
+        tableName: 'events',
+        timestamps: true, // Ensure timestamps are enabled
     });
+
     return Event;
-}
+};

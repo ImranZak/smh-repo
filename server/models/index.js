@@ -8,8 +8,8 @@ const basename = path.basename(__filename);
 const db = {};
 require('dotenv').config();
 
-// Create sequelize instance using config
-let sequelize = new Sequelize(
+// Initialize Sequelize instance
+const sequelize = new Sequelize(
   process.env.DB_NAME, process.env.DB_USER, process.env.DB_PWD,
   {
     host: process.env.DB_HOST,
@@ -26,12 +26,8 @@ fs
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file));
-    if (typeof model.init === 'function') {
-      db[model.name] = model.init(sequelize, Sequelize.DataTypes);
-    } else {
-      db[model.name] = model;
-    }
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
   });
 
 Object.keys(db).forEach(modelName => {
@@ -41,10 +37,10 @@ Object.keys(db).forEach(modelName => {
 });
 
 // Additional model imports from HEAD branch
-db.Friend = require('./Friend');
-db.Message = require('./Message');
-db.Notification = require('./Notification');
-db.Usage = require('./Usage');
+db.Friend = require('./Friend')(sequelize, Sequelize.DataTypes);
+db.Message = require('./Message')(sequelize, Sequelize.DataTypes);
+db.Notification = require('./Notification')(sequelize, Sequelize.DataTypes);
+db.Usage = require('./Usage')(sequelize, Sequelize.DataTypes);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

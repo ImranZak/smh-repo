@@ -32,7 +32,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import FriendList from './Friends';
 import Notification from './Notifications';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'; // Add this import
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import '../styles/Dashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -70,7 +70,7 @@ const Dashboard = () => {
 
   const formatData = (dataType) => {
     const labels = data.map(d => new Date(d.date).toLocaleDateString());
-    const usageData = data.filter(d => d.type === dataType).map(d => d.usage);
+    const usageData = data.filter(d => d.type === dataType).map(d => d.amount); // Update to use 'amount'
 
     return {
       labels,
@@ -171,7 +171,7 @@ const Dashboard = () => {
           preventCollision={true}
           isDraggable={true}
           isResizable={true}
-          measureBeforeMount={false} // Ensuring correct measurements
+          draggableHandle=".card-drag-handle" // Enable dragging only by clicking the drag handle
         >
           {charts.map((chart, index) => (
             <div key={`chart-${index}`} data-grid={{ x: index % 2, y: Math.floor(index / 2), w: 1, h: 1 }}>

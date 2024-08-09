@@ -1,70 +1,65 @@
-// usageController.js
-const Usage = require('../models/Usage');
-
-exports.getAllUsage = async (req, res) => {
-  try {
-    console.log("Fetching all usage data");
-    const usage = await Usage.findAll();
-    res.json(usage);
-  } catch (error) {
-    console.error("Error fetching usage data:", error.message);
-    res.status(500).json({ message: error.message });
-  }
-};
+const { Usage } = require('../models');
 
 exports.createUsage = async (req, res) => {
   try {
-    console.log("Creating usage with data:", req.body);
-    const newUsage = await Usage.create(req.body);
+    const { date, type, amount } = req.body;
+    const userId = req.body.userId || 1;  // Replace 1 with actual logic to get the user ID, if needed
+    
+    const newUsage = await Usage.create({ date, type, amount, userId });
     res.status(201).json(newUsage);
   } catch (error) {
-    console.error("Error creating usage:", error.message);
+    console.error("Error creating usage:", error);  // Log full error
     res.status(400).json({ message: error.message });
+  }
+};
+
+exports.getAllUsage = async (req, res) => {
+  try {
+    const usageData = await Usage.findAll();
+    res.json(usageData);
+  } catch (error) {
+    console.error("Error fetching usage data:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateUsage = async (req, res) => {
   try {
-    console.log("Updating usage with ID:", req.params.id);
-    const { date, type, usage } = req.body;
-    const [updated] = await Usage.update(
-      { date, type, usage },
-      { where: { id: req.params.id } }
-    );
-    if (updated) {
-      const updatedUsage = await Usage.findOne({ where: { id: req.params.id } });
-      res.json(updatedUsage);
-    } else {
+    const { id } = req.params;
+    const updatedUsage = await Usage.update(req.body, { where: { id } });
+    if (updatedUsage[0] === 0) {
       res.status(404).json({ message: 'Usage not found' });
+    } else {
+      const refreshedUsage = await Usage.findOne({ where: { id } });
+      res.json(refreshedUsage);
     }
   } catch (error) {
-    console.error("Error updating usage:", error.message);
+    console.error("Error updating usage:", error);
     res.status(400).json({ message: error.message });
   }
 };
 
 exports.clearAllUsage = async (req, res) => {
   try {
-    console.log("Clearing all usage data");
     await Usage.destroy({ where: {}, truncate: true });
     res.json({ message: 'All usage data cleared' });
   } catch (error) {
-    console.error("Error clearing usage data:", error.message);
+    console.error("Error clearing usage data:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.deleteUsage = async (req, res) => {
   try {
-    console.log("Deleting usage with ID:", req.params.id);
-    const deleted = await Usage.destroy({ where: { id: req.params.id } });
+    const { id } = req.params;
+    const deleted = await Usage.destroy({ where: { id } });
     if (deleted) {
       res.json({ message: 'Usage deleted' });
     } else {
       res.status(404).json({ message: 'Usage not found' });
     }
   } catch (error) {
-    console.error("Error deleting usage:", error.message);
+    console.error("Error deleting usage:", error);
     res.status(500).json({ message: error.message });
   }
 };

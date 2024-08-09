@@ -9,7 +9,7 @@ const DataEntry = () => {
   const [date, setDate] = useState('');
   const [type, setType] = useState('energy');
   const [usage, setUsage] = useState('');
-  const [entries, setEntries] = useState([]); // Ensure entries is an array
+  const [entries, setEntries] = useState([]);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('date');
   const [filterType, setFilterType] = useState('');
@@ -22,8 +22,8 @@ const DataEntry = () => {
   const fetchEntries = async () => {
     try {
       const result = await axios.get('http://localhost:3001/api/usage');
-      console.log('Fetched entries:', result.data); // Debugging line
-      setEntries(Array.isArray(result.data) ? result.data : []); // Ensure data is an array
+      console.log('Fetched entries:', result.data);
+      setEntries(Array.isArray(result.data) ? result.data : []);
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
@@ -49,14 +49,22 @@ const DataEntry = () => {
     }
 
     try {
-      await axios.post('http://localhost:3001/api/usage', { date, type, usage });
+      const usageData = {
+        date,
+        type,
+        amount: parseFloat(usage),  // Use "amount" instead of "usage" to match your model
+        userId: 1,  // Replace with actual user ID or remove this line if not needed
+      };
+
+      await axios.post('http://localhost:3001/api/usage', usageData);
       fetchEntries();
       setDate('');
       setType('energy');
       setUsage('');
       setError('');
     } catch (error) {
-      console.error('Error submitting data:', error);
+      console.error('Error submitting data:', error.response || error);
+      setError('Failed to submit data. Please try again.');
     }
   };
 
@@ -71,7 +79,8 @@ const DataEntry = () => {
 
   const handleUpdateData = async (id, field, value) => {
     try {
-      await axios.put(`http://localhost:3001/api/usage/${id}`, { [field]: value });
+      const updatedData = { [field]: field === 'amount' ? parseFloat(value) : value };
+      await axios.put(`http://localhost:3001/api/usage/${id}`, updatedData);
       fetchEntries();
     } catch (error) {
       console.error('Error updating data:', error);
@@ -92,7 +101,7 @@ const DataEntry = () => {
       } else if (orderBy === 'type') {
         return (order === 'asc' ? a.type.localeCompare(b.type) : b.type.localeCompare(a.type));
       } else {
-        return (order === 'asc' ? a.usage - b.usage : b.usage - a.usage);
+        return (order === 'asc' ? a.amount - b.amount : b.amount - a.amount);
       }
     });
 
@@ -184,13 +193,13 @@ const DataEntry = () => {
                   Type
                 </TableSortLabel>
               </TableCell>
-              <TableCell sortDirection={orderBy === 'usage' ? order : false}>
+              <TableCell sortDirection={orderBy === 'amount' ? order : false}>
                 <TableSortLabel
-                  active={orderBy === 'usage'}
-                  direction={orderBy === 'usage' ? order : 'asc'}
-                  onClick={() => handleSort('usage')}
+                  active={orderBy === 'amount'}
+                  direction={orderBy === 'amount' ? order : 'asc'}
+                  onClick={() => handleSort('amount')}
                 >
-                  Usage
+                  Amount
                 </TableSortLabel>
               </TableCell>
             </TableRow>
@@ -221,8 +230,8 @@ const DataEntry = () => {
                   </TableCell>
                   <TableCell>
                     <TextField
-                      value={entry.usage}
-                      onChange={(e) => handleUpdateData(entry.id, 'usage', e.target.value)}
+                      value={entry.amount}
+                      onChange={(e) => handleUpdateData(entry.id, 'amount', e.target.value)}
                       type="number"
                       fullWidth
                     />

@@ -1,22 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
     const UserQuizHistory = sequelize.define("UserQuizHistory", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        // Since quizid already exists in the database, we define it without trying to re-add the foreign key constraints
         quizid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            references: {
-                model: 'quizzes',
-                key: 'id'
-            },
-            onDelete: 'CASCADE'
         },
         userid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            references: {
-                model: 'users',
-                key: 'id'
-            },
-            onDelete: 'CASCADE'
         },
         title: {
             type: DataTypes.STRING(100),
@@ -50,11 +46,12 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     }, {
-        tableName: 'UserQuizHistory',
+        tableName: 'user_quiz_histories',
         timestamps: true,
     });
 
     UserQuizHistory.associate = models => {
+        // Associations are kept without attempting to add the foreign key constraint
         UserQuizHistory.belongsTo(models.Quiz, {
             foreignKey: 'quizid',
             as: 'quiz',

@@ -58,7 +58,7 @@ app.use("/datafeedback", dataFeedback);
 console.log('Routes have been set up.');
 
 const db = require('./models');
-db.sequelize.sync({ alter: true })
+db.sequelize.sync()
     .then(() => {
         const port = process.env.APP_PORT || 3000;
         app.listen(port, () => {

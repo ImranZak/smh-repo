@@ -22,6 +22,7 @@ class DataFeedback extends Model {
         }, {
             sequelize,
             tableName: 'datafeedback',
+            timestamps: true,  // Ensure timestamps are handled
         });
     }
 
@@ -30,4 +31,4 @@ class DataFeedback extends Model {
     }
 }
 
-module.exports = DataFeedback;
+module.exports = (sequelize) => DataFeedback.init(sequelize);

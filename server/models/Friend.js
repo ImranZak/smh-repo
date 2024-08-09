@@ -1,26 +1,38 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../utils/database');
 
-const Friend = sequelize.define('Friend', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-});
+module.exports = (sequelize) => {
+    const Friend = sequelize.define('Friend', {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        friendId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        status: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+    }, {
+        tableName: 'friends',
+        timestamps: true,
+    });
 
-module.exports = Friend;
+    return Friend;
+};
