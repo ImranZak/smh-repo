@@ -22,7 +22,6 @@ router.post("/register", async (req, res) => {
 
     // Validate request body 
     let validationSchema = yup.object({ 
-        // TODO: Update this to match user model AFTER review 2
         name: yup.string().trim().min(3).max(50).required()
         .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , ."),
         email: yup.string().trim().lowercase().email().max(50).matches(/^(?!.*@smhuser\.com$).+$/, "Invalid email").required(),
@@ -285,7 +284,6 @@ router.post("/populate", async (req, res) => {
         return
     }
     try {
-        // TODO: Implement department-role requirement to department :P
         const userData = [
             {
                 name: "Mary Jane",
