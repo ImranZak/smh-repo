@@ -34,6 +34,7 @@ const eventRoute = require('./routes/event');
 const fileRoute = require('./routes/file');
 const signupRoute = require('./routes/signup');
 const userRoute = require('./routes/user');
+const staffRoute = require('./routes/staff');
 
 // Routes from Feedback branch
 const dataFeedback = require('./routes/datafeedback');
@@ -54,6 +55,7 @@ app.use("/file", fileRoute);
 app.use("/signup", signupRoute);
 app.use("/user", userRoute);
 app.use("/datafeedback", dataFeedback);
+app.use('/staff', staffRoute)
 
 console.log('Routes have been set up.');
 
