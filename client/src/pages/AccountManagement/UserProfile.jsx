@@ -4,7 +4,9 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
 import http from '../../http';
-import UserContext from '../../contexts/UserContext';
+
+// FIX: Nullable values conflicting with form input values (this page and dashboard update page)
+// TODO: Make validationSchema accept empty string values (using regex?)
 
 function UserProfile() {
     const navigate = useNavigate();
@@ -26,6 +28,11 @@ function UserProfile() {
         http.get(`/user/${id}`).then((res) => {
             console.log(res.data);
             setUser(res.data)
+            // user.birthDate = user.birthDate == null ? "" : user.birthDate;
+            user.birthDate = user.birthDate || "";
+            user.phoneNumber = user.phoneNumber || "";
+            user.mailingAddress = user.mailingAddress || "";
+            console.log(user);
             setLoading(false);
         });
     }, []);
@@ -41,28 +48,24 @@ function UserProfile() {
                 .date()
                 .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
                 .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
-                .required(),
+                .nullable(),
             email: yup.string()
                 .email('Invalid email format')
                 .max(100, 'Email must be at most 100 characters')
                 .required('Email is required'),
             phoneNumber: yup.string()
                 .max(20, 'Phone number must be at most 20 characters')
-                .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international'),
+                .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
+                .nullable(),
             mailingAddress: yup.string()
-                .max(100, 'Home address must be at most 100 characters'),
+                .max(100, 'Home address must be at most 100 characters')
+                .nullable(),
             password: yup.string()
         }), 
         onSubmit: (data) => {
-            data.name = data.name.trim();
-            data.birthDate = data.birthDate
-            data.email = data.email.trim();
-            data.phoneNumber = data.phoneNumber.trim();
-            data.mailingAddress = data.mailingAddress.trim();
-            data.password = data.password.trim();
             http.put(`/user/${id}`, data).then((res) => {
                 console.log(res.data);
-                navigate("/users");
+                navigate("/");
             }).catch((error) => {
                 console.error("Error submitting form:", error);
             });
@@ -72,7 +75,7 @@ function UserProfile() {
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Update User
+                User Profile
             </Typography>
             {
                 !loading && (
@@ -118,7 +121,7 @@ function UserProfile() {
                             autoComplete="off"
                             label="Phone Number"
                             name="phoneNumber"
-                            value={formik.values.phoneNumber || ""}
+                            value={formik.values.phoneNumber}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
                             helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
@@ -129,7 +132,7 @@ function UserProfile() {
                             autoComplete="off"
                             label="Mailing Address"
                             name="mailingAddress"
-                            value={formik.values.mailingAddress || ""}
+                            value={formik.values.mailingAddress}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             error={formik.touched.mailingAddress && Boolean(formik.errors.mailingAddress)}
                             helperText={formik.touched.mailingAddress && formik.errors.mailingAddress}

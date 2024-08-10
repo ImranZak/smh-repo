@@ -189,7 +189,7 @@ router.put("/:id", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100).matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .").required(),
-        birthDate: yup.date().nullable().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 12, `Maximum birth year is ${(new Date().getFullYear() - 13)}`),
+        birthDate: yup.date().nullable().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 12, `Maximum birth year is ${(new Date().getFullYear() - 13)}`).nullable(),
         email: yup.string().trim().lowercase().min(3).max(100).email().required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').nullable(),
         mailingAddress: yup.string().trim().min(3).max(100).nullable(),

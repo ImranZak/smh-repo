@@ -40,7 +40,7 @@ function UpdateUser() {
                 .date()
                 .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
                 .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
-                .required(),
+                .nullable(),
             email: yup.string()
                 .email('Invalid email format')
                 .max(100, 'Email must be at most 100 characters')
@@ -48,19 +48,13 @@ function UpdateUser() {
             phoneNumber: yup.string()
                 .max(20, 'Phone number must be at most 20 characters')
                 .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
-                .required('Phone number is required'),
+                .nullable(),
             mailingAddress: yup.string()
                 .max(100, 'Home address must be at most 100 characters')
-                .required('Home address is required'),
+                .nullable(),
             password: yup.string()
         }),
         onSubmit: (data) => {
-            data.name = data.name.trim();
-            data.birthDate = data.birthDate
-            data.email = data.email.trim();
-            data.phoneNumber = data.phoneNumber.trim();
-            data.mailingAddress = data.mailingAddress.trim();
-            data.password = data.password.trim();
             http.put(`/user/${id}`, data).then((res) => {
                 console.log(res.data);
                 navigate("/users");
