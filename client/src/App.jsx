@@ -8,9 +8,9 @@ import http from './http';
 import MyTheme from './MyTheme/theme.jsx';
 
 // Imported components from Incoming branch
-import Events from './pages/Events';
-import AddEvent from './pages/AddEvent';
-import EditEvent from './pages/EditEvent';
+import Events from './pages/Events/Events.jsx';
+import AddEvent from './pages/Events/AddEvent.jsx';
+import EditEvent from './pages/Events/EditEvent.jsx';
 import Quizzes from './pages/Quiz/QuizzesStaff.jsx';
 import EditQuiz from './pages/Quiz/EditQuizStaff.jsx';
 import AddQuiz from './pages/Quiz/AddQuizStaff.jsx';
@@ -30,33 +30,21 @@ import ResourceLibraryUser from './pages/ResourceLibrary/ResourceLibraryUser.jsx
 import ResourceContentUserView from './pages/ResourceLibrary/ResourceContentUserView.jsx';
 import UserAppBar from './AppBar/UserAppBar.jsx';
 import StaffAppBar from './AppBar/StaffAppBar';
-import StaffEvents from './pages/StaffEvents';
-import SignUp from './pages/SignUp';
-import SignUps from './pages/SignUps';
-import Staff from './pages/Staff';
-import CreateStaff from './pages/CreateStaff';
-import UpdateStaff from './pages/UpdateStaff';
-import Register from './pages/Register';
-import Login from './pages/Login';
+import StaffEvents from './pages/Events/StaffEvents';
+import SignUp from './pages/Events/SignUp';
+import SignUps from './pages/Events/SignUps';
+import Staff from './pages/AccountManagement/Staff';
+import CreateStaff from './pages/AccountManagement/CreateStaff';
+import UpdateStaff from './pages/AccountManagement/UpdateStaff';
+import Register from './pages/AccountManagement/Register';
+import Login from './pages/AccountManagement/Login';
 import Homepage from './pages/Homepage.jsx';
-import Users from './pages/Users.jsx';
-import CreateUser from './pages/CreateUser';
-import UpdateUser from './pages/UpdateUser';
-
-// Imported components from Current branch
-import Dashboard from './components/Dashboard';
-import DataEntry from './components/DataEntry';
-import Friends from './components/Friends';
-import Messages from './components/Messages';
-import Notifications from './components/Notifications';
-
-// Imported components from Feedback branch
-import DataFeedbackStaff from './pages/DataFeedbackStaff';
-import FeedbackDisplay from './pages/FeedbackDisplay';
-import DataFeedbacks from './pages/DataFeedbacks';
-import AddDatafeedback from './pages/AddDatafeedback';
-import EditDataFeedback from './pages/EditDataFeedback';
-import Faq from './pages/Faq';
+import Users from './pages/AccountManagement/Users.jsx';
+import UpdateUser from './pages/AccountManagement/UpdateUser';
+import http from './http';
+import UserContext from './contexts/UserContext';
+import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
+import UserProfile from './pages/AccountManagement/UserProfile.jsx';
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
@@ -117,7 +105,6 @@ function App() {
               <Route path={"/staff"} element={<Staff />} />
               <Route path={"/users"} element={<Users />} />
               <Route path={"/create-staff"} element={<CreateStaff />} />
-              <Route path={"/create-user"} element={<CreateUser />} />
               <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
               <Route path={"/update-user/:id"} element={<UpdateUser />} />
 
@@ -138,6 +125,7 @@ function App() {
 
               {/* Newly Added Route for Feedback */}
               <Route path="/feedback" element={<AddDatafeedback />} />
+              <Route path={"/profile/:id"} element={!isStaff ? <UserProfile /> : <StaffProfile />} />
             </Routes>
           </Container>
         </ThemeProvider>

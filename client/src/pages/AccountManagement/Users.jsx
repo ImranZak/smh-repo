@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Typography, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Search, Clear, Edit, Delete } from '@mui/icons-material';
-import http from '../http';
+import http from '../../http';
 import dayjs from 'dayjs';
 
 function Users() {
@@ -83,10 +83,6 @@ function Users() {
                 <IconButton color="primary" onClick={onClickClear} >
                     <Clear />
                 </IconButton>
-                <Box sx={{ flexGrow: 1 }} />
-                <Link to="/create-user" style={{ textDecoration: 'none' }}>
-                    <Button variant='contained'>Create</Button>
-                </Link>
             </Box>
 
             {/* TODO: Add additional info feature so i can hide some of the columns */}

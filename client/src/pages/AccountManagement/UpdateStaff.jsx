@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, TextField, Button, MenuItem } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
-import http from '../http';
+import http from '../../http';
 
 function UpdateStaff() {
     const navigate = useNavigate();

@@ -1,14 +1,19 @@
 // UserAppBar.jsx
 
 import React, { useState, useContext } from 'react';
-import { AppBar, Toolbar, Typography, Container, Box, Button, Menu, MenuItem, Avatar } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Container, Box, Button, Menu, MenuItem, Avatar, IconButton } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import UserContext from '../contexts/UserContext';
 
 const UserAppBar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleUpdate = (id) => {
+    navigate(`/profile/${user.id}`)
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -74,9 +79,9 @@ const UserAppBar = () => {
                 <Link to="/ResourceLibraryUser" className="dropdown-link">Educational Materials</Link>
               </MenuItem>
             </Menu>
-            <Link to="/profile" className="nav-link profile-link">
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            </Link>
+            <IconButton onClick={() => handleUpdate(user.id)}>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
+            </IconButton>
             {user && (
                 <>
                     <Typography>{user.name}</Typography>

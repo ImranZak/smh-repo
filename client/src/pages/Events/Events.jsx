@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
-import http from '../http';
+import http from '../../http';
 import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Button } from
     '@mui/material';
 import { AccountCircle, AccessTime, Search, Clear, Edit } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 
-function StaffEvents() {
+function Events() {
     const [eventList, setEventList] = useState([]);
     const [search, setSearch] = useState('');
 
@@ -68,16 +68,12 @@ function StaffEvents() {
                     <Clear />
                 </IconButton>
                 <Box sx={{ flexGrow: 1 }} />
-                <Link to="/addevent" style={{ textDecoration: 'none' }}>
-                    <Button variant='contained'>
-                        Add
-                    </Button>
-                </Link>
             </Box>
 
             <Grid container spacing={2}>
                 {
                     eventList.map((event, i) => {
+                        const formattedDate = format(new Date(event.date), 'yyyy-MM-dd');
                         return (
                             <Grid item xs={12} md={6} lg={4} key={event.id}>
                                 <Card>
@@ -95,11 +91,6 @@ function StaffEvents() {
                                             <Typography variant="h6" sx={{ flexGrow: 1 }}>
                                                 {event.name}
                                             </Typography>
-                                            <Link to={`/editevent/${event.id}`}>
-                                                <IconButton color="primary" sx={{ padding: '4px' }}>
-                                                    <Edit />
-                                                </IconButton>
-                                            </Link>
                                         </Box>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
                                             Description: {event.description}
@@ -111,14 +102,26 @@ function StaffEvents() {
                                             Type: {event.type}
                                         </Typography>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                            Staff Notes: {event.notes}
+                                            Date of Event: {formattedDate}
                                         </Typography>
-                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                            Date of Event: {event.date}
-                                        </Typography>
-                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                            Location: {event.location}
-                                        </Typography>
+                                        {event.location && (
+                                            <>
+                                                <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                                    Location: {event.location}
+                                                </Typography>
+                                                <Button variant="contained" onClick={() => openGoogleMaps(event.location)}>
+                                                    View on Google Maps
+                                                </Button>
+                                            </>
+                                        )}
+                                        <Button
+                                            variant="contained"
+                                            component={Link}
+                                            to={`/sign-up/${event.id}`}
+                                            sx={{ mt: 2 }}
+                                        >   
+                                            Sign Up
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             </Grid>
@@ -129,4 +132,4 @@ function StaffEvents() {
         </Box>
     );
 }
-export default StaffEvents;
+export default Events;

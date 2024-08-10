@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; 
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
-import http from '../http';
+import http from '../../http';
 
-function UpdateUser() {
+// FIX: Nullable values conflicting with form input values (this page and dashboard update page)
+// TODO: Make validationSchema accept empty string values (using regex?)
+
+function UserProfile() {
     const navigate = useNavigate();
 
     const { id } = useParams();
@@ -19,12 +22,17 @@ function UpdateUser() {
         password: ""
     });
 
-    const [loading, setLoading] = useState(true);   
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         http.get(`/user/${id}`).then((res) => {
             console.log(res.data);
-            setUser(res.data); 
+            setUser(res.data)
+            // user.birthDate = user.birthDate == null ? "" : user.birthDate;
+            user.birthDate = user.birthDate || "";
+            user.phoneNumber = user.phoneNumber || "";
+            user.mailingAddress = user.mailingAddress || "";
+            console.log(user);
             setLoading(false);
         });
     }, []);
@@ -40,7 +48,7 @@ function UpdateUser() {
                 .date()
                 .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
                 .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
-                .required(),
+                .nullable(),
             email: yup.string()
                 .email('Invalid email format')
                 .max(100, 'Email must be at most 100 characters')
@@ -48,22 +56,16 @@ function UpdateUser() {
             phoneNumber: yup.string()
                 .max(20, 'Phone number must be at most 20 characters')
                 .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
-                .required('Phone number is required'),
+                .nullable(),
             mailingAddress: yup.string()
                 .max(100, 'Home address must be at most 100 characters')
-                .required('Home address is required'),
+                .nullable(),
             password: yup.string()
-        }),
+        }), 
         onSubmit: (data) => {
-            data.name = data.name.trim();
-            data.birthDate = data.birthDate
-            data.email = data.email.trim();
-            data.phoneNumber = data.phoneNumber.trim();
-            data.mailingAddress = data.mailingAddress.trim();
-            data.password = data.password.trim();
             http.put(`/user/${id}`, data).then((res) => {
                 console.log(res.data);
-                navigate("/users");
+                navigate("/");
             }).catch((error) => {
                 console.error("Error submitting form:", error);
             });
@@ -73,7 +75,7 @@ function UpdateUser() {
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Update User
+                User Profile
             </Typography>
             {
                 !loading && (
@@ -147,7 +149,7 @@ function UpdateUser() {
                             sx={{ mt: 2, ml: 2 }}
                             variant="contained"
                             color="neutral"
-                            onClick={() => navigate("/users")}>
+                            onClick={() => navigate("/")}>
                             Back
                         </Button>
                     </Box>
@@ -157,4 +159,4 @@ function UpdateUser() {
     );
 }
 
-export default UpdateUser
+export default UserProfile
