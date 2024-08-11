@@ -39,6 +39,7 @@ import ResourceContentUserView from './pages/ResourceLibrary/ResourceContentUser
 import UserAppBar from './AppBar/UserAppBar.jsx';
 import StaffAppBar from './AppBar/StaffAppBar';
 import StaffEvents from './pages/Events/StaffEvents';
+import Event_History from './pages/Events/Event_History';
 import SignUp from './pages/Events/SignUp';
 import SignUps from './pages/Events/SignUps';
 import Staff from './pages/AccountManagement/Staff';
@@ -91,6 +92,7 @@ function App() {
               <Route path={"/addevent"} element={<AddEvent />} />
               <Route path={"/editevent/:id"} element={<EditEvent />} />
               <Route path={"/staffevents"} element={<StaffEvents />} />
+              <Route path={"/event_history"} element={<Event_History />} />
               <Route path={"/sign-up/:id"} element={<SignUp />} />
               <Route path={"/signups"} element={<SignUps />} />
               <Route path="/quizzesStaff" element={<Quizzes />} />
