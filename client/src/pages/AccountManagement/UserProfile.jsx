@@ -4,12 +4,12 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
 import http from '../../http';
+import ChangePassword from './ChangePassword.jsx'
 
 // FIX: Nullable values conflicting with form input values (this page and dashboard update page)
 // TODO: Make validationSchema accept empty string values (using regex?)
 
 function UserProfile() {
-    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -18,31 +18,31 @@ function UserProfile() {
         email: "",
         birthDate: "",
         phoneNumber: "",
-        mailingAddress: "",
-        password: ""
+        mailingAddress: ""
     });
 
     const [loading, setLoading] = useState(true);
+    const [edit, setEdit] = useState(false);
+    const [changePassword, setChangePassword] = useState(false);
 
-    useEffect(() => {
+    const loadForm = () => {
         http.get(`/user/${id}`).then((res) => {
             console.log(res.data);
-            setUser(res.data)
-            // user.birthDate = user.birthDate == null ? "" : user.birthDate;
-            user.birthDate = user.birthDate || "";
-            user.phoneNumber = user.phoneNumber || "";
-            user.mailingAddress = user.mailingAddress || "";
-            console.log(user);
+            setUser(res.data);
             setLoading(false);
         });
-    }, []);
+    }
+
+    useEffect(loadForm, []);
 
     const formik = useFormik({
         initialValues: user,
         enableReinitialize: true,
         validationSchema: yup.object({
-            name: yup.string()
+            name: yup
+                .string()
                 .max(100, 'Name must be at most 100 characters')
+                .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .")
                 .required('Name is required'),
             birthDate: yup
                 .date()
@@ -59,26 +59,111 @@ function UserProfile() {
                 .nullable(),
             mailingAddress: yup.string()
                 .max(100, 'Home address must be at most 100 characters')
-                .nullable(),
-            password: yup.string()
+                .nullable()
         }), 
         onSubmit: (data) => {
             http.put(`/user/${id}`, data).then((res) => {
                 console.log(res.data);
-                navigate("/");
+                setEdit(false);
+                loadForm();
             }).catch((error) => {
                 console.error("Error submitting form:", error);
             });
         }
     });
 
-    return (
-        <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
-                User Profile
-            </Typography>
-            {
-                !loading && (
+    const handleCancel = () => {
+        formik.resetForm();
+        setEdit(false);
+    };
+
+    const renderUserProfile = () => {
+        return (
+            <>
+                <Typography variant="h5" sx={{ my: 2 }}>
+                    User Profile
+                </Typography>
+                { !edit && !loading && (
+                    <Box component="form" onSubmit={formik.handleSubmit} sx={{ marginBottom: '5%' }}>
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            autoComplete="off"
+                            label="Name"
+                            name="name"
+                            value={formik.values.name}
+                            InputProps={{
+                                readOnly: true,
+                                style: { pointerEvents: 'none' },
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            autoComplete="off"
+                            label="Birth Date"
+                            name="birthDate"
+                            type='date'
+                            value={formik.values.birthDate || "dd/mm/yyyy"}
+                            InputProps={{
+                                readOnly: true,
+                                style: { pointerEvents: 'none' },
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            autoComplete="off"
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={formik.values.email}
+                            InputProps={{
+                                readOnly: true,
+                                style: { pointerEvents: 'none' },
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            autoComplete="off"
+                            label="Phone Number"
+                            name="phoneNumber"
+                            value={formik.values.phoneNumber}
+                            InputProps={{
+                                readOnly: true,
+                                style: { pointerEvents: 'none' },
+                            }}
+                        />
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            autoComplete="off"
+                            label="Mailing Address"
+                            name="mailingAddress"
+                            value={formik.values.mailingAddress}
+                            InputProps={{
+                                readOnly: true,
+                                style: { pointerEvents: 'none' },
+                            }}
+                        />
+                        <Button
+                            sx={{ mt: 2 }}
+                            variant="contained"
+                            color="primary"
+                            onClick={() => setEdit(true)}>
+                            Edit Profile
+                        </Button>
+                        <Button
+                            sx={{ mt: 2, ml: 2 }}
+                            variant="contained"
+                            color="primary"
+                            onClick={() => setChangePassword(true)}>
+                            Change Password
+                        </Button>
+                    </Box>
+                )}
+                { edit && !loading && (
                     <Box component="form" onSubmit={formik.handleSubmit} sx={{ marginBottom: '5%' }}>
                         <TextField
                             fullWidth
@@ -143,18 +228,24 @@ function UserProfile() {
                             color="primary"
                             type="submit"
                             disabled={!formik.isValid || formik.isSubmitting}>
-                            Update
+                            Confirm
                         </Button>
                         <Button
                             sx={{ mt: 2, ml: 2 }}
                             variant="contained"
                             color="neutral"
-                            onClick={() => navigate("/")}>
+                            onClick={handleCancel}>
                             Back
                         </Button>
                     </Box>
-                )
-            }
+                )}
+            </>
+        );
+    };
+
+    return (
+        <Box>
+            { !changePassword ? renderUserProfile() : <ChangePassword />}
         </Box>
     );
 }

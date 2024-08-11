@@ -85,15 +85,72 @@ router.post("/", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
-        name: yup.string().trim().min(3).max(100).required(),
-        birthDate: yup.date().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 17, `Maximum birth year is ${(new Date().getFullYear() - 18)}`).required(),
-        email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
-        phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
-        homeAddress: yup.string().trim().min(3).max(100).required(),
-        password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed").required(),
-        role: yup.string().trim().min(3).max(500).required(),
-        department: yup.string().trim().min(2).max(500).required(),
-        joinDate: yup.date().min('01/01/2002', `Minimum join year is 2002`).max(new Date().getFullYear()+1, `Maximum join year is ${new Date().getFullYear()}`).required()
+        name: yup
+            .string()
+            .trim()
+            .min(3)
+            .max(100)
+            .matches(
+                /^[a-zA-Z '-,.]+$/,
+                "name only allow letters, spaces and characters: ' - , ."
+            )
+            .required(),
+        birthDate: yup
+            .date()
+            .min(
+                new Date().getFullYear() - 100,
+                `Minimum birth year is ${new Date().getFullYear() - 100}`
+            )
+            .max(
+                new Date().getFullYear() - 17,
+                `Maximum birth year is ${new Date().getFullYear() - 18}`
+            )
+            .required(),
+        email: yup
+            .string()
+            .trim()
+            .lowercase()
+            .min(3)
+            .max(100)
+            .email()
+            .matches(emailRegex, "Email must be from @smhstaff.com")
+            .required(),
+        phoneNumber: yup
+            .string()
+            .trim()
+            .matches(
+                phoneRegex,
+                "Phone number must be 8-10 digits with valid country code if international"
+            )
+            .required(),
+        homeAddress: yup
+            .string()
+            .trim()
+            .min(3)
+            .max(100)
+            .required(),
+        password: yup
+            .string()
+            .trim()
+            .matches(passwordRegex,"Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed")
+            .required(),
+        role: yup
+            .string()
+            .trim()
+            .min(3)
+            .max(500)
+            .required(),
+        department: yup
+            .string()
+            .trim()
+            .min(2)
+            .max(500)
+            .required(),
+        joinDate: yup
+            .date()
+            .min("01/01/2002", `Minimum join year is 2002`)
+            .max(new Date().getFullYear() + 1, `Maximum join year is ${new Date().getFullYear()}`)
+            .required(),
     });
     try {
         data = await validationSchema.validate(data,
@@ -155,7 +212,7 @@ router.put("/:id", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
-        name: yup.string().trim().min(3).max(100).required(),
+        name: yup.string().trim().min(3).max(100).matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .").required(),
         birthDate: yup.date().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 17, `Maximum birth year is ${(new Date().getFullYear() - 18)}`).required(),
         email: yup.string().trim().lowercase().min(3).max(100).email().matches(emailRegex, 'Email must be from @smhstaff.com').required(),
         phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').required(),
@@ -169,7 +226,7 @@ router.put("/:id", async (req, res) => {
         data = await validationSchema.validate(data,
             { abortEarly: false });
 
-        data.password = await bcrypt.hash(data.password, 10);
+        data.password = data.password || await bcrypt.hash(data.password, 10);
         let num = await Staff.update(data, {
             where: { id: id }
         });

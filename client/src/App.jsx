@@ -68,11 +68,11 @@ function App() {
   }, []);
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget); // Open the menu
+    setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorEl(null); // Close the menu
+    setAnchorEl(null);
   };
 
   return (
@@ -114,23 +114,17 @@ function App() {
               <Route path={"/create-staff"} element={<CreateStaff />} />
               <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
               <Route path={"/update-user/:id"} element={<UpdateUser />} />
-
-              {/* Routes from Current branch */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/data-entry" element={<DataEntry />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/notifications" element={<Notifications />} />
-
-              {/* Routes from Feedback branch */}
               <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
               <Route path="/feedbackdisplay/:id" element={<FeedbackDisplay />} />
               <Route path="/datafeedback" element={<DataFeedbacks />} />
               <Route path="/adddatafeedback" element={<AddDatafeedback />} />
               <Route path="/editdatafeedback/:id" element={<EditDataFeedback />} />
               <Route path="/faq" element={<Faq />} />
-
-              {/* Newly Added Route for Feedback */}
               <Route path="/feedback" element={<AddDatafeedback />} />
               <Route path={"/profile/:id"} element={!isStaff ? <UserProfile /> : <StaffProfile />} />
             </Routes>
