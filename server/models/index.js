@@ -36,12 +36,6 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-// Additional model imports from HEAD branch
-db.Friend = require('./Friend')(sequelize, Sequelize.DataTypes);
-db.Message = require('./Message')(sequelize, Sequelize.DataTypes);
-db.Notification = require('./Notification')(sequelize, Sequelize.DataTypes);
-db.Usage = require('./Usage')(sequelize, Sequelize.DataTypes);
-
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

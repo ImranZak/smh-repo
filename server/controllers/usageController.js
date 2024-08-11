@@ -4,7 +4,9 @@ exports.createUsage = async (req, res) => {
   try {
     const { date, type, amount } = req.body;
     const userId = req.body.userId || 1;  // Replace 1 with actual logic to get the user ID, if needed
-    
+
+    console.log("Creating usage with data:", { date, type, amount, userId });
+
     const newUsage = await Usage.create({ date, type, amount, userId });
     res.status(201).json(newUsage);
   } catch (error) {
@@ -26,7 +28,10 @@ exports.getAllUsage = async (req, res) => {
 exports.updateUsage = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("Updating usage with ID:", id, "with data:", req.body);
+    
     const updatedUsage = await Usage.update(req.body, { where: { id } });
+
     if (updatedUsage[0] === 0) {
       res.status(404).json({ message: 'Usage not found' });
     } else {
@@ -52,6 +57,8 @@ exports.clearAllUsage = async (req, res) => {
 exports.deleteUsage = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("Deleting usage with ID:", id);
+
     const deleted = await Usage.destroy({ where: { id } });
     if (deleted) {
       res.json({ message: 'Usage deleted' });
