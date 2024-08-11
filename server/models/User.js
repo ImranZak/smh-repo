@@ -51,14 +51,6 @@ module.exports = (sequelize, DataTypes) => {
             as: 'quizHistories',
             onDelete: 'CASCADE'
         });
-<<<<<<< HEAD
-=======
-        User.hasMany(models.SignUp, {
-            foreignKey: 'userid',
-            as: 'signups',
-            onDelete: 'CASCADE'
-        });
->>>>>>> events
     };
 
     return User;
