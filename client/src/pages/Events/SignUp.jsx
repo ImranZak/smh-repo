@@ -41,7 +41,7 @@ function SignUp() {
             data.email = data.email.trim();
             data.phone = data.phone.trim();
             data.nric = data.nric.trim();
-            http.post("/signup", data)
+            http.post("/signup", { ...data, eventId: id}    )
                 .then((res) => {
                     console.log(res.data);
                     toast.success('Sign Up Successful!');

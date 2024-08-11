@@ -31,10 +31,13 @@ const userquizhistoryRoute = require('./routes/UserQuizHistory');
 const resource = require('./routes/resource');
 const resourceContent = require('./routes/resourceContent');
 const eventRoute = require('./routes/event');
+const eventHistoryRoute = require('./routes/eventHistory'); 
 const fileRoute = require('./routes/file');
 const signupRoute = require('./routes/signup');
 const userRoute = require('./routes/user');
 const staffRoute = require('./routes/staff');
+const markerRoute = require('./routes/marker');
+const sendquizemailRoute = require('./routes/quizEmail');
 
 // Routes from Feedback branch
 const dataFeedback = require('./routes/datafeedback');
@@ -51,11 +54,14 @@ app.use("/user/quiz", userquizhistoryRoute);
 app.use("/resource", resource);
 app.use("/resourceContent", resourceContent);
 app.use("/event", eventRoute);
+app.use('/eventHistory', eventHistoryRoute);
 app.use("/file", fileRoute);
 app.use("/signup", signupRoute);
 app.use("/user", userRoute);
 app.use("/datafeedback", dataFeedback);
 app.use('/staff', staffRoute)
+app.use('/marker', markerRoute)
+app.use('/sendquizemail', sendquizemailRoute)
 
 console.log('Routes have been set up.');
 

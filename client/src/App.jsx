@@ -3,6 +3,7 @@ import './App.css';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
+import { ToastContainer } from 'react-toastify';  
 import MyTheme from './MyTheme/theme.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import DataEntry from './components/DataEntry.jsx';
@@ -38,6 +39,7 @@ import ResourceContentUserView from './pages/ResourceLibrary/ResourceContentUser
 import UserAppBar from './AppBar/UserAppBar.jsx';
 import StaffAppBar from './AppBar/StaffAppBar';
 import StaffEvents from './pages/Events/StaffEvents';
+import Event_History from './pages/Events/Event_History';
 import SignUp from './pages/Events/SignUp';
 import SignUps from './pages/Events/SignUps';
 import Staff from './pages/AccountManagement/Staff';
@@ -52,6 +54,7 @@ import http from './http';
 import UserContext from './contexts/UserContext';
 import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
 import UserProfile from './pages/AccountManagement/UserProfile.jsx';
+
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
@@ -77,6 +80,7 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>
+      <ToastContainer />
       <Router>
         <ThemeProvider theme={MyTheme}>
           {!isStaff ? <UserAppBar /> : <StaffAppBar />}
@@ -88,6 +92,7 @@ function App() {
               <Route path={"/addevent"} element={<AddEvent />} />
               <Route path={"/editevent/:id"} element={<EditEvent />} />
               <Route path={"/staffevents"} element={<StaffEvents />} />
+              <Route path={"/event_history"} element={<Event_History />} />
               <Route path={"/sign-up/:id"} element={<SignUp />} />
               <Route path={"/signups"} element={<SignUps />} />
               <Route path="/quizzesStaff" element={<Quizzes />} />
