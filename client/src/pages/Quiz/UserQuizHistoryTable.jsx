@@ -56,6 +56,7 @@ const headCells = [
     { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'dateTaken', numeric: false, disablePadding: false, label: 'Date Taken' },  // Add this line
+    { id: 'score', numeric: false, disablePadding: false, label: 'Score' },  // Add this line
 ];
 
 
@@ -189,7 +190,8 @@ export default function EnhancedTable({ rows }) {
                                         <TableCell align="center">{row.id}</TableCell>
                                         <TableCell align="left">{row.title}</TableCell>
                                         <TableCell align="left">{row.description}</TableCell>
-                                        <TableCell align="left">{row.dateTaken}</TableCell>  
+                                        <TableCell align="left">{row.dateTaken}</TableCell> 
+                                        <TableCell align="left">{row.score}</TableCell> 
                                     </TableRow>
                                 );
                             })}

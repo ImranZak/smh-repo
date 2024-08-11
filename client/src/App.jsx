@@ -3,6 +3,7 @@ import './App.css';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
+import { ToastContainer } from 'react-toastify';  
 import MyTheme from './MyTheme/theme.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import DataEntry from './components/DataEntry.jsx';
@@ -53,6 +54,7 @@ import UserContext from './contexts/UserContext';
 import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
 import UserProfile from './pages/AccountManagement/UserProfile.jsx';
 
+
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
   const [user, setUser] = useState(null);
@@ -77,6 +79,7 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>
+      <ToastContainer />
       <Router>
         <ThemeProvider theme={MyTheme}>
           {!isStaff ? <UserAppBar /> : <StaffAppBar />}
@@ -116,22 +119,22 @@ function App() {
               <Route path={"/update-user/:id"} element={<UpdateUser />} />
 
               {/* Routes from Current branch */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              {/* <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/data-entry" element={<DataEntry />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/messages" element={<Messages />} />
-              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/notifications" element={<Notifications />} /> */}
 
               {/* Routes from Feedback branch */}
-              <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
+              {/* <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
               <Route path="/feedbackdisplay/:id" element={<FeedbackDisplay />} />
               <Route path="/datafeedback" element={<DataFeedbacks />} />
               <Route path="/adddatafeedback" element={<AddDatafeedback />} />
               <Route path="/editdatafeedback/:id" element={<EditDataFeedback />} />
-              <Route path="/faq" element={<Faq />} />
+              <Route path="/faq" element={<Faq />} /> */}
 
               {/* Newly Added Route for Feedback */}
-              <Route path="/feedback" element={<AddDatafeedback />} />
+              {/* <Route path="/feedback" element={<AddDatafeedback />} /> */}
               <Route path={"/profile/:id"} element={!isStaff ? <UserProfile /> : <StaffProfile />} />
             </Routes>
           </Container>

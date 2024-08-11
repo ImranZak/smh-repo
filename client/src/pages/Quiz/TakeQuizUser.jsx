@@ -117,27 +117,37 @@ function TakeQuizUser() {
         }));
     };
 
-    const calculateScore = () => {
-        http.get(`/quiz/question/quizzes/${id}/questions`)
-            .then((res) => {
-                const correctAnswers = res.data.reduce((acc, question) => {
-                    const userAnswer = userAnswers[question.id];
-                    const correctAnswer = question.answer_text;
-
-                    console.log(`Question ID: ${question.id}, User Answer: ${userAnswer}, Correct Answer: ${correctAnswer}`);
-
-                    if (userAnswer && correctAnswer && userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-                        return acc + 1;
+    const calculateScore = async () => {
+        try {
+            const res = await http.get(`/quiz/question/quizzes/${id}/questions`);
+            let correctAnswers = 0;
+    
+            for (const question of res.data) {
+                const userAnswer = userAnswers[question.id];
+                const correctAnswer = question.answer_text;
+    
+                console.log(`Question ID: ${question.id}, User Answer: ${userAnswer}, Correct Answer: ${correctAnswer}`);
+    
+                try {
+                    const response = await http.post('/marker', {
+                        question: question.question_text,
+                        answer: correctAnswer,
+                        userAnswer: userAnswer
+                    });
+    
+                    if (response.data.isCorrect) {
+                        correctAnswers += 1;
                     }
-                    return acc;
-                }, 0);
-
-                const scorePercentage = (correctAnswers / totalQuestions) * 100;
-                setScore(scorePercentage);
-            })
-            .catch((err) => {
-                console.error('Error calculating score:', err);
-            });
+                } catch (error) {
+                    console.error('Error checking answer:', error);
+                }
+            }
+    
+            const scorePercentage = (correctAnswers / totalQuestions) * 100;
+            setScore(scorePercentage);
+        } catch (err) {
+            console.error('Error calculating score:', err);
+        }
     };
 
     const postQuizHistory = () => {

@@ -100,7 +100,7 @@ function EditQuiz() {
                             helperText={formik.touched.tag && formik.errors.tag}
                         >
                             <MenuItem value="waste reduction">Waste Reduction</MenuItem>
-                            <MenuItem value="energy conservation">Energy Vonservation</MenuItem>
+                            <MenuItem value="energy conservation">Energy Conservation</MenuItem>
                             <MenuItem value="water management">Water Management</MenuItem>
                             <MenuItem value="green living tips">Green Living Tips</MenuItem>
                         </TextField>
