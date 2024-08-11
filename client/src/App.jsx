@@ -59,91 +59,91 @@ import EditDataFeedback from './pages/EditDataFeedback';
 import Faq from './pages/Faq';
 
 function App() {
-  const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
-  const [user, setUser] = useState(null);
-  const [isStaff, setIsStaff] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
+    const [user, setUser] = useState(null);
+    const [isStaff, setIsStaff] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      http.get("/user/auth").then((res) => {
-        setUser(res.data.user)
-        setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
-      });
-    }
-  }, []);
+    useEffect(() => {
+        if (localStorage.getItem("accessToken")) {
+            http.get("/user/auth").then((res) => {
+                setUser(res.data.user);
+                setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
+            });
+        }
+    }, []);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget); // Open the menu
-  };
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget); // Open the menu
+    };
 
-  const handleClose = () => {
-    setAnchorEl(null); // Close the menu
-  };
+    const handleClose = () => {
+        setAnchorEl(null); // Close the menu
+    };
 
-  return (
-    <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>
-      <Router>
-        <ThemeProvider theme={MyTheme}>
-          {!isStaff ? <UserAppBar /> : <StaffAppBar />}
-          <Container>
-            <Routes>
-              {/* Routes from Incoming branch */}
-              <Route path={"/"} element={<Homepage />} />
-              <Route path={"/events"} element={<Events />} />
-              <Route path={"/addevent"} element={<AddEvent />} />
-              <Route path={"/editevent/:id"} element={<EditEvent />} />
-              <Route path={"/staffevents"} element={<StaffEvents />} />
-              <Route path={"/sign-up/:id"} element={<SignUp />} />
-              <Route path={"/signups"} element={<SignUps />} />
-              <Route path="/quizzesStaff" element={<Quizzes />} />
-              <Route path="/editquiz/:id" element={<EditQuiz />} />
-              <Route path="/addquiz" element={<AddQuiz />} />
-              <Route path="/quizzesStaff/:quizId/questions" element={<Questions />} />
-              <Route path="/quizzesStaff/:quizId/addquestion" element={<AddQuestion />} />
-              <Route path="/quizzesStaff/:quizId/editquestion/:questionId" element={<EditQuestion />} />
-              <Route path="/quizzesUser" element={<QuizzesUser />} />
-              <Route path="/takequiz/:id" element={<TakeQuizUser />} />
-              <Route path="/ResourceLibraryStaff" element={<ResourceLibraryStaff />} />
-              <Route path="/AddResource" element={<AddResource />} />
-              <Route path="/EditResource/:id" element={<EditResource />} />
-              <Route path="/ResourceContentStaff/:postId" element={<ResourceContentStaff />} />
-              <Route path="/ResourceContentStaff/:postId/AddResourceContentStaff" element={<AddResourceContentStaff />} />
-              <Route path="/ResourceContentStaff/:postId/EditResourceContentStaff/:id" element={<EditResourceContentStaff />} />
-              <Route path="/ResourceLibraryUser" element={<ResourceLibraryUser />} />
-              <Route path="/ResourceLibraryUser/ResourceContentUserView/:id" element={<ResourceContentUserView />} />
-              <Route path="/quizzesUser/history" element={<UserQuizHistory />} />
-              <Route path={"/register"} element={<Register />} />
-              <Route path={"/login"} element={<Login />} />
-              <Route path={"/staff"} element={<Staff />} />
-              <Route path={"/users"} element={<Users />} />
-              <Route path={"/create-staff"} element={<CreateStaff />} />
-              <Route path={"/create-user"} element={<CreateUser />} />
-              <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
-              <Route path={"/update-user/:id"} element={<UpdateUser />} />
+    return (
+        <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>
+            <Router>
+                <ThemeProvider theme={MyTheme}>
+                    {!isStaff ? <UserAppBar /> : <StaffAppBar />}
+                    <Container>
+                        <Routes>
+                            {/* Routes from Incoming branch */}
+                            <Route path={"/"} element={<Homepage />} />
+                            <Route path={"/events"} element={<Events />} />
+                            <Route path={"/addevent"} element={<AddEvent />} />
+                            <Route path={"/editevent/:id"} element={<EditEvent />} />
+                            <Route path={"/staffevents"} element={<StaffEvents />} />
+                            <Route path={"/sign-up/:id"} element={<SignUp />} />
+                            <Route path={"/signups"} element={<SignUps />} />
+                            <Route path="/quizzesStaff" element={<Quizzes />} />
+                            <Route path="/editquiz/:id" element={<EditQuiz />} />
+                            <Route path="/addquiz" element={<AddQuiz />} />
+                            <Route path="/quizzesStaff/:quizId/questions" element={<Questions />} />
+                            <Route path="/quizzesStaff/:quizId/addquestion" element={<AddQuestion />} />
+                            <Route path="/quizzesStaff/:quizId/editquestion/:questionId" element={<EditQuestion />} />
+                            <Route path="/quizzesUser" element={<QuizzesUser />} />
+                            <Route path="/takequiz/:id" element={<TakeQuizUser />} />
+                            <Route path="/ResourceLibraryStaff" element={<ResourceLibraryStaff />} />
+                            <Route path="/AddResource" element={<AddResource />} />
+                            <Route path="/EditResource/:id" element={<EditResource />} />
+                            <Route path="/ResourceContentStaff/:postId" element={<ResourceContentStaff />} />
+                            <Route path="/ResourceContentStaff/:postId/AddResourceContentStaff" element={<AddResourceContentStaff />} />
+                            <Route path="/ResourceContentStaff/:postId/EditResourceContentStaff/:id" element={<EditResourceContentStaff />} />
+                            <Route path="/ResourceLibraryUser" element={<ResourceLibraryUser />} />
+                            <Route path="/ResourceLibraryUser/ResourceContentUserView/:id" element={<ResourceContentUserView />} />
+                            <Route path="/quizzesUser/history" element={<UserQuizHistory />} />
+                            <Route path={"/register"} element={<Register />} />
+                            <Route path={"/login"} element={<Login />} />
+                            <Route path={"/staff"} element={<Staff />} />
+                            <Route path={"/users"} element={<Users />} />
+                            <Route path={"/create-staff"} element={<CreateStaff />} />
+                            <Route path={"/create-user"} element={<CreateUser />} />
+                            <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
+                            <Route path={"/update-user/:id"} element={<UpdateUser />} />
 
-              {/* Routes from Current branch */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/data-entry" element={<DataEntry />} />
-              <Route path="/friends" element={<Friends />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/notifications" element={<Notifications />} />
+                            {/* Routes from Current branch */}
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/data-entry" element={<DataEntry />} />
+                            <Route path="/friends" element={<Friends />} />
+                            <Route path="/messages" element={<Messages />} />
+                            <Route path="/notifications" element={<Notifications />} />
 
-              {/* Routes from Feedback branch */}
-              <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
-              <Route path="/feedbackdisplay/:id" element={<FeedbackDisplay />} />
-              <Route path="/datafeedback" element={<DataFeedbacks />} />
-              <Route path="/adddatafeedback" element={<AddDatafeedback />} />
-              <Route path="/editdatafeedback/:id" element={<EditDataFeedback />} />
-              <Route path="/faq" element={<Faq />} />
+                            {/* Routes from Feedback branch */}
+                            <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
+                            <Route path="/feedbackdisplay/:id" element={<FeedbackDisplay />} />
+                            <Route path="/datafeedback" element={<DataFeedbacks />} />
+                            <Route path="/adddatafeedback" element={<AddDatafeedback />} />
+                            <Route path="/editdatafeedback/:id" element={<EditDataFeedback />} />
+                            <Route path="/faq" element={<Faq />} />
 
-              {/* Newly Added Route for Feedback */}
-              <Route path="/feedback" element={<AddDatafeedback />} />
-            </Routes>
-          </Container>
-        </ThemeProvider>
-      </Router>
-    </UserContext.Provider>
-  );
+                            {/* Newly Added Route for Feedback */}
+                            <Route path="/feedback" element={<AddDatafeedback />} />
+                        </Routes>
+                    </Container>
+                </ThemeProvider>
+            </Router>
+        </UserContext.Provider>
+    );
 }
 
 export default App;
