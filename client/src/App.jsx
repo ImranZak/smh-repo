@@ -3,11 +3,18 @@ import './App.css';
 import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import UserContext from './contexts/UserContext';
-import http from './http';
 import MyTheme from './MyTheme/theme.jsx';
-
-// Imported components from Incoming branch
+import Dashboard from './components/Dashboard.jsx';
+import DataEntry from './components/DataEntry.jsx';
+import Friends from './components/Friends.jsx';
+import Messages from './components/Messages.jsx';
+import Notifications from './components/Notifications.jsx';
+import DataFeedbackStaff from './pages/Feedback/DataFeedbackStaff.jsx';
+import FeedbackDisplay from './pages/Feedback/FeedbackDisplay.jsx';
+import DataFeedbacks from './pages/Feedback/DataFeedbacks.jsx';
+import AddDatafeedback from './pages/Feedback/AddDatafeedback.jsx';
+import EditDataFeedback from './pages/Feedback/EditDataFeedback.jsx';
+import Faq from './pages/Feedback/Faq.jsx'; 
 import Events from './pages/Events/Events.jsx';
 import AddEvent from './pages/Events/AddEvent.jsx';
 import EditEvent from './pages/Events/EditEvent.jsx';

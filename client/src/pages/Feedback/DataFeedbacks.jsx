@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Button, Snackbar, Alert } from '@mui/material';
 import { AccessTime, Search, Clear, Edit } from '@mui/icons-material';
 
-import http from '../http';
+import http from '../../http';
 //import { AccessTime } from '@mui/icons-material';
 
 import dayjs from 'dayjs';
-import global from '../global';
+import global from '../../global';
 
 import './DataFeedbacks.css';
 
