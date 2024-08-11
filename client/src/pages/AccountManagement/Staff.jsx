@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Typography, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Search, Clear, Edit, Delete } from '@mui/icons-material';
-import http from '../http';
+import http from '../../http';
 import dayjs from 'dayjs';
-import global from '../global'
+import global from '../../global'
 
 function Staff() {
     const navigate = useNavigate();
@@ -46,8 +46,7 @@ function Staff() {
     const onClickClear = () => {
         setSearch(''); getStaff();
     };
-
-    // Example handlers
+    
     const handleUpdate = (id) => {
         navigate(`/update-staff/${id}`)
     };

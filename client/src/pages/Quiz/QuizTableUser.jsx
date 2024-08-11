@@ -1,8 +1,8 @@
 // EnhancedTableUser.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -22,8 +22,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import http from '../../http';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserContext from '../../contexts/UserContext'; // Adjust the import based on your context location
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -133,7 +136,16 @@ EnhancedTableToolbar.propTypes = {
     setRows: PropTypes.func.isRequired,
 };
 
+
+
 export default function EnhancedTable({ rows }) {
+    const { user } = useContext(UserContext);
+    const navigate = useNavigate();
+
+    const handleTakeQuiz = () => {
+        toast.error('Please log in first before being able to access the quiz');
+        console.log('Please log in first before being able to access the quiz');
+    }
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('id');
     const [page, setPage] = useState(0);
@@ -168,7 +180,7 @@ export default function EnhancedTable({ rows }) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={0} rows={rows} setRows={() => {}} />
+                <EnhancedTableToolbar numSelected={0} rows={rows} setRows={() => { }} />
                 <TableContainer>
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
                         <EnhancedTableHead
@@ -190,11 +202,20 @@ export default function EnhancedTable({ rows }) {
                                         <TableCell align="center">{row.id}</TableCell>
                                         <TableCell align="left">{row.title}</TableCell>
                                         <TableCell align="left">{row.description}</TableCell>
-                                        <TableCell align="left">{row.tag}</TableCell>  
+                                        <TableCell align="left">{row.tag}</TableCell>
                                         <TableCell align="left">
-                                            <Link to={`/takequiz/${row.id}`}>
-                                                Take Quiz
-                                            </Link>
+                                            {user ? (
+                                                <Link to={`/takequiz/${row.id}`}>
+                                                    <Button variant="contained" color="success">
+                                                        Take Quiz
+                                                    </Button>
+                                                </Link>
+                                            ) : (
+
+                                                <Button variant="outlined" color="error" onClick={handleTakeQuiz}>
+                                                    Take Quiz
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 );

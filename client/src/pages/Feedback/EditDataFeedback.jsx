@@ -1,29 +1,43 @@
-import React, { useState } from 'react'
-import { Box, Typography, TextField, Button, Grid, backdropClasses, Rating } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, TextField, Button, Grid, Rating } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import http from '../../http';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import http from '../http';
-
-import { useNavigate } from 'react-router-dom';
 
 import './DataFeedbacks.css';
 
-function AddDatafeedback() {
-
+function EditDataFeedback() {
+    const { id } = useParams();
     const navigate = useNavigate();
 
-    const [rating, setRating] = useState(5); // State to keep track of rating
+    const [datafeedback, setDatafeedback] = useState(
+        { name: "", ranking: 0, best: "", improvement: "", rating: 5 }
+    );
+    const [loading, setLoading] = useState(true);
 
-    const formik = useFormik(
-        {
-            initialValues:
-                { name: "", ranking: 0, best: "", improvement: "" },
-            validationSchema: yup.object({
+    const [rating, setRating] = useState(0);
+
+    useEffect(() => {
+        http.get(`/datafeedback/${id}`)
+            .then((res) => {
+                setDatafeedback(res.data);
+                setRating(res.data.rating);
+                setLoading(false);
+            });
+    }, []);
+
+    const formik = useFormik({
+        initialValues: datafeedback,
+        enableReinitialize: true,
+        validationSchema:
+            yup.object({
                 name: yup.string().trim().min(3, 'Name must be at least 3 characters')
                     .max(80, 'Name must be at most 100 characters')
                     .required('name is required'),
-                ranking: yup.number() // Ensure ranking is a number
+                ranking: yup.number()
                     .integer('Ranking must be an integer'),
                 best: yup.string().trim().min(3, 'Your best portion must be at least 3 characters')
                     .max(500, 'Your best portion must be at most 500 characters')
@@ -32,28 +46,37 @@ function AddDatafeedback() {
                     .max(500, 'Your feedback must be at most 500 characters')
                     .required('Description is required')
             }),
-            onSubmit: (data) => {
-                data.name = data.name.trim();
-                data.ranking = data.ranking;
-                data.best = data.best.trim();
-                data.improvement = data.improvement.trim();
-                console.log("Data to be sent:", data);
-                http.post('/datafeedback', data)
-                    .then((res) => {
-                        console.log(res.data);
-                        navigate("/datafeedback")
-                    });
-            }
+        onSubmit: (data) => {
+            data.name = data.name.trim();
+            data.ranking = data.ranking;
+            data.best = data.best.trim();
+            data.improvement = data.improvement.trim();
+            http.put(`/datafeedback/${id}`, data)
+            .then((res) => {
+                console.log(res.data);
+                navigate("/datafeedback");
+            });
         }
+    }
     );
 
-    // Function to handle star click
+    const [open, setOpen] = useState(false);
+    
+    const handleOpen = () => { setOpen(true); };
+    const handleClose = () => { setOpen(false); };
+
+    const deleteDataFeedback = () => {
+        http.delete(`/datafeedback/${id}`)
+            .then((res) => {
+                console.log(res.data);
+                navigate("/datafeedback");
+            });
+    }
+
     const handleStarClick = (starIndex) => {
         setRating(starIndex);
         formik.setFieldValue('ranking', starIndex);
     };
-
-    // Function to render stars
     const renderStars = () => {
         const stars = [];
         const currentRating = formik.values.ranking || rating;
@@ -61,7 +84,7 @@ function AddDatafeedback() {
             stars.push(
                 <span key={i}
                     style={{ cursor: 'pointer', color: i <= currentRating ? '#ffc107' : '#e4e5e9' }}
-                    onClick={() => handleStarClick(i)}>
+                    onClick={() => formik.setFieldValue('ranking', i)}>
                     ★
                 </span>
             );
@@ -80,7 +103,8 @@ function AddDatafeedback() {
                 </div>
 
                 <div style={{ backgroundColor: 'white', padding: '10px', marginleft: '5px' }}>
-                    <Box component="form" onSubmit={formik.handleSubmit}>
+                {!loading && (
+                    <Box component="form" onSubmit={formik.handleSubmit} style={{margin:'5px'}}>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item xs={4}>
                                 <Typography>Name (From your account):</Typography>
@@ -95,9 +119,9 @@ function AddDatafeedback() {
                             </Grid>
                             <Grid item xs={8}>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    {renderStars()}
+                                    {renderStars(datafeedback.ranking)}
                                     <Typography component="span" sx={{ ml: 2 }}>
-                                        {rating} Star{rating > 1 ? 's' : ''}
+                                        {formik.values.ranking} Star{formik.values.ranking > 1 ? 's' : ''}
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -117,20 +141,30 @@ function AddDatafeedback() {
                                 <TextField fullWidth margin="dense" autoComplete="off" multiline minRows={2} label="Improvements" name="improvement"
                                     value={formik.values.improvement} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.improvement && Boolean(formik.errors.improvement)} helperText={formik.touched.improvement && formik.errors.improvement} />
                             </Grid>
-                            <div className='feedback-buttons' style={{ textAlign: 'right', alignContent: 'right' }}>
-                                <Grid item xs={12} >
-                                    <Button variant="contained" style={{ backgroundColor: '#208130', alignContent: 'right' }} type="submit">Submit</Button>
-                                </Grid>
-                            </div>
 
+                            <Grid item xs={12}>
+                                <Button variant="contained" type="submit" style={{ backgroundColor: '#0084ff' }}> Update</Button>
+                                <Button variant="contained" sx={{ ml: 2 }} color="error" onClick={handleOpen}> Delete </Button>
+                            </Grid>
                         </Grid>
                     </Box>
+                )}
                 </div>
-
+                
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle> Delete your feedback </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText> Are you sure you want to delete this feedback? </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button variant="contained" color="inherit" onClick={handleClose}> Cancel </Button>
+                        <Button variant="contained" color="error" onClick={deleteDataFeedback}> Delete </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </div>
 
     )
 }
 
-export default AddDatafeedback
+export default EditDataFeedback

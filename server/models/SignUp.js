@@ -16,8 +16,36 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(12),
             allowNull: false
         },
+        eventId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'events',
+                key: 'id'
+            },
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'users',
+                key: 'id',
+            },
+        },
     }, {
         tableName: 'signup'
     });
+    SignUp.associate = models => {
+        SignUp.belongsTo(models.Event, {
+            foreignKey: 'eventid',
+            as: 'event',
+            onDelete: 'CASCADE'
+        });
+        SignUp.belongsTo(models.User, {
+            foreignKey: 'userid',
+            as: 'user',
+            onDelete: 'CASCADE'
+        });
+    };
     return SignUp;
 }

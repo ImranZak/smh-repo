@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Grid, Rating } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import http from '../http';
+import http from '../../http';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';

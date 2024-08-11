@@ -52,19 +52,33 @@ function UserHistoryPage() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
-                User Quiz History
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Input value={search} placeholder="Search by ID, Title or Description" onChange={onSearchChange} />
-                <IconButton color="primary">
-                    <Search />
-                </IconButton>
-                <IconButton color="primary" onClick={() => setSearch('')}>
-                    <Clear />
-                </IconButton>
-            </Box>
-            <UserQuizHistoryTable rows={filteredHistory} />
+            {user ? (
+                <>
+                    <Typography variant="h5" sx={{ my: 2 }}>
+                        User Quiz History
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Input value={search} placeholder="Search by ID, Title or Description" onChange={onSearchChange} />
+                        <IconButton color="primary">
+                            <Search />
+                        </IconButton>
+                        <IconButton color="primary" onClick={() => setSearch('')}>
+                            <Clear />
+                        </IconButton>
+                    </Box>
+                    <UserQuizHistoryTable rows={filteredHistory} />
+                </>
+            ) : (
+                <>
+                    <Typography variant="h5" sx={{ my: 2, mt: 30, textAlign: 'center' }}>
+                        Please login first or register to see quiz history
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', maxWidth: '300px', margin: '0 auto' }}>
+                        <Button variant="contained" color="primary" href="/login">Login</Button>
+                        <Button variant="contained" color="primary" href="/register">Register</Button>
+                    </Box>
+                </>
+            )}
         </Box>
     );
 }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Button } from '@mui/material';
 import { Search, Clear } from '@mui/icons-material';
 
-import http from '../http';
+import http from '../../http';
 
 
 function DataFeedbackStaff() {

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Grid } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import http from '../http';
+import http from '../../http';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -41,7 +41,7 @@ function SignUp() {
             data.email = data.email.trim();
             data.phone = data.phone.trim();
             data.nric = data.nric.trim();
-            http.post("/signup", data)
+            http.post("/signup", { ...data, eventId: id}    )
                 .then((res) => {
                     console.log(res.data);
                     toast.success('Sign Up Successful!');

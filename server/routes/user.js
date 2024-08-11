@@ -63,12 +63,12 @@ router.post("/login", async (req, res) => {
         let errorMsg = "Email or password is not correct.";
         let user = await User.findOne({ where: { email: data.email } });
         if (!user) {
-            res.status(400).json({ message: errorMsg });
+            res.status(400).json({ message: "Email is not correct." });
             return;
         }
         let match = await bcrypt.compare(data.password, user.password);
         if (!match) {
-            res.status(400).json({ message: errorMsg });
+            res.status(400).json({ message: "Password is not correct." });
             return;
         }
 
@@ -206,22 +206,41 @@ router.put("/:id", async (req, res) => {
 
     // Validate request body
     let validationSchema = yup.object({
-        name: yup.string().trim().min(3).max(100).matches(/^[a-zA-Z '-,.]+$/, "name only allows letters, spaces and characters: ' - , .").required(),
-        birthDate: yup.date().nullable().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 12, `Maximum birth year is ${(new Date().getFullYear() - 13)}`),
-        email: yup.string().trim().lowercase().min(3).max(100).email().required(),
-        phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').nullable(),
-        mailingAddress: yup.string().trim().min(3).max(100).nullable(),
+        name: yup
+            .string()
+            .max(100, 'Name must be at most 100 characters')
+            .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .")
+            .required('Name is required'),
+        birthDate: yup
+            .date()
+            .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
+            .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
+            .nullable(),
+        email: yup.string()
+            .email('Invalid email format')
+            .max(100, 'Email must be at most 100 characters')
+            .required('Email is required'),
+        phoneNumber: yup.string()
+            .max(20, 'Phone number must be at most 20 characters')
+            .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
+            .nullable(),
+        mailingAddress: yup.string()
+            .max(100, 'Home address must be at most 100 characters')
+            .nullable(),
+        password: yup
+            .string()
+            .matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces")
+            .nullable()
     });
 
     try {
-        data = await validationSchema.validate(data, { abortEarly: false });
-
-        // If password was provided in the update, hash it
-        if (data.password) {
-            data.password = await bcrypt.hash(data.password, 10);
-        }
-
-        let num = await User.update(data, { where: { id: id } });
+        data = await validationSchema.validate(data,
+            { abortEarly: false });
+            
+        data.password = data.password || await bcrypt.hash(data.password, 10);
+        let num = await User.update(data, {
+            where: { id: id }
+        });
         if (num == 1) {
             res.json({ message: "User was updated successfully." });
         } else {

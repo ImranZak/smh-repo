@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import http from '../http';
+import http from '../../http';
 import { Box, Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, Grid } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
