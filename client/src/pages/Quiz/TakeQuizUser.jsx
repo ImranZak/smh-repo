@@ -162,7 +162,7 @@ function TakeQuizUser() {
         };
         console.log("score number:", score, 'Posting quiz history:', historyData);
 
-        http.post(`/user/quiz/userhistory/${id}`, historyData)
+        http.post(`/api/user/quiz/userhistory/${id}`, historyData)
             .then((res) => {
                 console.log('Quiz history posted:', res.data);
                 navigate(`/quizzesUser`)

@@ -46,7 +46,7 @@ function Login() {
                     toast.error(`${err.response.data.message}`);
                 });
             } else {
-                http.post("/user/login", data || {})
+                http.post("/api/user/login", data || {})
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.accessToken);
                     setUser(res.data.user);
@@ -72,7 +72,7 @@ function Login() {
         }),
         onSubmit: (data) => {
             const toastId = toast.loading("Sending email...");
-            http.post('/user/verify', {
+            http.post('/api/user/verify', {
                 email: data.email
             })
                 .then((res) => {
@@ -98,7 +98,7 @@ function Login() {
                 .required('Verification code is required'),
         }),
         onSubmit: (data) => {
-            http.put(`/user/verify/${id}`, data)
+            http.put(`/api/user/verify/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     setVerifyEmail(false);
@@ -133,7 +133,7 @@ function Login() {
                 .oneOf([yup.ref("newPassword")], "Passwords must match")
         }), 
         onSubmit: (data) => {
-            http.put(`/user/password/${id}`, data)
+            http.put(`/api/user/password/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     setChangePassword(false);
@@ -162,7 +162,7 @@ function Login() {
 
     const handleVerifyEmail = async () => {
         const toastId = toast.loading("Sending email...");
-        http.post('/user/verify', {
+        http.post('/api/user/verify', {
             email: email
         })
             .then((res) => {

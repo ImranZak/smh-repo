@@ -5,8 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { ToastContainer } from 'react-toastify';
 import MyTheme from './MyTheme/theme.jsx';
-import UserContext from './contexts/UserContext';
-import http from './http';
+
 
 // Imported components from various branches
 import Dashboard from './components/Dashboard';
@@ -90,7 +89,7 @@ function App() {
 
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
-      http.get("/user/auth").then((res) => {
+      http.get("/api/user/auth").then((res) => {
         setUser(res.data.user)
         setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
       });

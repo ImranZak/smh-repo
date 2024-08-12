@@ -51,7 +51,7 @@ function Users() {
     };
 
     const deleteUsers = () => {
-        http.delete(`/user/${deleteId}`)
+        http.delete(`/api/user/${deleteId}`)
             .then((res) => {
                 console.log(res.data);
                 handleClose();

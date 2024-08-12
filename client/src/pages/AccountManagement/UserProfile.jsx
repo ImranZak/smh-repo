@@ -30,7 +30,7 @@ function UserProfile() {
     
 
     const loadProfileForm = () => {
-        http.get(`/user/${id}`).then((res) => {
+        http.get(`/api/user/${id}`).then((res) => {
             console.log(res.data);
             setUser(res.data);
             setOriginalEmail(res.data.email)
@@ -68,7 +68,7 @@ function UserProfile() {
                 .nullable()
         }), 
         onSubmit: (data) => {
-            http.put(`/user/${id}`, data).then((res) => {
+            http.put(`/api/user/${id}`, data).then((res) => {
                 console.log(res.data);
                 setEdit(false);
                 loadProfileForm();
@@ -76,7 +76,7 @@ function UserProfile() {
                 console.error("Error submitting form:", error);
             });
             if (data.verified && data.email != originalEmail) {
-                http.put(`/user/unverify/${id}`).then((res) => {
+                http.put(`/api/user/unverify/${id}`).then((res) => {
                     console.log(res.data);
                     toast.error("User is no longer verified")
                 }).catch((error) => {
@@ -115,7 +115,7 @@ function UserProfile() {
                 .oneOf([yup.ref("newPassword")], "Passwords must match")
         }), 
         onSubmit: (data) => {
-            http.put(`/user/password/${id}`, data)
+            http.put(`/api/user/password/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     setChangePassword(false);
@@ -139,7 +139,7 @@ function UserProfile() {
                 .required('Verification code is required'),
         }),
         onSubmit: (data) => {
-            http.put(`/user/verify/${id}`, data)
+            http.put(`/api/user/verify/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     setVerifyEmail(false);
@@ -167,7 +167,7 @@ function UserProfile() {
 
     const handleVerifyEmail = async () => {
         const toastId = toast.loading("Sending email...");
-        http.post('/user/verify', {
+        http.post('/api/user/verify', {
             email: user.email
         })
             .then((res) => {

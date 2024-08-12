@@ -26,7 +26,7 @@ function UserHistoryPage() {
 
     const getUserHistory = () => {
         if (user) {
-            http.get(`/user/quiz/userhistory/${user.id}`).then((res) => {
+            http.get(`/api/user/quiz/userhistory/${user.id}`).then((res) => {
                 const formattedHistory = res.data.map(history => ({
                     ...history,
                     dateTaken: formatDate(history.dateTaken)

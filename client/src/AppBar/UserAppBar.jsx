@@ -76,7 +76,6 @@ const UserAppBar = () => {
                 <Link to="/event_history" className="dropdown-link">My Events</Link>
               </MenuItem>
             </Menu>
-            <Link to="/book-facilities" className="nav-link">Book Facilities</Link>
             <Link to="/feedback" className="nav-link">Feedback</Link>
             <Button
               className="nav-link"

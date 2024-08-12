@@ -18,17 +18,6 @@ const Friends = () => {
         }
     };
 
-    const addFriend = async () => {
-        try {
-            const response = await http.get(`/api/user/search`, {
-                params: { search: searchQuery },
-            });
-            setSearchResult(response.data);
-        } catch (error) {
-            console.error('Error searching user:', error);
-            setSearchResult(null);
-        }
-    };
 
     const addFriend = async (friendId) => {
         if (!friendId) {

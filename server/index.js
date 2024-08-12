@@ -49,7 +49,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/staff', staffRoutes);
 app.use("/quiz", quizRoute);
 app.use("/quiz/question", questionRoute);
-app.use("/user/quiz", userquizhistoryRoute);
+app.use("/api/user/quiz", userquizhistoryRoute);
 app.use("/resource", resource);
 app.use("/resourceContent", resourceContent);
 app.use("/event", eventRoute);
@@ -60,7 +60,7 @@ app.use("/api/user", userRoute);  // Ensure /api/user handles login, registratio
 app.use("/datafeedback", dataFeedback);
 app.use('/staff', staffRoute);
 app.use('/marker', markerRoute);
-app.use('/sendquizemail', sendquizemailRoute);
+//app.use('/sendquizemail', sendquizemailRoute);
 
 // This middleware will catch all undefined API routes and return a JSON error response
 app.use((req, res, next) => {

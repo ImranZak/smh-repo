@@ -22,7 +22,7 @@ function UpdateUser() {
     const [loading, setLoading] = useState(true);   
 
     useEffect(() => {
-        http.get(`/user/${id}`).then((res) => {
+        http.get(`/api/user/${id}`).then((res) => {
             console.log(res.data);
             setUser(res.data); 
             setLoading(false);
@@ -59,7 +59,7 @@ function UpdateUser() {
                 .nullable(),
         }),
         onSubmit: (data) => {
-            http.put(`/user/${id}`, data)
+            http.put(`/api/user/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     navigate("/users");
