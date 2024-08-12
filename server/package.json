@@ -30,6 +30,7 @@
     "react-toastify": "^10.0.5",
     "sequelize": "^6.37.3",
     "signal-exit": "^4.1.0",
+    "string-similarity": "^4.0.4",
     "yup": "^1.4.0"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ import UserContext from '../contexts/UserContext';
 
 const UserAppBar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [eventsAnchorEl, setEventsAnchorEl] = useState(null);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -21,11 +22,16 @@ const UserAppBar = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setEventsAnchorEl(null);
   };
 
   const logout = () => {
     localStorage.clear();
     window.location = "/";
+  };
+
+  const handleEventsClick = (event) => {  
+    setEventsAnchorEl(event.currentTarget);
   };
 
   return (
@@ -37,14 +43,43 @@ const UserAppBar = () => {
               Singapore<br />
               Management<br />
               Hub
-            </Link>  
+            </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <Link to="/dashboard" className="nav-link">Dashboard</Link>
-            <Link to="/events" className="nav-link">Events</Link>
+            <Button
+              className="nav-link"
+              aria-controls="events-menu"
+              aria-haspopup="true"
+              onClick={handleEventsClick}
+              style={{ color: '#fff' }}
+              endIcon={<KeyboardArrowDownIcon />}
+            >
+              Events
+            </Button>
+            <Menu
+              id="events-menu"
+              anchorEl={eventsAnchorEl}
+              open={Boolean(eventsAnchorEl)}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem onClick={handleClose}>
+                <Link to="/events" className="dropdown-link">View Events</Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link to="/event_history" className="dropdown-link">My Events</Link>
+              </MenuItem>
+            </Menu>
             <Link to="/book-facilities" className="nav-link">Book Facilities</Link>
             <Link to="/feedback" className="nav-link">Feedback</Link>
-            <Link to="/event_history" className="nav-link">Event History</Link>
             <Button
               className="nav-link"
               aria-controls="menu"
@@ -81,23 +116,23 @@ const UserAppBar = () => {
               </MenuItem>
             </Menu>
             <IconButton onClick={() => handleUpdate(user.id)}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </IconButton>
             {user && (
-                <>
-                    <Typography>{user.name}</Typography>
-                    <Button onClick={logout}>Logout</Button>
-                </>
+              <>
+                <Typography>{user.name}</Typography>
+                <Button onClick={logout}>Logout</Button>
+              </>
             )}
             {!user && (
-                <>
-                    <Link to="/register">
-                        <Typography>Register</Typography>
-                    </Link>
-                    <Link to="/login">
-                        <Typography>Login</Typography>
-                    </Link>
-                </>
+              <>
+                <Link to="/register">
+                  <Typography>Register</Typography>
+                </Link>
+                <Link to="/login">
+                  <Typography>Login</Typography>
+                </Link>
+              </>
             )}
           </Box>
         </Toolbar>

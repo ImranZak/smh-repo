@@ -42,6 +42,7 @@ import StaffEvents from './pages/Events/StaffEvents';
 import Event_History from './pages/Events/Event_History';
 import SignUp from './pages/Events/SignUp';
 import SignUps from './pages/Events/SignUps';
+import SignUpConfirm from './pages/Events/SignUpConfirm.jsx';
 import Staff from './pages/AccountManagement/Staff';
 import CreateStaff from './pages/AccountManagement/CreateStaff';
 import UpdateStaff from './pages/AccountManagement/UpdateStaff';
@@ -95,6 +96,7 @@ function App() {
               <Route path={"/event_history"} element={<Event_History />} />
               <Route path={"/sign-up/:id"} element={<SignUp />} />
               <Route path={"/signups"} element={<SignUps />} />
+              <Route path={"/signupconfirm"} element={<SignUpConfirm />} />
               <Route path="/quizzesStaff" element={<Quizzes />} />
               <Route path="/editquiz/:id" element={<EditQuiz />} />
               <Route path="/addquiz" element={<AddQuiz />} />
