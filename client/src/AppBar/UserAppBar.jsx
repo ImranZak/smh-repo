@@ -11,7 +11,7 @@ const UserAppBar = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleUpdate = (id) => {
+  const handleProfile = () => {
     navigate(`/profile/${user.id}`)
   };
 
@@ -80,7 +80,7 @@ const UserAppBar = () => {
                 <Link to="/ResourceLibraryUser" className="dropdown-link">Educational Materials</Link>
               </MenuItem>
             </Menu>
-            <IconButton onClick={() => handleUpdate(user.id)}>
+            <IconButton onClick={() => handleProfile()}>
               <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
             </IconButton>
             {user && (
