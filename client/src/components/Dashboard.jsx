@@ -33,6 +33,7 @@ import FriendList from './Friends';
 import Notification from './Notifications';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import Messages from './Messages'; // Import the Messages component
 import '../styles/Dashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -215,16 +216,7 @@ const Dashboard = () => {
       <Grid container spacing={3} style={{ marginTop: '20px' }}>
         <Grid item xs={12}>
           <Typography variant="h6">Inbox</Typography>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '48%' }}>
-              <Typography variant="subtitle1">Community Inbox</Typography>
-              {/* Add inbox data here */}
-            </div>
-            <div style={{ width: '48%' }}>
-              <Typography variant="subtitle1">Personal Inbox</Typography>
-              {/* Add inbox data here */}
-            </div>
-          </div>
+          <Messages /> {/* Add the Messages component */}
         </Grid>
         <Grid item xs={12}>
           <Notification />
