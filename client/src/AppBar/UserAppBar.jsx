@@ -1,6 +1,6 @@
 // UserAppBar.jsx
 
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { AppBar, Toolbar, Typography, Container, Box, Button, Menu, MenuItem, Avatar, IconButton } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -117,16 +117,9 @@ const UserAppBar = () => {
             </Menu>
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {user && (
-                <>
-                    <IconButton onClick={() => handleProfile()}>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
-                    </IconButton>
-                    <Typography>{user.name}</Typography>
-                    <Button onClick={logout}>Logout</Button>
-                </>
               <>
                 <IconButton onClick={() => handleProfile()}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
                 </IconButton>
                 <Typography>{user.name}</Typography>
                 <Button onClick={logout}>Logout</Button>

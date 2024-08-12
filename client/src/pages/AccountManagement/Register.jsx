@@ -15,6 +15,7 @@ function Register() {
             email: "",
             password: "",
             confirmPassword: "",
+            verified: false
         },
         validationSchema: yup.object({
             name: yup
