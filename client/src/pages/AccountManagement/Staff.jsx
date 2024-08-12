@@ -12,6 +12,7 @@ function Staff() {
     const [search, setSearch] = useState('');
     const [open, setOpen] = useState(false);
     const [deleteId, setDeleteId] = useState('');
+    // const { user, setUser } = useContext(UserContext);
 
     const onSearchChange = (e) => { 
         setSearch(e.target.value); 

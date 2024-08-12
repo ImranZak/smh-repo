@@ -16,14 +16,18 @@ function UserProfile() {
     const [user, setUser] = useState({
         name: "", 
         email: "",
+        verified: false,
         birthDate: "",
         phoneNumber: "",
-        mailingAddress: "",
+        mailingAddress: ""
     });
     
     const [loading, setLoading] = useState(true);
     const [edit, setEdit] = useState(false);
     const [changePassword, setChangePassword] = useState(false);
+    const [verifyEmail, setVerifyEmail] = useState(false);
+    const [verificationCode, setVerificationCode] = useState(null);
+    
 
     const loadProfileForm = () => {
         http.get(`/user/${id}`).then((res) => {
@@ -113,6 +117,30 @@ function UserProfile() {
         }
     });
 
+    const emailFormik = useFormik({
+        initialValues: {
+            verificationCode: ""
+        },
+        enableReinitialize: true,
+        validationSchema: yup.object({
+            verificationCode: yup
+                .number()
+                .min(111111)
+                .max(1000000)
+                .required('Verification code is required'),
+        }),
+        onSubmit: (data) => {
+            http.put(`/user/verify/${id}`, { verified: true })
+                .then((res) => {
+                    console.log(res.data);
+                    setVerifyEmail(false);
+                    toast.success("Email verified successfully!");
+                }).catch(function (err) {
+                    toast.error(`${err.response.data.message || err.response.data.errors}`);
+                });
+        }
+    });
+
     const cancelProfileEdit = () => {
         profileFormik.resetForm();
         setEdit(false);
@@ -123,14 +151,39 @@ function UserProfile() {
         setChangePassword(false);
     };
 
+    const cancelVerifyEmail = () => {
+        emailFormik.resetForm();
+        setVerifyEmail(false);
+    };
+
+    const handleVerifyEmail = async () => {
+        const toastId = toast.loading("Sending email...");
+        setVerificationCode(Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111)
+        http.post('/user/verify', {
+            email: user.email,
+            verificationCode: verificationCode
+        })
+            .then((res) => {
+                console.log(res.data);
+                setVerifyEmail(true);
+                toast.update(toastId, { render: "Email sent!", type: "success", isLoading: false, autoClose: 1000 });
+            }).catch(function (err) {
+                toast.update(toastId, { render: `${err.response.data.message || err.response.data.errors}`, type: "error", isLoading: false, autoClose: 5000 });
+            });
+    };
+
     const renderUserProfile = () => {
         return (
             <>
                 <Typography variant="h5" sx={{ my: 2 }}>
                     User Profile
                 </Typography>
-                { !edit && !loading && (
-                    <Box component="form" onSubmit={profileFormik.handleSubmit} sx={{ marginBottom: '5%' }}>
+                {!edit && !loading && (
+                    <Box
+                        component="form"
+                        onSubmit={profileFormik.handleSubmit}
+                        sx={{ marginBottom: "5%" }}
+                    >
                         <TextField
                             fullWidth
                             margin="dense"
@@ -140,7 +193,7 @@ function UserProfile() {
                             value={profileFormik.values.name}
                             InputProps={{
                                 readOnly: true,
-                                style: { pointerEvents: 'none' },
+                                style: { pointerEvents: "none" },
                             }}
                         />
                         <TextField
@@ -149,11 +202,13 @@ function UserProfile() {
                             autoComplete="off"
                             label="Birth Date"
                             name="birthDate"
-                            type='date'
-                            value={profileFormik.values.birthDate || "dd/mm/yyyy"}
+                            type="date"
+                            value={
+                                profileFormik.values.birthDate || "dd/mm/yyyy"
+                            }
                             InputProps={{
                                 readOnly: true,
-                                style: { pointerEvents: 'none' },
+                                style: { pointerEvents: "none" },
                             }}
                         />
                         <TextField
@@ -166,7 +221,7 @@ function UserProfile() {
                             value={profileFormik.values.email}
                             InputProps={{
                                 readOnly: true,
-                                style: { pointerEvents: 'none' },
+                                style: { pointerEvents: "none" },
                             }}
                         />
                         <TextField
@@ -178,7 +233,7 @@ function UserProfile() {
                             value={profileFormik.values.phoneNumber}
                             InputProps={{
                                 readOnly: true,
-                                style: { pointerEvents: 'none' },
+                                style: { pointerEvents: "none" },
                             }}
                         />
                         <TextField
@@ -190,27 +245,47 @@ function UserProfile() {
                             value={profileFormik.values.mailingAddress}
                             InputProps={{
                                 readOnly: true,
-                                style: { pointerEvents: 'none' },
+                                style: { pointerEvents: "none" },
                             }}
                         />
                         <Button
                             sx={{ mt: 2 }}
                             variant="contained"
                             color="primary"
-                            onClick={() => setEdit(true)}>
+                            onClick={() => setEdit(true)}
+                        >
                             Edit Profile
                         </Button>
-                        <Button
-                            sx={{ mt: 2, ml: 2 }}
-                            variant="contained"
-                            color="primary"
-                            onClick={() => setChangePassword(true)}>
-                            Change Password
-                        </Button>
+                        {!user.verified && (
+                            <>
+                                <Button
+                                    sx={{ mt: 2, ml: 2 }}
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleVerifyEmail()}
+                                >
+                                    Verify Email
+                                </Button>
+                            </>
+                        )}
+                        {user.verified && (
+                            <Button
+                                sx={{ mt: 2, ml: 2 }}
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setChangePassword(true)}
+                            >
+                                Change Password
+                            </Button>
+                        )}
                     </Box>
                 )}
-                { edit && !loading && (
-                    <Box component="form" onSubmit={profileFormik.handleSubmit} sx={{ marginBottom: '5%' }}>
+                {edit && !loading && (
+                    <Box
+                        component="form"
+                        onSubmit={profileFormik.handleSubmit}
+                        sx={{ marginBottom: "5%" }}
+                    >
                         <TextField
                             fullWidth
                             margin="dense"
@@ -218,9 +293,16 @@ function UserProfile() {
                             label="Name"
                             name="name"
                             value={profileFormik.values.name}
-                            onChange={profileFormik.handleChange} onBlur={profileFormik.handleBlur}
-                            error={profileFormik.touched.name && Boolean(profileFormik.errors.name)}
-                            helperText={profileFormik.touched.name && profileFormik.errors.name}
+                            onChange={profileFormik.handleChange}
+                            onBlur={profileFormik.handleBlur}
+                            error={
+                                profileFormik.touched.name &&
+                                Boolean(profileFormik.errors.name)
+                            }
+                            helperText={
+                                profileFormik.touched.name &&
+                                profileFormik.errors.name
+                            }
                         />
                         <TextField
                             fullWidth
@@ -228,11 +310,20 @@ function UserProfile() {
                             autoComplete="off"
                             label="Birth Date"
                             name="birthDate"
-                            type='date'
-                            value={profileFormik.values.birthDate || "dd/mm/yyyy"}
-                            onChange={profileFormik.handleChange} onBlur={profileFormik.handleBlur}
-                            error={profileFormik.touched.birthDate && Boolean(profileFormik.errors.birthDate)}
-                            helperText={profileFormik.touched.birthDate && profileFormik.errors.birthDate}
+                            type="date"
+                            value={
+                                profileFormik.values.birthDate || "dd/mm/yyyy"
+                            }
+                            onChange={profileFormik.handleChange}
+                            onBlur={profileFormik.handleBlur}
+                            error={
+                                profileFormik.touched.birthDate &&
+                                Boolean(profileFormik.errors.birthDate)
+                            }
+                            helperText={
+                                profileFormik.touched.birthDate &&
+                                profileFormik.errors.birthDate
+                            }
                         />
                         <TextField
                             fullWidth
@@ -242,9 +333,16 @@ function UserProfile() {
                             name="email"
                             type="email"
                             value={profileFormik.values.email}
-                            onChange={profileFormik.handleChange} onBlur={profileFormik.handleBlur}
-                            error={profileFormik.touched.email && Boolean(profileFormik.errors.email)}
-                            helperText={profileFormik.touched.email && profileFormik.errors.email}
+                            onChange={profileFormik.handleChange}
+                            onBlur={profileFormik.handleBlur}
+                            error={
+                                profileFormik.touched.email &&
+                                Boolean(profileFormik.errors.email)
+                            }
+                            helperText={
+                                profileFormik.touched.email &&
+                                profileFormik.errors.email
+                            }
                         />
                         <TextField
                             fullWidth
@@ -253,9 +351,16 @@ function UserProfile() {
                             label="Phone Number"
                             name="phoneNumber"
                             value={profileFormik.values.phoneNumber}
-                            onChange={profileFormik.handleChange} onBlur={profileFormik.handleBlur}
-                            error={profileFormik.touched.phoneNumber && Boolean(profileFormik.errors.phoneNumber)}
-                            helperText={profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber}
+                            onChange={profileFormik.handleChange}
+                            onBlur={profileFormik.handleBlur}
+                            error={
+                                profileFormik.touched.phoneNumber &&
+                                Boolean(profileFormik.errors.phoneNumber)
+                            }
+                            helperText={
+                                profileFormik.touched.phoneNumber &&
+                                profileFormik.errors.phoneNumber
+                            }
                         />
                         <TextField
                             fullWidth
@@ -264,23 +369,35 @@ function UserProfile() {
                             label="Mailing Address"
                             name="mailingAddress"
                             value={profileFormik.values.mailingAddress}
-                            onChange={profileFormik.handleChange} onBlur={profileFormik.handleBlur}
-                            error={profileFormik.touched.mailingAddress && Boolean(profileFormik.errors.mailingAddress)}
-                            helperText={profileFormik.touched.mailingAddress && profileFormik.errors.mailingAddress}
+                            onChange={profileFormik.handleChange}
+                            onBlur={profileFormik.handleBlur}
+                            error={
+                                profileFormik.touched.mailingAddress &&
+                                Boolean(profileFormik.errors.mailingAddress)
+                            }
+                            helperText={
+                                profileFormik.touched.mailingAddress &&
+                                profileFormik.errors.mailingAddress
+                            }
                         />
                         <Button
                             sx={{ mt: 2 }}
                             variant="contained"
                             color="primary"
                             type="submit"
-                            disabled={!profileFormik.isValid || profileFormik.isSubmitting}>
+                            disabled={
+                                !profileFormik.isValid ||
+                                profileFormik.isSubmitting
+                            }
+                        >
                             Confirm
                         </Button>
                         <Button
                             sx={{ mt: 2, ml: 2 }}
                             variant="contained"
                             color="neutral"
-                            onClick={cancelProfileEdit}>
+                            onClick={cancelProfileEdit}
+                        >
                             Back
                         </Button>
                     </Box>
@@ -346,9 +463,51 @@ function UserProfile() {
         )
     }
 
+    const renderVerifyEmail = () => {
+        return (
+            <><Box>
+                <Typography variant="h5" sx={{ my: 2 }}>
+                    Verify Email
+                </Typography>
+                {
+                    !loading && (
+                        <><Box component="form" sx={{ maxWidth: "500px" }} onSubmit={emailFormik.handleSubmit}>
+                            <TextField
+                                fullWidth margin="dense" autoComplete="off"
+                                label="Verification Code"
+                                name="verificationCode" type="password"
+                                value={passwordFormik.values.verificationCode}
+                                onChange={passwordFormik.handleChange}
+                                onBlur={passwordFormik.handleBlur}
+                                error={passwordFormik.touched.verificationCode && Boolean(passwordFormik.errors.verificationCode)}
+                                helperText={passwordFormik.touched.verificationCode && passwordFormik.errors.verificationCode} />
+                            <Button 
+                                variant="contained" 
+                                sx={{ mt: 2 }} 
+                                type="submit"
+                            >
+                                Confirm
+                            </Button>
+                            <Button
+                                sx={{ mt: 2, ml: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                onClick={cancelVerifyEmail}
+                            >
+                                Back
+                            </Button>
+                        </Box></>
+                    )
+                }
+            </Box></>
+        )
+    }
+
     return (
         <Box>
-            { !changePassword ? renderUserProfile() : renderChangePassword() }
+            {!changePassword && !verifyEmail && renderUserProfile()}
+            {changePassword && renderChangePassword()}
+            {verifyEmail && renderVerifyEmail()}
             <ToastContainer />
         </Box>
     );

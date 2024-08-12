@@ -1,6 +1,6 @@
 // UserAppBar.jsx
 
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { AppBar, Toolbar, Typography, Container, Box, Button, Menu, MenuItem, Avatar, IconButton } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -42,7 +42,6 @@ const UserAppBar = () => {
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <Link to="/dashboard" className="nav-link">Dashboard</Link>
             <Link to="/events" className="nav-link">Events</Link>
-            <Link to="/book-facilities" className="nav-link">Book Facilities</Link>
             <Link to="/feedback" className="nav-link">Feedback</Link>
             <Link to="/event_history" className="nav-link">Event History</Link>
             <Button
@@ -80,11 +79,11 @@ const UserAppBar = () => {
                 <Link to="/ResourceLibraryUser" className="dropdown-link">Educational Materials</Link>
               </MenuItem>
             </Menu>
-            <IconButton onClick={() => handleProfile()}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
-            </IconButton>
             {user && (
                 <>
+                    <IconButton onClick={() => handleProfile()}>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
+                    </IconButton>
                     <Typography>{user.name}</Typography>
                     <Button onClick={logout}>Logout</Button>
                 </>

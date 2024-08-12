@@ -68,7 +68,7 @@ function App() {
         setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
       });
     }
-  }, []);
+  }, [user, isStaff]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

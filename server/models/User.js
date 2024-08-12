@@ -15,6 +15,14 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: true,
             },
+            verified: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+            },
+            verificationCode: {
+                type: DataTypes.STRING(100),
+                allowNull: true,
+            },
             phoneNumber: {
                 type: DataTypes.STRING(20),
                 allowNull: true,
