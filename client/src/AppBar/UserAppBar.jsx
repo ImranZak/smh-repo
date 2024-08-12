@@ -1,5 +1,3 @@
-// UserAppBar.jsx
-
 import React, { useState, useContext } from 'react';
 import { AppBar, Toolbar, Typography, Container, Box, Button, Menu, MenuItem, Avatar, IconButton } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';

@@ -33,7 +33,7 @@ function Register() {
                 .trim()
                 .email("Enter a valid email")
                 .max(100, "Email must be at most 100 characters")
-                .required("Email is required"),
+                .required("Email is required"), 
             password: yup
                 .string()
                 .trim()

@@ -26,18 +26,19 @@ function UserProfile() {
     const [edit, setEdit] = useState(false);
     const [changePassword, setChangePassword] = useState(false);
     const [verifyEmail, setVerifyEmail] = useState(false);
-    const [verificationCode, setVerificationCode] = useState(null);
+    const [originalEmail, setOriginalEmail] = useState(false);
     
 
     const loadProfileForm = () => {
         http.get(`/user/${id}`).then((res) => {
             console.log(res.data);
             setUser(res.data);
+            setOriginalEmail(res.data.email)
             setLoading(false);
         });
     }
 
-    useEffect(loadProfileForm, []);
+    useEffect(loadProfileForm, [verifyEmail, changePassword]);
 
     const profileFormik = useFormik({
         initialValues: user,
@@ -74,6 +75,14 @@ function UserProfile() {
             }).catch((error) => {
                 console.error("Error submitting form:", error);
             });
+            if (data.verified && data.email != originalEmail) {
+                http.put(`/user/unverify/${id}`).then((res) => {
+                    console.log(res.data);
+                    toast.error("User is no longer verified")
+                }).catch((error) => {
+                    console.error("Error unverifying user:", error);
+                });
+            }
         }
     });
 
@@ -88,7 +97,7 @@ function UserProfile() {
             currentPassword: yup
                 .string()
                 .trim()
-                .required("Old password is required"),
+                .required("Current password is required"),
             newPassword: yup
                 .string()
                 .trim()
@@ -130,7 +139,7 @@ function UserProfile() {
                 .required('Verification code is required'),
         }),
         onSubmit: (data) => {
-            http.put(`/user/verify/${id}`, { verified: true })
+            http.put(`/user/verify/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     setVerifyEmail(false);
@@ -158,10 +167,8 @@ function UserProfile() {
 
     const handleVerifyEmail = async () => {
         const toastId = toast.loading("Sending email...");
-        setVerificationCode(Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111)
         http.post('/user/verify', {
-            email: user.email,
-            verificationCode: verificationCode
+            email: user.email
         })
             .then((res) => {
                 console.log(res.data);
@@ -465,41 +472,45 @@ function UserProfile() {
 
     const renderVerifyEmail = () => {
         return (
-            <><Box>
-                <Typography variant="h5" sx={{ my: 2 }}>
-                    Verify Email
-                </Typography>
-                {
-                    !loading && (
-                        <><Box component="form" sx={{ maxWidth: "500px" }} onSubmit={emailFormik.handleSubmit}>
-                            <TextField
-                                fullWidth margin="dense" autoComplete="off"
-                                label="Verification Code"
-                                name="verificationCode" type="password"
-                                value={passwordFormik.values.verificationCode}
-                                onChange={passwordFormik.handleChange}
-                                onBlur={passwordFormik.handleBlur}
-                                error={passwordFormik.touched.verificationCode && Boolean(passwordFormik.errors.verificationCode)}
-                                helperText={passwordFormik.touched.verificationCode && passwordFormik.errors.verificationCode} />
-                            <Button 
-                                variant="contained" 
-                                sx={{ mt: 2 }} 
-                                type="submit"
-                            >
-                                Confirm
-                            </Button>
-                            <Button
-                                sx={{ mt: 2, ml: 2 }}
-                                variant="contained"
-                                color="neutral"
-                                onClick={cancelVerifyEmail}
-                            >
-                                Back
-                            </Button>
-                        </Box></>
-                    )
+            <>
+                { !loading &&
+                    <Box>
+                    <Typography variant="h5" sx={{ my: 2 }}>
+                        Verify Email
+                    </Typography>
+                    {
+                        !loading && (
+                            <><Box component="form" sx={{ maxWidth: "500px" }} onSubmit={emailFormik.handleSubmit}>
+                                <TextField
+                                    fullWidth margin="dense" autoComplete="off"
+                                    label="Verification Code"
+                                    name="verificationCode" type="password"
+                                    value={emailFormik.values.verificationCode}
+                                    onChange={emailFormik.handleChange}
+                                    onBlur={emailFormik.handleBlur}
+                                    error={emailFormik.touched.verificationCode && Boolean(emailFormik.errors.verificationCode)}
+                                    helperText={emailFormik.touched.verificationCode && emailFormik.errors.verificationCode} />
+                                <Button 
+                                    variant="contained" 
+                                    sx={{ mt: 2 }} 
+                                    type="submit"
+                                >
+                                    Confirm
+                                </Button>
+                                <Button
+                                    sx={{ mt: 2, ml: 2 }}
+                                    variant="contained"
+                                    color="neutral"
+                                    onClick={cancelVerifyEmail}
+                                >
+                                    Back
+                                </Button>
+                            </Box></>
+                        )
+                    }
+                </Box>
                 }
-            </Box></>
+            </>
         )
     }
 
