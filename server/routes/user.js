@@ -72,12 +72,12 @@ router.post("/login", async (req, res) => {
             where: { email: data.email }
         });
         if (!user) {
-            res.status(400).json({ message: "Email is not correct." });
+            res.status(400).json({ message: errorMsg });
             return;
         }
         let match = await bcrypt.compare(data.password, user.password);
         if (!match) {
-            res.status(400).json({ message: "Password is not correct." });
+            res.status(400).json({ message: errorMsg });
             return;
         }
 
@@ -99,7 +99,6 @@ router.post("/login", async (req, res) => {
         return;
     }
 });
-
 
 // Authenticate User
 router.get("/auth", validateToken, (req, res) => {
@@ -158,6 +157,8 @@ router.put("/:id", async (req, res) => {
         return;
     }
     
+    // Wanted to do validation to prevent password update, but gave up :(
+
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
@@ -177,21 +178,16 @@ router.put("/:id", async (req, res) => {
             .required('Email is required'),
         phoneNumber: yup.string()
             .max(20, 'Phone number must be at most 20 characters')
-            .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
+            .matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international')
             .nullable(),
         mailingAddress: yup.string()
             .max(100, 'Home address must be at most 100 characters')
-            .nullable(),
-        password: yup
-            .string()
-            .matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces")
             .nullable()
     });
     try {
         data = await validationSchema.validate(data,
             { abortEarly: false });
-            
-        data.password = data.password || await bcrypt.hash(data.password, 10);
+
         let num = await User.update(data, {
             where: { id: id }
         });
@@ -203,6 +199,69 @@ router.put("/:id", async (req, res) => {
         else {
             res.status(400).json({
                 message: `Cannot update user with id ${id}.`
+            });
+        }
+    }
+    catch (err) {
+        res.status(400).json({ errors: err.errors });
+    }
+});
+
+// Change User Password By Id
+router.put("/password/:id", async (req, res) => {
+    let id = req.params.id;
+    // Check id not found
+    let user = await User.findByPk(id);
+    if (!user) {
+        res.sendStatus(404);
+        return;
+    }
+    
+    let data = req.body;
+    // Validate request body
+    let validationSchema = yup.object({
+        currentPassword: yup
+            .string()
+            .trim()
+            .required("Old password is required"),
+        newPassword: yup
+            .string()
+            .trim()
+            .min(8, "Password must be at least 8 characters")
+            .max(100, "Password must be at most 100 characters")
+            .required("New password is required")
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/,
+                "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces"
+            )
+    });
+    try {
+        data = await validationSchema.validate(data,
+            { abortEarly: false });
+
+        let current_password_match = await bcrypt.compare(data.currentPassword, user.password);
+        if (!current_password_match) {
+            res.status(400).json({ message: "Current password is incorrect" });
+            return;
+        }
+        let new_password_match = await bcrypt.compare(data.newPassword, user.password);
+        if (new_password_match) {
+            res.status(400).json({ message: "New password cannot match current password" });
+            return;
+        }
+        user.password = await bcrypt.hash(data.newPassword, 10);
+        
+        let num = await User.update({ password: user.password }, {
+            where: { id: id }
+        });
+        if (num == 1) {
+            res.json({
+                message: "User was updated successfully."
+            });
+        }
+        else {
+            res.status(400).json({
+                message: `Cannot update user with id ${id}. `
             });
         }
     }

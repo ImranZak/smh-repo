@@ -40,8 +40,8 @@ function Register() {
                 .max(100, "Password must be at most 100 characters")
                 .required("Password is required")
                 .matches(
-                    /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
-                    "Password at least 1 letter and 1 number"
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/,
+                    "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces"
                 ),
             confirmPassword: yup
                 .string()
@@ -59,7 +59,6 @@ function Register() {
                     navigate("/login");
                 })
                 .catch(function (err) {
-                    // FIXTHIS: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
                     toast.error(`${err.response.data.message || err.response.data.errors}`);
                 });
         },

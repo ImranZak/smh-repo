@@ -1,16 +1,21 @@
 // StaffAppBar.jsx
 
 import React, { useContext } from 'react';
-import { AppBar, Toolbar, Typography, Container, Box, Button, Avatar} from '@mui/material';
-import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Container, Box, Button, Avatar, IconButton} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
 
 const StaffAppBar = () => {
+  const navigate = useNavigate();
   const { user } = useContext(UserContext);
 
   const logout = () => {
     localStorage.clear();
     window.location = "/";
+  };
+
+  const handleProfile = () => {
+    navigate(`/profile/${user.id}`)
   };
 
   return (
@@ -32,9 +37,9 @@ const StaffAppBar = () => {
             <Link to="/quizzesStaff" className="nav-link">Quizzes</Link>
             {user && (
                 <>
-                    <Link to="/profile" className="nav-link profile-link">
-                      <Avatar/>
-                    </Link>
+                    <IconButton onClick={() => handleProfile()}>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
+                    </IconButton>
                     <Button onClick={logout}>Logout</Button>
                 </>
             )}

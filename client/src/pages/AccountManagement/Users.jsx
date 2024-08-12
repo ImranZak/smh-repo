@@ -46,7 +46,6 @@ function Users() {
         setSearch(''); getUsers();
     };
 
-    // Example handlers
     const handleUpdate = (id) => {
         navigate(`/update-user/${id}`)
     };
