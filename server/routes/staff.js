@@ -47,7 +47,7 @@ router.post("/login", async (req, res) => {
             return;
         }
 
-        // Return user info
+        // Return staff info
         let staffInfo = {
             id: staff.id,
             email: staff.email,
@@ -57,7 +57,7 @@ router.post("/login", async (req, res) => {
             { expiresIn: process.env.TOKEN_EXPIRES_IN });
         res.json({
             accessToken: accessToken,
-            user: staffInfo
+            staff: staffInfo
         });
     }
     catch (err) {
@@ -69,13 +69,13 @@ router.post("/login", async (req, res) => {
 
 // Authenticate Staff 
 router.get("/auth", validateToken, (req, res) => {
-    let userInfo = {
-        id: req.user.id,
-        email: req.user.email,
-        name: req.user.name,
+    let staffInfo = {
+        id: req.staff.id,
+        email: req.staff.email,
+        name: req.staff.name,
     };
     res.json({ 
-        user: userInfo 
+        staff: staffInfo 
     });
 });
 
@@ -238,6 +238,69 @@ router.put("/:id", async (req, res) => {
         else {
             res.status(400).json({
                 message: `Cannot update staff with id ${id}.`
+            });
+        }
+    }
+    catch (err) {
+        res.status(400).json({ errors: err.errors });
+    }
+});
+
+// Change Staff Password By Id
+router.put("/password/:id", async (req, res) => {
+    let id = req.params.id;
+    // Check id not found
+    let staff = await Staff.findByPk(id);
+    if (!staff) {
+        res.sendStatus(404);
+        return;
+    }
+    
+    let data = req.body;
+    // Validate request body
+    let validationSchema = yup.object({
+        currentPassword: yup
+            .string()
+            .trim()
+            .required("Old password is required"),
+        newPassword: yup
+            .string()
+            .trim()
+            .min(8, "Password must be at least 8 characters")
+            .max(100, "Password must be at most 100 characters")
+            .required("New password is required")
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/,
+                "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces"
+            )
+    });
+    try {
+        data = await validationSchema.validate(data,
+            { abortEarly: false });
+
+        let current_password_match = await bcrypt.compare(data.currentPassword, staff.password);
+        if (!current_password_match) {
+            res.status(400).json({ message: "Current password is incorrect" });
+            return;
+        }
+        let new_password_match = await bcrypt.compare(data.newPassword, staff.password);
+        if (new_password_match) {
+            res.status(400).json({ message: "New password cannot match current password" });
+            return;
+        }
+        staff.password = await bcrypt.hash(data.newPassword, 10);
+        
+        let num = await Staff.update({ password: staff.password }, {
+            where: { id: id }
+        });
+        if (num == 1) {
+            res.json({
+                message: "Staff was updated successfully."
+            });
+        }
+        else {
+            res.status(400).json({
+                message: `Cannot update staff with id ${id}. `
             });
         }
     }

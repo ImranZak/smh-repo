@@ -31,7 +31,7 @@ function Login() {
             data.email = data.email.trim().toLowerCase();
             data.password = data.password.trim();
             if (data.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/)) {
-                http.post("/api/staff/login", data)
+                http.post("/staff/login", data)
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.accessToken);
                     setUser(res.data.user);
@@ -42,7 +42,7 @@ function Login() {
                     toast.error(`${err.response.data.message}`);
                 });
             } else {
-                http.post("/api/user/login", data)
+                http.post("/user/login", data || {})
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.accessToken);
                     setUser(res.data.user);

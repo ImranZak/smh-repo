@@ -7,10 +7,6 @@ module.exports = (sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        date: {
-            type: DataTypes.DATEONLY, // YYYY-MM-DD format
-            allowNull: false,
-        },
         type: {
             type: DataTypes.STRING,
             allowNull: false,

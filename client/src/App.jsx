@@ -5,15 +5,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { ToastContainer } from 'react-toastify';  
 import MyTheme from './MyTheme/theme.jsx';
-import UserContext from './contexts/UserContext';
-import http from './http';
-
-// Imported components from various branches
-import Dashboard from './components/Dashboard';
-import DataEntry from './components/DataEntry';
-import Friends from './components/Friends';
-import Messages from './components/Messages';
-import Notifications from './components/Notifications';
+import Dashboard from './components/Dashboard.jsx';
+import DataEntry from './components/DataEntry.jsx';
+import Friends from './components/Friends.jsx';
+import Messages from './components/Messages.jsx';
+import Notifications from './components/Notifications.jsx';
 import DataFeedbackStaff from './pages/Feedback/DataFeedbackStaff.jsx';
 import FeedbackDisplay from './pages/Feedback/FeedbackDisplay.jsx';
 import DataFeedbacks from './pages/Feedback/DataFeedbacks.jsx';
@@ -54,6 +50,8 @@ import Login from './pages/AccountManagement/Login';
 import Homepage from './pages/Homepage.jsx';
 import Users from './pages/AccountManagement/Users.jsx';
 import UpdateUser from './pages/AccountManagement/UpdateUser';
+import http from './http';
+import UserContext from './contexts/UserContext';
 import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
 import UserProfile from './pages/AccountManagement/UserProfile.jsx';
 
@@ -81,9 +79,9 @@ class ErrorBoundary extends React.Component {
 }
 
 function App() {
-    const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
-    const [user, setUser] = useState(null);
-    const [isStaff, setIsStaff] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
+  const [user, setUser] = useState(null);
+  const [isStaff, setIsStaff] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem("accessToken")) {
@@ -96,13 +94,13 @@ function App() {
         }
     }, []);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget); // Open the menu
-    };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleClose = () => {
-        setAnchorEl(null); // Close the menu
-    };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
     return (
       <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>

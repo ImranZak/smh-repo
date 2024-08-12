@@ -121,20 +121,21 @@ function TakeQuizUser() {
         try {
             const res = await http.get(`/quiz/question/quizzes/${id}/questions`);
             let correctAnswers = 0;
-
+    
             for (const question of res.data) {
                 const userAnswer = userAnswers[question.id];
                 const correctAnswer = question.answer_text;
-
+    
                 console.log(`Question ID: ${question.id}, User Answer: ${userAnswer}, Correct Answer: ${correctAnswer}`);
-
+    
                 try {
                     const response = await http.post('/marker', {
-                        question: question.question_text,
-                        answer: correctAnswer,
+                        // expectedAnswer: question.question_text,
+                        question_type: question.question_type,
+                        expectedAnswer: correctAnswer,
                         userAnswer: userAnswer
                     });
-
+    
                     if (response.data.isCorrect) {
                         correctAnswers += 1;
                     }
@@ -142,7 +143,7 @@ function TakeQuizUser() {
                     console.error('Error checking answer:', error);
                 }
             }
-
+    
             const scorePercentage = (correctAnswers / totalQuestions) * 100;
             setScore(scorePercentage);
         } catch (err) {
@@ -162,19 +163,6 @@ function TakeQuizUser() {
         console.log("score number:", score, 'Posting quiz history:', historyData);
 
         http.post(`/user/quiz/userhistory/${id}`, historyData)
-            .then((res) => {
-                console.log('Quiz history posted:', res.data);
-                navigate(`/quizzesUser`)
-            })
-            .catch((err) => {
-                console.error('Error posting quiz history:', err.response ? err.response.data : err);
-            });
-        const emailData = {
-            to: user.email,
-            quizTitle: quizDetails.title,
-            score: Math.round(score)
-        };
-        http.post(`/sendquizemail`, emailData)
             .then((res) => {
                 console.log('Quiz history posted:', res.data);
                 navigate(`/quizzesUser`)
