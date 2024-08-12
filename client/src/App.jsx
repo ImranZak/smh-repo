@@ -84,16 +84,14 @@ function App() {
   const [user, setUser] = useState(null);
   const [isStaff, setIsStaff] = useState(false);
 
-    useEffect(() => {
-        if (localStorage.getItem("accessToken")) {
-            http.get("/api/user/auth").then((res) => {
-                setUser(res.data.user);
-                setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
-            }).catch(err => {
-                console.error("Error fetching user data:", err);
-            });
-        }
-    }, []);
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      http.get("/user/auth").then((res) => {
+        setUser(res.data.user)
+        setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
+      });
+    }
+  }, [user, isStaff]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

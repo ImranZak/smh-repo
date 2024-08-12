@@ -19,4 +19,15 @@ const sendQuizResultEmail = (to, quizTitle, score) => {
     return transporter.sendMail(mailOptions);
 };
 
-module.exports = sendQuizResultEmail;
+const sendVerifyEmail = (to, verificationCode) => {
+    const mailOptions = {
+        from: 'students4nyp@gmail.com',
+        to: to,
+        subject: `Verify your SMH account`,
+        html: `<h1>Singapore Management Hub</h1><p>DO NOT RESPOND TO THIS EMAIL AS IT IS AUTO GENERATED! <br>Verification Code: ${verificationCode}<p>`
+    };
+
+    return transporter.sendMail(mailOptions);
+};
+
+module.exports = { sendQuizResultEmail, sendVerifyEmail };

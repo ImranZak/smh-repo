@@ -15,6 +15,14 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: true,
             },
+            verified: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+            },
+            verificationCode: {
+                type: DataTypes.STRING(100),
+                allowNull: true,
+            },
             phoneNumber: {
                 type: DataTypes.STRING(20),
                 allowNull: true,
@@ -47,12 +55,12 @@ module.exports = (sequelize, DataTypes) => {
     // Define the association between User and UserQuizHistory
     User.associate = models => {
         User.hasMany(models.UserQuizHistory, {
-            foreignKey: 'userId',
+            foreignKey: 'userid',
             as: 'quizHistories',
             onDelete: 'CASCADE'
         });
         User.hasMany(models.SignUp, {
-            foreignKey: 'userId',
+            foreignKey: 'userid',
             as: 'signups',
             onDelete: 'CASCADE'
         });

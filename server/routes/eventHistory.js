@@ -7,9 +7,9 @@ const { validateToken } = require('../middlewares/auth');
 
 router.get("/", validateToken, async (req, res) => {
     try {
-        const userId = req.user.id; // Assuming `validateToken` middleware sets the logged-in user's ID in req.user
+        const userid = req.user.id; // Assuming `validateToken` middleware sets the logged-in user's ID in req.user
         const signups = await SignUp.findAll({
-            where: { userId: userId },
+            where: { userid: userid },
             include: [
                 { model: Event, as: "event" }, // Include event details
             ],

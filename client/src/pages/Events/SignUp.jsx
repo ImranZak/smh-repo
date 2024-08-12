@@ -38,9 +38,6 @@ function SignUp() {
             data.email = data.email.trim();
             data.phone = data.phone.trim();
             data.nric = data.nric.trim();
-
-            console.log("Submitting data:", data);
-            
             http.post("/signup", { ...data, eventId: id}    )
                 .then((res) => {
                     console.log(res.data);

@@ -6,6 +6,7 @@ const { User } = require("../models");
 const yup = require("yup");
 const { sign } = require('jsonwebtoken'); 
 const { validateToken } = require('../middlewares/auth');
+const { sendVerifyEmail } = require('../middlewares/email');
 require('dotenv').config();
 
 
@@ -15,6 +16,9 @@ const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 // Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/;
 
+function generateVerificationCode() {
+    return bcrypt.hash((Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111).toString(), 10);
+}
 
 // Register User
 router.post("/register", async (req, res) => {
@@ -30,7 +34,6 @@ router.post("/register", async (req, res) => {
     });
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
-        // Process valid data …
     } catch (err) {
         res.status(400).json({ errors: err.errors });
     }
@@ -112,7 +115,43 @@ router.get("/auth", validateToken, (req, res) => {
     });
 });
 
-// TODO: Continue lab5b by adding Booking table and one-to-many relationship between them
+// Send verification email
+router.post("/verify", async (req, res) => {
+    const verificationCode = generateVerificationCode();
+    const email = req.body.email;
+    try {
+        await User.update({ verificationCode: verificationCode }, {
+            where: { email: email }
+        });
+        await sendVerifyEmail(email, verificationCode);
+        res.status(200).send('Email sent');
+    } catch (error) {
+        res.status(500).send(`Error sending email: ${error}`);
+    }
+});
+
+// Verify/Unverify user
+router.put("/verify/:id", async (req, res) => {
+    let id = req.params.id;
+    let data = req.body;
+    try {
+        let num = await User.update({ verified: data.verified }, {
+            where: { id: id }
+        });
+        if (num == 1) {
+            res.json({
+                message: "User verified was updated successfully."
+            });
+        }
+        else {
+            res.status(400).json({
+                message: `Cannot update user with id ${id}. `
+            });
+        }
+    } catch (error) {
+        res.status(500).send('Error sending email');
+    }
+});
 
 // Get All Users (With Optional Search Query)
 router.get("/", async (req, res) => {
@@ -341,6 +380,7 @@ router.post("/populate", async (req, res) => {
                 name: "Mary Jane",
                 birthDate: new Date("1992-01-01"),
                 email: "maryjane@gmail.com",
+                verified: true,
                 phoneNumber: "111111111",
                 mailingAddress: "123 Woodlands Drive",
                 password: await bcrypt.hash("Password1", 10)
@@ -349,6 +389,7 @@ router.post("/populate", async (req, res) => {
                 name: "Peter Parker",
                 birthDate: new Date("2002-01-01"),
                 email: "peterparker@gmail.com",
+                verified: false,
                 mailingAddress: "765 Yio Chu Kang Road",
                 phoneNumber: "22222222",
                 password: await bcrypt.hash("Password1", 10)

@@ -35,19 +35,17 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName: 'signup'
     });
-
     SignUp.associate = models => {
         SignUp.belongsTo(models.Event, {
-            foreignKey: 'eventId',  // Ensure consistency here
+            foreignKey: 'eventid',
             as: 'event',
             onDelete: 'CASCADE'
         });
         SignUp.belongsTo(models.User, {
-            foreignKey: 'userId',  // Ensure consistency here
+            foreignKey: 'userid',
             as: 'user',
             onDelete: 'CASCADE'
         });
     };
-
     return SignUp;
-};
+}

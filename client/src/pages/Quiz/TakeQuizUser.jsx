@@ -154,8 +154,8 @@ function TakeQuizUser() {
     const postQuizHistory = () => {
         const historyData = {
             quizid: parseInt(id, 10),
-            userId: user.id, // Use user ID from context
-            title: `Quiz ${quizDetails.title}`,
+            userid: user.id, // Use user ID from context
+            title: quizDetails.title,
             description: quizDetails.description,
             score: Math.round(score), // Ensure this is an integer between 0 and 100
             dateTaken: new Date().toISOString() // Include the current date as dateTaken
@@ -237,7 +237,7 @@ function TakeQuizUser() {
             >
                 <DialogTitle>Submit Quiz</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Are you sure you want to submit the quiz?</DialogContentText>
+                    <DialogContentText>Are you sure you want to submit the quiz? <br />This might take awhile to process please give us time</DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseSubmitModal} color="primary">Cancel</Button>

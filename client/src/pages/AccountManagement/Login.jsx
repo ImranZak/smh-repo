@@ -34,9 +34,9 @@ function Login() {
                 http.post("/staff/login", data)
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.accessToken);
-                    setUser(res.data.user);
                     setIsStaff(true);
-                    navigate("/staff");
+                    setUser(res.data.user);
+                    navigate("/staff")
                 })
                 .catch(function (err) {
                     toast.error(`${err.response.data.message}`);
