@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { Line, Bar } from 'react-chartjs-2';
-import { ResizableBox } from 'react-resizable';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,6 +24,7 @@ import {
   Container,
   IconButton,
   Fab,
+  Drawer,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
@@ -73,7 +73,7 @@ const Dashboard = () => {
 
   const formatData = (dataType) => {
     const labels = data.map(d => new Date(d.date).toLocaleDateString());
-    const usageData = data.filter(d => d.type === dataType).map(d => d.amount);
+    const usageData = data.filter(d => d.type === dataType).map(d => d.amount); // Update to use 'amount'
 
     return {
       labels,
@@ -101,7 +101,7 @@ const Dashboard = () => {
   };
 
   const handleAddChart = () => {
-    if (charts.length >= 4) return;
+    if (charts.length >= 4) return; // Limit to 4 charts max
     const newLayout = [...layout, { i: `chart-${charts.length}`, x: (charts.length % 2), y: Math.floor(charts.length / 2), w: 1, h: 1 }];
     setLayout(newLayout);
     setCharts([...charts, { chartType: 'line', dataType: 'energy' }]);
@@ -141,7 +141,6 @@ const Dashboard = () => {
 
   const toggleFriendList = () => {
     setIsFriendListOpen(!isFriendListOpen);
-    console.log(`Friend list toggled. Now it is ${isFriendListOpen ? 'closed' : 'open'}.`);
   };
 
   return (
@@ -177,7 +176,7 @@ const Dashboard = () => {
           preventCollision={true}
           isDraggable={true}
           isResizable={true}
-          draggableHandle=".card-drag-handle"
+          draggableHandle=".card-drag-handle" // Enable dragging only by clicking the drag handle
         >
           {charts.map((chart, index) => (
             <div key={`chart-${index}`} data-grid={{ x: index % 2, y: Math.floor(index / 2), w: 1, h: 1 }}>
@@ -242,56 +241,16 @@ const Dashboard = () => {
         {isFriendListOpen ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
       </Fab>
 
-      {isFriendListOpen && (
-        <ResizableBox
-          width={400}
-          height={300}
-          minConstraints={[300, 200]}
-          maxConstraints={[600, 400]}
-          resizeHandles={['nw']}
-          handle={
-            <span
-              style={{
-                width: '15px',
-                height: '15px',
-                backgroundColor: '#333',
-                display: 'block',
-                position: 'absolute',
-                top: '-10px',
-                left: '-10px',
-                cursor: 'nw-resize',
-              }}
-            />
-          }
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            zIndex: 1300,
-            backgroundColor: '#fff',
-            borderRadius: '10px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-            padding: '20px',
-            overflow: 'auto',
-          }}
-        >
-          <div style={{ position: 'relative', height: '100%' }}>
-            <IconButton
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                zIndex: 1400,
-              }}
-              onClick={toggleFriendList}
-            >
-              <CloseIcon />
-            </IconButton>
-            <FriendList />
-          </div>
-        </ResizableBox>
-      )}
-
+      <Drawer
+        anchor="bottom"
+        open={isFriendListOpen}
+        onClose={toggleFriendList}
+        PaperProps={{ style: { height: '500px', width: '300px', position: 'fixed', bottom: '0', right: '0', left: 'unset' } }}
+      >
+        <div style={{ padding: '20px' }}>
+          <FriendList />
+        </div>
+      </Drawer>
       <footer style={{ marginTop: '20px', textAlign: 'center' }}>
         <Typography variant="body2" color="textSecondary">© 2024 Community Dashboard</Typography>
       </footer>

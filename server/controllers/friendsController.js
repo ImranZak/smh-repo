@@ -1,9 +1,5 @@
-const db = require('../models');
-const { Op } = require('sequelize');
-const Friend = db.Friend;
-const User = db.User;
+const Friend = require('../models/Friend');
 
-// Fetch all friends and pending friend requests of a user
 exports.getAllFriends = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -140,20 +136,16 @@ exports.acceptFriendRequest = async (req, res) => {
 
 // Delete a friend
 exports.deleteFriend = async (req, res) => {
-    try {
-        const { friendshipId } = req.params;
-
-        const result = await Friend.destroy({
-            where: { id: friendshipId },
-        });
-
-        if (result === 0) {
-            return res.status(404).json({ message: 'Friendship not found.' });
-        }
-
-        res.status(204).send();
-    } catch (error) {
-        console.error('Error deleting friend:', error.message);
-        res.status(500).json({ message: 'Failed to delete friend. Please try again later.' });
+  try {
+    console.log('Deleting a friend with id:', req.params.id);
+    const deleted = await Friend.destroy({ where: { id: req.params.id } });
+    if (deleted) {
+      res.json({ message: 'Friend deleted' });
+    } else {
+      res.status(404).json({ message: 'Friend not found' });
     }
+  } catch (error) {
+    console.error('Error deleting friend:', error.message);
+    res.status(500).json({ message: error.message });
+  }
 };

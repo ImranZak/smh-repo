@@ -46,6 +46,7 @@ import StaffEvents from './pages/Events/StaffEvents';
 import Event_History from './pages/Events/Event_History';
 import SignUp from './pages/Events/SignUp';
 import SignUps from './pages/Events/SignUps';
+import SignUpConfirm from './pages/Events/SignUpConfirm.jsx';
 import Staff from './pages/AccountManagement/Staff';
 import CreateStaff from './pages/AccountManagement/CreateStaff';
 import UpdateStaff from './pages/AccountManagement/UpdateStaff';
@@ -54,6 +55,8 @@ import Login from './pages/AccountManagement/Login';
 import Homepage from './pages/Homepage.jsx';
 import Users from './pages/AccountManagement/Users.jsx';
 import UpdateUser from './pages/AccountManagement/UpdateUser';
+import http from './http';
+import UserContext from './contexts/UserContext';
 import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
 import UserProfile from './pages/AccountManagement/UserProfile.jsx';
 
@@ -81,28 +84,26 @@ class ErrorBoundary extends React.Component {
 }
 
 function App() {
-    const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
-    const [user, setUser] = useState(null);
-    const [isStaff, setIsStaff] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
+  const [user, setUser] = useState(null);
+  const [isStaff, setIsStaff] = useState(false);
 
-    useEffect(() => {
-        if (localStorage.getItem("accessToken")) {
-            http.get("/api/user/auth").then((res) => {
-                setUser(res.data.user);
-                setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
-            }).catch(err => {
-                console.error("Error fetching user data:", err);
-            });
-        }
-    }, []);
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      http.get("/user/auth").then((res) => {
+        setUser(res.data.user)
+        setIsStaff(res.data.user.email.match(/^[a-zA-Z0-9._%+-]+@smhstaff\.com$/));
+      });
+    }
+  }, [user, isStaff]);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget); // Open the menu
-    };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleClose = () => {
-        setAnchorEl(null); // Close the menu
-    };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
     return (
       <UserContext.Provider value={{ user, setUser, isStaff, setIsStaff }}>

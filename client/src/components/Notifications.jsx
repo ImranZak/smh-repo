@@ -4,31 +4,23 @@ import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
-  const [userId, setUserId] = useState(null);
+  const mockUserId = 1; // Hardcoded user ID for testing
 
   useEffect(() => {
-    // Fetch the user's ID and then fetch their notifications
-    const fetchUserAndNotifications = async () => {
-      try {
-        const userResponse = await axios.get('/api/user');
-        setUserId(userResponse.data.id);
-
-        const response = await axios.get(`/api/notifications/${userResponse.data.id}`);
+    axios.get(`/api/notifications?userId=${mockUserId}`)
+      .then(response => {
+        // Ensure the response data is an array
         setNotifications(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-      }
-    };
-
-    fetchUserAndNotifications();
+      })
+      .catch(error => console.error(error));
   }, []);
 
   return (
     <div>
       <Typography variant="h6">Notifications</Typography>
       <List>
-        {notifications.map((notification, index) => (
-          <ListItem key={index}>
+        {notifications.map(notification => (
+          <ListItem key={notification.id}>
             <ListItemText primary={notification.message} />
           </ListItem>
         ))}

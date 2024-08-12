@@ -34,18 +34,5 @@ module.exports = (sequelize) => {
         timestamps: true,
     });
 
-    // Associations
-    Friend.associate = (models) => {
-        Friend.belongsTo(models.User, {
-            foreignKey: 'userId',
-            as: 'user',
-        });
-
-        Friend.belongsTo(models.User, {
-            foreignKey: 'friendId',
-            as: 'friendUser',
-        });
-    };
-
     return Friend;
 };

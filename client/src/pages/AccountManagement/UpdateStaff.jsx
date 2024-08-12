@@ -60,7 +60,7 @@ function UpdateStaff() {
             value: 'Publicity',
             label: 'Publicity',
           },
-    ];            
+    ];
 
     useEffect(() => {
         http.get(`/staff/${id}`).then((res) => {
@@ -76,6 +76,7 @@ function UpdateStaff() {
         validationSchema: yup.object({
             name: yup.string()
                 .max(100, 'Name must be at most 100 characters')
+                .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .")
                 .required('Name is required'),
             birthDate: yup
                 .date()
@@ -100,10 +101,10 @@ function UpdateStaff() {
             department: yup.string()
                 .required('Department is required'),
             joinDate: yup
-            .date()
-            .min('01/01/2002', `Maximum join year is 2002`)
-            .max(new Date().getFullYear()+1, `Minimum join year is ${new Date().getFullYear()}`)
-            .required()
+                .date()
+                .min('01/01/2002', `Maximum join year is 2002`)
+                .max(new Date().getFullYear()+1, `Minimum join year is ${new Date().getFullYear()}`)
+                .required()
         }),
         onSubmit: (data) => {
             data.name = data.name.trim();

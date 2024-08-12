@@ -1,3 +1,4 @@
+// index.js
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -36,7 +37,6 @@ const signupRoute = require('./routes/signup');
 const userRoute = require('./routes/user');  // User route registered under /api/user
 const staffRoute = require('./routes/staff');
 const markerRoute = require('./routes/marker');
-const sendquizemailRoute = require('./routes/quizEmail');
 
 // Routes from Feedback branch
 const dataFeedback = require('./routes/datafeedback');
@@ -76,7 +76,7 @@ console.log('Routes have been set up.');
 const db = require('./models');
 db.sequelize.sync()  // Change to true if you want to drop and recreate the database each time.
     .then(() => {
-        const port = process.env.APP_PORT || 3001;
+        const port = process.env.APP_PORT || 3000;
         app.listen(port, () => {
             console.log(`⚡ Server running on http://localhost:${port}`);
         });
