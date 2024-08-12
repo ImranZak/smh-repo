@@ -17,7 +17,7 @@ const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/;
 
 function generateVerificationCode() {
-    return bcrypt.hash((Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111).toString(), 10);
+    return bcrypt.hash((Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111).toString(), 10).toString();
 }
 
 // Register User
@@ -117,10 +117,11 @@ router.get("/auth", validateToken, (req, res) => {
 
 // Send verification email
 router.post("/verify", async (req, res) => {
-    const verificationCode = generateVerificationCode();
+    const verificationCode = Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111;
     const email = req.body.email;
     try {
-        await User.update({ verificationCode: verificationCode }, {
+        const hashedVerificationCode = await bcrypt.hash(verificationCode.toString(), 10);
+        await User.update({ verificationCode: hashedVerificationCode }, {
             where: { email: email }
         });
         await sendVerifyEmail(email, verificationCode);
@@ -130,17 +131,29 @@ router.post("/verify", async (req, res) => {
     }
 });
 
-// Verify/Unverify user
+// Verify user
 router.put("/verify/:id", async (req, res) => {
-    let id = req.params.id;
+    const id = req.params.id;
+    let user = await User.findByPk(id);
+    // Check id not found
+    if (!user) {
+        res.sendStatus(404);
+        return;
+    }
+
     let data = req.body;
     try {
-        let num = await User.update({ verified: data.verified }, {
+        let match = await bcrypt.compare(data.verificationCode, user.verificationCode);
+        if (!match) {
+            res.status(400).json({ message: "Verification code is incorrect" });
+            return;
+        }
+        let num = await User.update({ verified: true }, {
             where: { id: id }
         });
         if (num == 1) {
             res.json({
-                message: "User verified was updated successfully."
+                message: "User was verified successfully."
             });
         }
         else {
@@ -149,7 +162,35 @@ router.put("/verify/:id", async (req, res) => {
             });
         }
     } catch (error) {
-        res.status(500).send('Error sending email');
+        res.status(500).send(`Error verifying user: ${error}`);
+    }
+});
+
+// Unverify user
+router.put("/unverify/:id", async (req, res) => {
+    const id = req.params.id;
+    let user = await User.findByPk(id);
+    // Check id not found
+    if (!user) {
+        res.sendStatus(404);
+        return;
+    }
+    try {
+        let num = await User.update({ verified: false }, {
+            where: { id: id }
+        });
+        if (num == 1) {
+            res.json({
+                message: "User was unverified successfully."
+            });
+        }
+        else {
+            res.status(400).json({
+                message: `Cannot update user with id ${id}. `
+            });
+        }
+    } catch (error) {
+        res.status(500).send(`Error unverifying user: ${error}`);
     }
 });
 
@@ -195,8 +236,6 @@ router.put("/:id", async (req, res) => {
         res.sendStatus(404);
         return;
     }
-    
-    // Wanted to do validation to prevent password update, but gave up :(
 
     let data = req.body;
     // Validate request body
