@@ -42,7 +42,7 @@ function Login() {
                     toast.error(`${err.response.data.message}`);
                 });
             } else {
-                http.post("/user/login", data)
+                http.post("/user/login", data || {})
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.accessToken);
                     setUser(res.data.user);

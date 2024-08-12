@@ -130,8 +130,9 @@ function TakeQuizUser() {
     
                 try {
                     const response = await http.post('/marker', {
-                        question: question.question_text,
-                        answer: correctAnswer,
+                        // expectedAnswer: question.question_text,
+                        question_type: question.question_type,
+                        expectedAnswer: correctAnswer,
                         userAnswer: userAnswer
                     });
     

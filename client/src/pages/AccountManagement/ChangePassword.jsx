@@ -85,4 +85,4 @@ function ChangePassword() {
     );
 }
 
-export default UserProfile
+export default ChangePassword;
