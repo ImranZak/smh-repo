@@ -47,12 +47,12 @@ module.exports = (sequelize, DataTypes) => {
     // Define the association between User and UserQuizHistory
     User.associate = models => {
         User.hasMany(models.UserQuizHistory, {
-            foreignKey: 'userid',
+            foreignKey: 'userId',
             as: 'quizHistories',
             onDelete: 'CASCADE'
         });
         User.hasMany(models.SignUp, {
-            foreignKey: 'userid',
+            foreignKey: 'userId',
             as: 'signups',
             onDelete: 'CASCADE'
         });

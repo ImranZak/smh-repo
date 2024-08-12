@@ -73,7 +73,7 @@ app.use((req, res, next) => {
 console.log('Routes have been set up.');
 
 const db = require('./models');
-db.sequelize.sync()
+db.sequelize.sync({ force: true })
     .then(() => {
         const port = process.env.APP_PORT || 3000;
         app.listen(port, () => {
