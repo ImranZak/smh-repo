@@ -18,7 +18,7 @@ function AddDatafeedback() {
     const formik = useFormik(
         {
             initialValues:
-                { name: "", ranking: 0, best: "", improvement: "" },
+                { name: "", ranking: 5, best: "", improvement: "" },
             validationSchema: yup.object({
                 name: yup.string().trim().min(3, 'Name must be at least 3 characters')
                     .max(80, 'Name must be at most 100 characters')
