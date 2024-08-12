@@ -5,14 +5,21 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        // Since quizid already exists in the database, we define it without trying to re-add the foreign key constraints
-        quizid: {
+        quizId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            references: {
+                model: 'quizzes',
+                key: 'id'
+            }
         },
-        userid: {
+        userId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            references: {
+                model: 'users',
+                key: 'id'
+            }
         },
         title: {
             type: DataTypes.STRING(100),
@@ -51,14 +58,13 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     UserQuizHistory.associate = models => {
-        // Associations are kept without attempting to add the foreign key constraint
         UserQuizHistory.belongsTo(models.Quiz, {
-            foreignKey: 'quizid',
+            foreignKey: 'quizId',
             as: 'quiz',
             onDelete: 'CASCADE'
         });
         UserQuizHistory.belongsTo(models.User, {
-            foreignKey: 'userid',
+            foreignKey: 'userId',
             as: 'user',
             onDelete: 'CASCADE'
         });
