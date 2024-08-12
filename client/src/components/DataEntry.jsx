@@ -53,7 +53,6 @@ const DataEntry = () => {
         date,
         type,
         amount: parseFloat(usage),  // Use "amount" instead of "usage" to match your model
-        userId: 1,  // Replace with actual user ID or remove this line if not needed
       };
 
       await axios.post('http://localhost:3001/api/usage', usageData);

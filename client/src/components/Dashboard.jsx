@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { Line, Bar } from 'react-chartjs-2';
@@ -30,10 +30,10 @@ import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import FriendList from './Friends';
-import Notification from './Notifications';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Messages from './Messages'; // Import the Messages component
+import Messages from './Messages';
+import UserContext from '../contexts/UserContext';
 import '../styles/Dashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -50,6 +50,7 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const { user, isStaff } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [charts, setCharts] = useState([]);
   const [layout, setLayout] = useState([]);
@@ -60,7 +61,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get('http://localhost:3001/api/usage');
+        const result = await axios.get(`http://localhost:3001/api/usage`);
         setData(Array.isArray(result.data) ? result.data : []);
         console.log("Usage data fetched: ", result.data);
       } catch (error) {
@@ -115,7 +116,7 @@ const Dashboard = () => {
 
   const handleClearData = async () => {
     try {
-      await axios.delete('http://localhost:3001/api/usage');
+      await axios.delete(`http://localhost:3001/api/usage`);
       setData([]);
       alert('Data cleared successfully');
     } catch (error) {
@@ -124,19 +125,19 @@ const Dashboard = () => {
   };
 
   const handleSaveLayout = () => {
-    localStorage.setItem('dashboardLayout', JSON.stringify(layout));
-    localStorage.setItem('dashboardCharts', JSON.stringify(charts));
+    localStorage.setItem(`dashboardLayout-${user.id}`, JSON.stringify(layout));
+    localStorage.setItem(`dashboardCharts-${user.id}`, JSON.stringify(charts));
     alert('Layout saved successfully');
   };
 
   useEffect(() => {
-    const savedLayout = localStorage.getItem('dashboardLayout');
-    const savedCharts = localStorage.getItem('dashboardCharts');
+    const savedLayout = localStorage.getItem(`dashboardLayout-${user.id}`);
+    const savedCharts = localStorage.getItem(`dashboardCharts-${user.id}`);
     if (savedLayout && savedCharts) {
       setLayout(JSON.parse(savedLayout));
       setCharts(JSON.parse(savedCharts));
     }
-  }, []);
+  }, [user]);
 
   const toggleFriendList = () => {
     setIsFriendListOpen(!isFriendListOpen);
@@ -153,7 +154,9 @@ const Dashboard = () => {
           </Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="success" onClick={handleClearData}>Clear Data</Button>
+          {isStaff && (
+            <Button variant="contained" color="success" onClick={handleClearData}>Clear Data</Button>
+          )}
         </Grid>
         <Grid item>
           <Button variant="contained" color="success" onClick={handleAddChart}>Add Graph</Button>
@@ -168,8 +171,8 @@ const Dashboard = () => {
           layouts={{ lg: layout }}
           breakpoints={{ lg: 1200 }}
           cols={{ lg: 2 }}
-          rowHeight={380}
-          width={1200}
+          rowHeight={300} // Adjusted the rowHeight to make charts narrower
+          width={1000}    // Adjusted width to prevent charts from bleeding out
           compactType={null}
           preventCollision={true}
           isDraggable={true}
@@ -196,11 +199,13 @@ const Dashboard = () => {
                         <MenuItem value="water">Water</MenuItem>
                       </Select>
                     </Grid>
-                    <Grid item>
-                      <IconButton color="secondary" onClick={() => handleRemoveChart(index)}>
-                        <CloseIcon />
-                      </IconButton>
-                    </Grid>
+                    {isStaff && (
+                      <Grid item>
+                        <IconButton color="secondary" onClick={() => handleRemoveChart(index)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Grid>
+                    )}
                   </Grid>
                   <div className="chart-container">
                     {chart.chartType === 'line' ? (
@@ -218,10 +223,9 @@ const Dashboard = () => {
       <Grid container spacing={3} style={{ marginTop: '20px' }}>
         <Grid item xs={12}>
           <Typography variant="h6"></Typography>
-          <Messages /> {/* Add the Messages component */}
+          <Messages />
         </Grid>
         <Grid item xs={12}>
-          <Notification />
         </Grid>
       </Grid>
       <Fab
@@ -232,7 +236,7 @@ const Dashboard = () => {
           position: 'fixed',
           bottom: '20px',
           right: '20px',
-          zIndex: 1300, // Ensure the button stays above other components
+          zIndex: 1300,
         }}
       >
         {isFriendListOpen ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
