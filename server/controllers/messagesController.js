@@ -1,6 +1,8 @@
-const Message = require('../models/Message');
-const Friend = require('../models/Friend');
-const User = require('../models/User');
+const { Op } = require('sequelize');
+const db = require('../models');
+const Message = db.Message;
+const Friend = db.Friend;
+const User = db.User;
 
 exports.getAllMessages = async (req, res) => {
     const { userId } = req.params;
@@ -18,17 +20,25 @@ exports.getAllMessages = async (req, res) => {
                 { model: User, as: 'recipient', attributes: ['id', 'name'] }
             ]
         });
+        if (!messages || messages.length === 0) {
+            return res.status(404).json({ message: 'No messages found.' });
+        }
         res.json(messages);
     } catch (error) {
         console.error('Error fetching messages:', error.message);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+
 
 exports.addMessage = async (req, res) => {
     const { senderId, recipientId, content } = req.body;
 
     try {
+        if (!senderId || !recipientId || !content) {
+            return res.status(400).json({ message: 'Missing required fields.' });
+        }
+
         // Check if the users are accepted friends
         const friendship = await Friend.findOne({
             where: {
@@ -48,9 +58,10 @@ exports.addMessage = async (req, res) => {
         res.status(201).json(newMessage);
     } catch (error) {
         console.error('Error adding message:', error.message);
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+
 
 exports.deleteMessage = async (req, res) => {
     try {

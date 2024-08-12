@@ -1,4 +1,4 @@
-// Message.js (Updated)
+// Message.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
             allowNull: false,
         },
         content: { // The actual message content
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT, // Adjusted to TEXT for potentially longer messages
             allowNull: false,
         },
         createdAt: {
@@ -35,7 +35,6 @@ module.exports = (sequelize) => {
         timestamps: true,
     });
 
-    // Associations
     Message.associate = (models) => {
         Message.belongsTo(models.User, { as: 'sender', foreignKey: 'senderId' });
         Message.belongsTo(models.User, { as: 'recipient', foreignKey: 'recipientId' });

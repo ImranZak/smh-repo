@@ -217,7 +217,7 @@ const Dashboard = () => {
       </div>
       <Grid container spacing={3} style={{ marginTop: '20px' }}>
         <Grid item xs={12}>
-          <Typography variant="h6">Inbox</Typography>
+          <Typography variant="h6"></Typography>
           <Messages /> {/* Add the Messages component */}
         </Grid>
         <Grid item xs={12}>

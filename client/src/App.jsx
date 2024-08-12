@@ -3,7 +3,7 @@ import './App.css';
 import { Container } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import { ToastContainer } from 'react-toastify';  
+import { ToastContainer } from 'react-toastify';
 import MyTheme from './MyTheme/theme.jsx';
 import UserContext from './contexts/UserContext';
 import http from './http';
@@ -13,13 +13,13 @@ import Dashboard from './components/Dashboard';
 import DataEntry from './components/DataEntry';
 import Friends from './components/Friends';
 import Messages from './components/Messages';
-import Notifications from './components/Notifications';
+// Removed import for Notifications
 import DataFeedbackStaff from './pages/Feedback/DataFeedbackStaff.jsx';
 import FeedbackDisplay from './pages/Feedback/FeedbackDisplay.jsx';
 import DataFeedbacks from './pages/Feedback/DataFeedbacks.jsx';
 import AddDatafeedback from './pages/Feedback/AddDatafeedback.jsx';
 import EditDataFeedback from './pages/Feedback/EditDataFeedback.jsx';
-import Faq from './pages/Feedback/Faq.jsx'; 
+import Faq from './pages/Feedback/Faq.jsx';
 import Events from './pages/Events/Events.jsx';
 import AddEvent from './pages/Events/AddEvent.jsx';
 import EditEvent from './pages/Events/EditEvent.jsx';
@@ -149,7 +149,7 @@ function App() {
                               <Route path="/data-entry" element={<DataEntry />} />
                               <Route path="/friends" element={<Friends />} />
                               <Route path="/messages" element={<Messages />} />
-                              <Route path="/notifications" element={<Notifications />} />
+                              {/* Removed Notifications route */}
                               <Route path="/datafeedbackstaff" element={<DataFeedbackStaff />} />
                               <Route path="/feedbackdisplay/:id" element={<FeedbackDisplay />} />
                               <Route path="/datafeedback" element={<DataFeedbacks />} />

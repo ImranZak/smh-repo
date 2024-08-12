@@ -33,7 +33,7 @@ const eventRoute = require('./routes/event');
 const eventHistoryRoute = require('./routes/eventHistory'); 
 const fileRoute = require('./routes/file');
 const signupRoute = require('./routes/signup');
-const userRoute = require('./routes/user');
+const userRoute = require('./routes/user');  // User route registered under /api/user
 const staffRoute = require('./routes/staff');
 const markerRoute = require('./routes/marker');
 const sendquizemailRoute = require('./routes/quizEmail');
@@ -56,11 +56,11 @@ app.use("/event", eventRoute);
 app.use('/eventHistory', eventHistoryRoute);
 app.use("/file", fileRoute);
 app.use("/signup", signupRoute);
-app.use("/api/user", userRoute);
+app.use("/api/user", userRoute);  // Ensure /api/user handles login, registration, etc.
 app.use("/datafeedback", dataFeedback);
-app.use('/staff', staffRoute)
-app.use('/marker', markerRoute)
-app.use('/sendquizemail', sendquizemailRoute)
+app.use('/staff', staffRoute);
+app.use('/marker', markerRoute);
+app.use('/sendquizemail', sendquizemailRoute);
 
 // This middleware will catch all undefined API routes and return a JSON error response
 app.use((req, res, next) => {
