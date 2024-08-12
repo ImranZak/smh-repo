@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { Container, AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Button } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Container } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { ToastContainer } from 'react-toastify';  
 import MyTheme from './MyTheme/theme.jsx';
@@ -42,6 +42,7 @@ import StaffEvents from './pages/Events/StaffEvents';
 import Event_History from './pages/Events/Event_History';
 import SignUp from './pages/Events/SignUp';
 import SignUps from './pages/Events/SignUps';
+import SignUpConfirm from './pages/Events/SignUpConfirm.jsx';
 import Staff from './pages/AccountManagement/Staff';
 import CreateStaff from './pages/AccountManagement/CreateStaff';
 import UpdateStaff from './pages/AccountManagement/UpdateStaff';
@@ -55,6 +56,28 @@ import UserContext from './contexts/UserContext';
 import StaffProfile from './pages/AccountManagement/StaffProfile.jsx';
 import UserProfile from './pages/AccountManagement/UserProfile.jsx';
 
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false };
+    }
+  
+    static getDerivedStateFromError(error) {
+      return { hasError: true };
+    }
+  
+    componentDidCatch(error, info) {
+      console.error('ErrorBoundary caught an error', error, info);
+    }
+  
+    render() {
+      if (this.state.hasError) {
+        return <h1>Something went wrong.</h1>;
+      }
+  
+      return this.props.children; 
+    }
+}
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null); // State for menu anchor element
@@ -95,6 +118,7 @@ function App() {
               <Route path={"/event_history"} element={<Event_History />} />
               <Route path={"/sign-up/:id"} element={<SignUp />} />
               <Route path={"/signups"} element={<SignUps />} />
+              <Route path={"/signupconfirm"} element={<SignUpConfirm />} />
               <Route path="/quizzesStaff" element={<Quizzes />} />
               <Route path="/editquiz/:id" element={<EditQuiz />} />
               <Route path="/addquiz" element={<AddQuiz />} />

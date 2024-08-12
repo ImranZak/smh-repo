@@ -45,7 +45,7 @@ function SignUp() {
                 .then((res) => {
                     console.log(res.data);
                     toast.success('Sign Up Successful!');
-                    navigate("/events");
+                    navigate("/signupconfirm");
                 })
                 .catch((error) => {
                     // Check if error response exists
