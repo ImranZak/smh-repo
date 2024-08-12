@@ -119,6 +119,7 @@ function App() {
               <Route path={"/create-staff"} element={<CreateStaff />} />
               <Route path={"/update-staff/:id"} element={<UpdateStaff />} />
               <Route path={"/update-user/:id"} element={<UpdateUser />} />
+              <Route path={"/faq"} element={<Faq />} />
 
               {/* Routes from Current branch */}
               {/* <Route path="/dashboard" element={<Dashboard />} />

@@ -1,6 +1,6 @@
 {
   "development": {
-    "username": "smh_user",
+    "username": "smh-staff",
     "password": "smh_password",
     "database": "smh",
     "host": "127.0.0.1",
