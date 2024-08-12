@@ -8,9 +8,13 @@ const { sign } = require('jsonwebtoken');
 const { validateToken } = require('../middlewares/auth');
 require('dotenv').config();
 
-// Regex for validation
-const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/;
+
+// 8-10 digits with optional country code
+const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
+
+// Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/;
+
 
 // Register User
 router.post("/register", async (req, res) => {
@@ -19,32 +23,34 @@ router.post("/register", async (req, res) => {
     // Validate request body 
     let validationSchema = yup.object({ 
         name: yup.string().trim().min(3).max(50).required()
-            .matches(/^[a-zA-Z '-,.]+$/, "name only allows letters, spaces and characters: ' - , ."),
+        .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , ."),
         email: yup.string().trim().lowercase().email().max(50).matches(/^(?!.*@smhuser\.com$).+$/, "Invalid email").required(),
         password: yup.string().trim().min(8).max(50).required()
-            .matches(passwordRegex, "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces")
+        .matches(passwordRegex, "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces")
     });
-
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
-
-        // Check email 
-        let user = await User.findOne({ where: { email: data.email } });
-        if (user) {
-            res.status(400).json({ message: "Email already exists." });
-            return;
-        }
-
-        // Hash password
-        data.password = await bcrypt.hash(data.password, 10);
-
-        // Create user
-        let result = await User.create(data);
-        res.json({ message: `Email ${result.email} was registered successfully.` });
+        // Process valid data …
     } catch (err) {
         res.status(400).json({ errors: err.errors });
     }
+
+    // Check email 
+    let user = await User.findOne(
+        { where: { email: data.email } 
+    });
+    if (user) {
+        res.status(400).json({ message: "Email already exists." });
+        return;
+    }
+
+    // Hash password
+    data.password = await bcrypt.hash(data.password, 10);
+    // Create user
+    let result = await User.create(data);
+    res.json({ message: `Email ${result.email} was registered successfully.` });
 });
+
 
 // Login User
 router.post("/login", async (req, res) => {
@@ -57,11 +63,14 @@ router.post("/login", async (req, res) => {
     });
 
     try {
-        data = await validationSchema.validate(data, { abortEarly: false });
+        data = await validationSchema.validate(data,
+            { abortEarly: false });
 
         // Check email and password
         let errorMsg = "Email or password is not correct.";
-        let user = await User.findOne({ where: { email: data.email } });
+        let user = await User.findOne({
+            where: { email: data.email }
+        });
         if (!user) {
             res.status(400).json({ message: "Email is not correct." });
             return;
@@ -78,89 +87,33 @@ router.post("/login", async (req, res) => {
             email: user.email,
             name: user.name
         };
-        let accessToken = sign(userInfo, process.env.APP_SECRET, { expiresIn: process.env.TOKEN_EXPIRES_IN });
+        let accessToken = sign(userInfo, process.env.APP_SECRET, 
+            { expiresIn: process.env.TOKEN_EXPIRES_IN });
         res.json({
             accessToken: accessToken,
             user: userInfo
         });
-    } catch (err) {
+    }
+    catch (err) {
         res.status(400).json({ errors: err.errors });
         return;
     }
 });
 
-// Authenticated User Info
+
+// Authenticate User
 router.get("/auth", validateToken, (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
     let userInfo = {
         id: req.user.id,
         email: req.user.email,
         name: req.user.name,
     };
-    res.json({ user: userInfo });
-});
-
-router.get("/search", async (req, res) => {
-    console.log("Search Request Reached Backend");
-    const { search } = req.query;
-
-    console.log("Search Request Received:", req.query);  // Log the received query parameters
-
-    try {
-        let condition = {
-            [Op.or]: [
-                { email: { [Op.like]: `%${search}%` } },  // Use `like` for MySQL
-                { name: { [Op.like]: `%${search}%` } },  // Use `like` for MySQL
-            ]
-        };
-
-        const user = await User.findOne({ where: condition });
-
-        if (user) {
-            console.log("User Found:", user);  // Log the found user
-            res.json(user);
-        } else {
-            console.log("User not found");  // Log if no user is found
-            res.status(404).json({ message: "User not found." });
-        }
-    } catch (err) {
-        console.error("Error during search:", err);
-        res.status(500).json({ message: err.message });
-    }
-});
-
-
-
-
-
-
-// Create User (via Admin or Special Cases)
-router.post("/", async (req, res) => {
-    let data = req.body;
-
-    // Validate request body
-    let validationSchema = yup.object({
-        name: yup.string().trim().min(3).max(100).matches(/^[a-zA-Z '-,.]+$/, "name only allows letters, spaces and characters: ' - , .").required(),
-        birthDate: yup.date().nullable().min(new Date().getFullYear() - 100, `Minimum birth year is ${new Date().getFullYear() - 100}`).max(new Date().getFullYear() - 12, `Maximum birth year is ${(new Date().getFullYear() - 13)}`),
-        email: yup.string().trim().lowercase().min(3).max(100).email().required(),
-        phoneNumber: yup.string().trim().matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international').nullable(),
-        mailingAddress: yup.string().trim().min(3).max(100).nullable(),
-        password: yup.string().trim().matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces. Special characters (@,#,$,%,^,&,+,=) are allowed").required()
+    res.json({ 
+        user: userInfo 
     });
-
-    try {
-        data = await validationSchema.validate(data, { abortEarly: false });
-
-        // Hash password
-        data.password = await bcrypt.hash(data.password, 10);
-        let result = await User.create(data);
-        res.json(result);
-    } catch (err) {
-        res.status(400).json({ errors: err.errors });
-    }
 });
+
+// TODO: Continue lab5b by adding Booking table and one-to-many relationship between them
 
 // Get All Users (With Optional Search Query)
 router.get("/", async (req, res) => {
@@ -170,11 +123,12 @@ router.get("/", async (req, res) => {
         condition[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
             { email: { [Op.like]: `%${search}%` } },
-            { phoneNumber: { [Op.like]: `%{search}%` } },
+            { phoneNumber: { [Op.like]: `%${search}%` } },
             { mailingAddress: { [Op.like]: `%${search}%` } },
+            { password: { [Op.like]: `%${search}%` } },
         ];
     }
-
+    
     let list = await User.findAll({
         where: condition,
         order: [['createdAt', 'ASC']]
@@ -186,6 +140,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     let id = req.params.id;
     let user = await User.findByPk(id);
+    // Check id not found
     if (!user) {
         res.sendStatus(404);
         return;
@@ -196,14 +151,14 @@ router.get("/:id", async (req, res) => {
 // Update User By Id
 router.put("/:id", async (req, res) => {
     let id = req.params.id;
+    // Check id not found
     let user = await User.findByPk(id);
     if (!user) {
         res.sendStatus(404);
         return;
     }
-
+    
     let data = req.body;
-
     // Validate request body
     let validationSchema = yup.object({
         name: yup
@@ -232,7 +187,6 @@ router.put("/:id", async (req, res) => {
             .matches(passwordRegex, "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and no whitespaces")
             .nullable()
     });
-
     try {
         data = await validationSchema.validate(data,
             { abortEarly: false });
@@ -242,11 +196,17 @@ router.put("/:id", async (req, res) => {
             where: { id: id }
         });
         if (num == 1) {
-            res.json({ message: "User was updated successfully." });
-        } else {
-            res.status(400).json({ message: `Cannot update user with id ${id}.` });
+            res.json({
+                message: "User was updated successfully."
+            });
         }
-    } catch (err) {
+        else {
+            res.status(400).json({
+                message: `Cannot update user with id ${id}.`
+            });
+        }
+    }
+    catch (err) {
         res.status(400).json({ errors: err.errors });
     }
 });
@@ -254,47 +214,68 @@ router.put("/:id", async (req, res) => {
 // Delete User By Id
 router.delete("/:id", async (req, res) => {
     let id = req.params.id;
+    // Check id not found
     let user = await User.findByPk(id);
     if (!user) {
         res.sendStatus(404);
         return;
     }
 
-    let num = await User.destroy({ where: { id: id } });
+    let num = await User.destroy({
+        where: { id: id }
+    })
     if (num == 1) {
-        res.json({ message: "User was deleted successfully." });
-    } else {
-        res.status(400).json({ message: `Cannot delete user with id ${id}.` });
+        res.json({
+            message: "User was deleted successfully."
+        });
+    }
+    else {
+        res.status(400).json({
+            message: `Cannot delete user with id ${id}.`
+        });
     }
 });
 
 // Delete All Users
 router.delete("/", async (req, res) => {
     try {
-        let userIds = await User.findAll({ attributes: ['id'] });
-
+        let userIds = await User.findAll({
+            attributes: ['id']
+        });
+        
         for (let i = 0; i < userIds.length; i++) {
-            await User.destroy({ where: { id: userIds[i].id } });
+            await User.destroy({
+                where: { id: userIds[i].id }
+            });
         }
-        res.json({ message: "All users were deleted successfully." });
+        res.json({
+            message: "All users were deleted successfully."
+        });
     } catch (err) {
-        res.status(500).json({ message: "Failed to delete all users." });
+        res.status(500).json({
+            message: "Failed to delete all users."
+        });
     }
 });
 
-// Populate Users (For Testing Purposes)
+// Populate User
 router.post("/populate", async (req, res) => {
     try {
-        let userIds = await User.findAll({ attributes: ['id'] });
-
+        let userIds = await User.findAll({
+            attributes: ['id']
+        });
+        
         for (let i = 0; i < userIds.length; i++) {
-            await User.destroy({ where: { id: userIds[i].id } });
+            await User.destroy({
+                where: { id: userIds[i].id }
+            });
         }
     } catch (err) {
-        res.status(500).json({ message: "Failed to delete all users." });
-        return;
+        res.status(500).json({
+            message: "Failed to delete all user."
+        });
+        return
     }
-
     try {
         const userData = [
             {
@@ -318,7 +299,9 @@ router.post("/populate", async (req, res) => {
         const result = await User.bulkCreate(userData);
         res.json(result);
     } catch (err) {
-        res.status(500).json({ message: `${err}: Failed to populate users.` });
+        res.status(500).json({
+            message: `${err}: Failed to populate user.`
+        });
     }
 });
 

@@ -40,38 +40,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             tableName: "users",
-            timestamps: true,
+            timestamps: true,  // Ensure timestamps are automatically managed
         }
     );
 
+    // Define the association between User and UserQuizHistory
     User.associate = models => {
-        // Association with Friend model for the user who sent the friend request
-        User.hasMany(models.Friend, {
-            foreignKey: 'userId',
-            as: 'sentFriendRequests',
-            onDelete: 'CASCADE',
-        });
-
-        // Association with Friend model for the user who received the friend request
-        User.hasMany(models.Friend, {
-            foreignKey: 'friendId',
-            as: 'receivedFriendRequests',
-            onDelete: 'CASCADE',
-        });
-
-        // BelongsToMany association for getting all friends of a user
-        User.belongsToMany(models.User, {
-            through: models.Friend,
-            as: 'friends',
-            foreignKey: 'userId',
-            otherKey: 'friendId'
-        });
-
-        User.belongsToMany(models.User, {
-            through: models.Friend,
-            as: 'friendOf',
-            foreignKey: 'friendId',
-            otherKey: 'userId'
+        User.hasMany(models.UserQuizHistory, {
+            foreignKey: 'userid',
+            as: 'quizHistories',
+            onDelete: 'CASCADE'
         });
         User.hasMany(models.SignUp, {
             foreignKey: 'userid',
