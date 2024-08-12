@@ -1,3 +1,4 @@
+// Message.js (Updated)
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -7,11 +8,15 @@ module.exports = (sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        userId: {
+        senderId: { // The sender's user ID
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        message: {
+        recipientId: { // The recipient's user ID
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        content: { // The actual message content
             type: DataTypes.STRING,
             allowNull: false,
         },
