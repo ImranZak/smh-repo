@@ -30,7 +30,7 @@ const UserAppBar = () => {
     window.location = "/";
   };
 
-  const handleEventsClick = (event) => {  
+  const handleEventsClick = (event) => {
     setEventsAnchorEl(event.currentTarget);
   };
 
@@ -115,11 +115,12 @@ const UserAppBar = () => {
                 <Link to="/ResourceLibraryUser" className="dropdown-link">Educational Materials</Link>
               </MenuItem>
             </Menu>
-            <IconButton onClick={() => handleProfile()}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
-            </IconButton>
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {user && (
               <>
+                <IconButton onClick={() => handleProfile()}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </IconButton>
                 <Typography>{user.name}</Typography>
                 <Button onClick={logout}>Logout</Button>
               </>
@@ -134,6 +135,7 @@ const UserAppBar = () => {
                 </Link>
               </>
             )}
+            </Box>
           </Box>
         </Toolbar>
       </Container>
