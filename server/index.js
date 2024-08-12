@@ -36,7 +36,6 @@ const signupRoute = require('./routes/signup');
 const userRoute = require('./routes/user');
 const staffRoute = require('./routes/staff');
 const markerRoute = require('./routes/marker');
-const sendquizemailRoute = require('./routes/quizEmail');
 
 // Routes from Feedback branch
 const dataFeedback = require('./routes/datafeedback');
@@ -60,7 +59,6 @@ app.use("/api/user", userRoute);
 app.use("/datafeedback", dataFeedback);
 app.use('/staff', staffRoute)
 app.use('/marker', markerRoute)
-app.use('/sendquizemail', sendquizemailRoute)
 
 console.log('Routes have been set up.');
 
