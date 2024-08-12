@@ -1,6 +1,6 @@
 const Message = require('../models/Message');
 const Friend = require('../models/Friend');
-const User = require('../models/User'); // Include the User model
+const User = require('../models/User');
 
 exports.getAllMessages = async (req, res) => {
     const { userId } = req.params;

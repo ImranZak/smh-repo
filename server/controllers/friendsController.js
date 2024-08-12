@@ -13,7 +13,7 @@ exports.getAllFriends = async (req, res) => {
                     { userId },
                     { friendId: userId }
                 ],
-                status: 'accepted'
+                status: { [Op.or]: ['accepted', 'pending'] } 
             },
             include: [
                 {
@@ -42,6 +42,7 @@ exports.getAllFriends = async (req, res) => {
             };
         });
 
+        console.log('All Friends and Pending Requests:', formattedFriends);
         res.json(formattedFriends);
     } catch (error) {
         console.error('Error fetching friends:', error.message);
@@ -79,7 +80,6 @@ exports.addFriend = async (req, res) => {
         const { friendId } = req.body;
 
         if (!friendId) {
-            console.log('Friend ID is missing.');
             return res.status(400).json({ message: 'Friend ID is required.' });
         }
 
@@ -93,7 +93,6 @@ exports.addFriend = async (req, res) => {
         });
 
         if (existingFriendship) {
-            console.log('Existing friendship or request found:', existingFriendship);
             return res.status(400).json({ message: 'Friend request or friendship already exists.' });
         }
 

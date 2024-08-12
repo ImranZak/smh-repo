@@ -153,7 +153,7 @@ function TakeQuizUser() {
     const postQuizHistory = () => {
         const historyData = {
             quizid: parseInt(id, 10),
-            userid: user.id, // Use user ID from context
+            userId: user.id, // Use user ID from context
             title: `Quiz ${quizDetails.title}`,
             description: quizDetails.description,
             score: Math.round(score), // Ensure this is an integer between 0 and 100

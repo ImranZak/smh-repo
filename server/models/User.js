@@ -74,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
             otherKey: 'userId'
         });
         User.hasMany(models.SignUp, {
-            foreignKey: 'userid',
+            foreignKey: 'userId',
             as: 'signups',
             onDelete: 'CASCADE'
         });

@@ -9,24 +9,24 @@ const sendQuizResultEmail = require('../middlewares/email');
 router.post('/userhistory/:quizid', async (req, res) => {
     let data = req.body;
     const { quizid } = req.params;
-    const { userid, title, description, score, dateTaken } = data;
+    const { userId, title, description, score, dateTaken } = data;
 
     try {
-        const userInfo = await User.findByPk(userid);
+        const userInfo = await User.findByPk(userId);
         if (!userInfo) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         let validationSchema = yup.object({
             quizid: yup.number().integer().required(),
-            userid: yup.number().integer().required(),
+            userId: yup.number().integer().required(),
             title: yup.string().trim().max(100).required(),
             description: yup.string().trim().required(),
             score: yup.number().integer().min(0).max(100).required(),
             dateTaken: yup.date().required()
         });
 
-        data = await validationSchema.validate({ quizid, userid, title, description, score, dateTaken }, { abortEarly: false });
+        data = await validationSchema.validate({ quizid, userId, title, description, score, dateTaken }, { abortEarly: false });
         data.quizid = parseInt(quizid, 10);
 
         console.log('Data to be inserted:', data); // Log data to be inserted
@@ -51,7 +51,7 @@ router.post('/userhistory/:quizid', async (req, res) => {
 router.get('/userhistory/:id', async (req, res) => {
     let id = req.params.id;
     try {
-        const history = await UserQuizHistory.findAll({ where: { userid: id }, order: [['id', 'ASC']] });
+        const history = await UserQuizHistory.findAll({ where: { userId: id }, order: [['id', 'ASC']] });
         res.json(history);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -65,7 +65,7 @@ router.put('/userhistory/:quizid', async (req, res) => {
 
     let validationSchema = yup.object({
         quizid: yup.number().integer().required(),
-        userid: yup.number().integer().required(),
+        userId: yup.number().integer().required(),
         title: yup.string().trim().max(100).required(),
         description: yup.string().trim().required(),
         score: yup.number().integer().min(0).max(100).required(),
@@ -75,8 +75,8 @@ router.put('/userhistory/:quizid', async (req, res) => {
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
         data.quizid = parseInt(quizid, 10);
-        data.userid = parseInt(userid, 10);
-        let [num] = await UserQuizHistory.update(data, { where: { id: id, quizid: quizid, userid: userid } });
+        data.userId = parseInt(userId, 10);
+        let [num] = await UserQuizHistory.update(data, { where: { id: id, quizid: quizid, userId: userId } });
         if (num === 1) {
             res.json({ message: "User's quiz history was updated successfully." });
         } else {
@@ -94,7 +94,7 @@ router.put('/userhistory/:quizid', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const deleted = await UserQuizHistory.destroy({ where: { id, userid: req.user.id } });
+        const deleted = await UserQuizHistory.destroy({ where: { id, userId: req.user.id } });
 
         if (deleted === 1) {
             res.json({ message: 'Quiz history deleted successfully' });

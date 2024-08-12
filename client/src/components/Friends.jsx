@@ -37,6 +37,10 @@ const Friends = () => {
     };
 
     const addFriend = async (friendId) => {
+        if (!friendId) {
+            console.error('No friendId provided');
+            return;
+        }
         try {
             await http.post(`/api/friends/${user.id}`, { friendId });
             fetchFriends();
@@ -44,6 +48,7 @@ const Friends = () => {
             console.error('Error adding friend:', error);
         }
     };
+    
 
     const acceptFriendRequest = async (friendRequestId) => {
         try {

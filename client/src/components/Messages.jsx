@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import UserContext from '../contexts/UserContext';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, TextField, Typography, List, ListItem, ListItemText, Divider, Box } from '@mui/material';
 
 const Messages = () => {
     const { user } = useContext(UserContext);
@@ -25,10 +25,8 @@ const Messages = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("API Response:", response);
             if (response.headers['content-type'].includes('application/json')) {
                 const friendsList = Array.isArray(response.data) ? response.data : [];
-                console.log("Filtered Friends List:", friendsList);
                 setFoundFriends(friendsList.filter(friend =>
                     friend.friend.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
                     friend.status === 'accepted'
@@ -76,7 +74,7 @@ const Messages = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setMessage('');
+            setMessage('');  // Clear the input after sending
             fetchMessages();
         } catch (error) {
             console.error('Error sending message:', error);
@@ -88,9 +86,9 @@ const Messages = () => {
     };
 
     return (
-        <div>
+        <Box>
             <Typography variant="h5">Messages</Typography>
-            <div style={{ margin: '20px 0' }}>
+            <Box marginY={2}>
                 <TextField
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -103,23 +101,24 @@ const Messages = () => {
                     Search Friends
                 </Button>
 
-                <div style={{ marginTop: '10px' }}>
+                <Box marginTop={2}>
                     {foundFriends.length > 0 ? (
                         foundFriends.map(friend => (
-                            <div key={friend.friend.id} style={{ marginBottom: '10px' }}>
+                            <Box key={friend.friend.id} marginBottom={2}>
                                 <Button
-                                    variant="outlined"
+                                    variant={recipientId === friend.friend.id ? 'contained' : 'outlined'}
                                     color={recipientId === friend.friend.id ? 'secondary' : 'default'}
                                     onClick={() => handleSelectFriend(friend.friend.id)}
+                                    fullWidth
                                 >
                                     {friend.friend.name}
                                 </Button>
-                            </div>
+                            </Box>
                         ))
                     ) : (
                         <Typography>No friends found. Try searching with different terms.</Typography>
                     )}
-                </div>
+                </Box>
 
                 <TextField
                     value={message}
@@ -137,23 +136,42 @@ const Messages = () => {
                 <Button variant="outlined" color="secondary" onClick={fetchMessages} style={{ marginLeft: '10px', marginTop: '10px' }}>
                     Refresh Messages
                 </Button>
-            </div>
-            <div style={{ marginTop: '20px' }}>
+            </Box>
+            <Box marginTop={4}>
                 <Typography variant="h6">Inbox</Typography>
-                <ul>
+                <List>
                     {Array.isArray(messages) && messages.length > 0 ? (
                         messages.map((msg) => (
-                            <li key={msg.id}>
-                                <strong>From:</strong> {msg.sender.name}<br />
-                                <strong>Message:</strong> {msg.content}
-                            </li>
+                            <React.Fragment key={msg.id}>
+                                <ListItem alignItems="flex-start">
+                                    <ListItemText
+                                        primary={`From: ${msg.sender.name}`}
+                                        secondary={
+                                            <>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    color="textPrimary"
+                                                >
+                                                    {msg.content}
+                                                </Typography>
+                                                {" — "}
+                                                {new Date(msg.createdAt).toLocaleString()}
+                                            </>
+                                        }
+                                    />
+                                </ListItem>
+                                <Divider component="li" />
+                            </React.Fragment>
                         ))
                     ) : (
-                        <li>No messages found.</li>
+                        <ListItem>
+                            <ListItemText primary="No messages found." />
+                        </ListItem>
                     )}
-                </ul>
-            </div>
-        </div>
+                </List>
+            </Box>
+        </Box>
     );
 };
 

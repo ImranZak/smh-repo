@@ -35,5 +35,11 @@ module.exports = (sequelize) => {
         timestamps: true,
     });
 
+    // Associations
+    Message.associate = (models) => {
+        Message.belongsTo(models.User, { as: 'sender', foreignKey: 'senderId' });
+        Message.belongsTo(models.User, { as: 'recipient', foreignKey: 'recipientId' });
+    };
+
     return Message;
 };
