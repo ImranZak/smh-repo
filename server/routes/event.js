@@ -10,11 +10,16 @@ router.post("/", async (req, res) => {
     // Validate request body
     let validationSchema = yup.object({
         name: yup.string().trim().min(3).max(100).required(),
-        description: yup.string().trim().min(3).max(500).required(),
-        status: yup.string().oneOf(['Completed', 'Upcoming', 'Cancelled']).required(),
-        type: yup.string().oneOf(['In-Person', 'Online', 'TBD'], 'Invalid type').required('Type of event is required'),
-        notes: yup.string().trim().max(500),
-        date: yup.date().required().min(new Date(), 'Event Date cannot be in the past'),
+        description: yup.string().trim().min(3, 'Description must be at least 3 characters')
+        .max(500, 'Description must be at most 500 characters')
+        .required('Description is required'),
+        status: yup.string().oneOf(['Completed', 'Upcoming', 'Cancelled'], 'Invalid status')
+        .required('Status is required'),
+        type: yup.string().oneOf(['In-Person', 'Online', 'TBD'], 'Invalid type')
+        .required('Type of event is required'),
+        notes: yup.string().trim().max(500, 'Staff Notes must be at most 500 characters'),
+        date: yup.date().required('Event Date is required')
+        .min(new Date(), 'Event Date cannot be in the past'),
         location: yup.string().trim().nullable(),
     });
     try {
@@ -73,12 +78,17 @@ router.put("/:id", async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
-        name: yup.string().trim().min(3).max(100),
-        description: yup.string().trim().min(3).max(500),
-        status: yup.string().oneOf(['Completed', 'Upcoming', 'Cancelled']).required(),
-        type: yup.string().oneOf(['In-Person', 'Online', 'TBD'], 'Invalid type').required('Type of event is required'),
-        notes: yup.string().trim().max(500),
-        date: yup.date().required().min(new Date(), 'Event Date cannot be in the past'),
+        name: yup.string().trim().min(3).max(100).required(),
+        description: yup.string().trim().min(3, 'Description must be at least 3 characters')
+        .max(500, 'Description must be at most 500 characters')
+        .required('Description is required'),
+        status: yup.string().oneOf(['Completed', 'Upcoming', 'Cancelled'], 'Invalid status')
+        .required('Status is required'),
+        type: yup.string().oneOf(['In-Person', 'Online', 'TBD'], 'Invalid type')
+        .required('Type of event is required'),
+        notes: yup.string().trim().max(500, 'Staff Notes must be at most 500 characters'),
+        date: yup.date().required('Event Date is required')
+        .min(new Date(), 'Event Date cannot be in the past'),
     });
     try {
         data = await validationSchema.validate(data,

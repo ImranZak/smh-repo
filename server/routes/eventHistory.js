@@ -22,4 +22,27 @@ router.get("/", validateToken, async (req, res) => {
     }
 });
 
+router.delete("/:id", validateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const signupId = req.params.id;
+
+        // Check if the sign-up exists and belongs to the user
+        const signup = await SignUp.findOne({
+            where: { id: signupId, userId: userId }
+        });
+
+        if (!signup) {
+            return res.status(404).json({ error: 'Sign-up not found or does not belong to this user' });
+        }
+
+        // Delete the sign-up
+        await signup.destroy();
+        res.json({ message: 'Sign-up cancelled successfully' });
+    } catch (err) {
+        console.error('Error cancelling sign-up:', err);
+        res.status(500).json({ error: 'Failed to cancel sign-up' });
+    }
+});
+
 module.exports = router;

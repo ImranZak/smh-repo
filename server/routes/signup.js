@@ -9,10 +9,10 @@ router.post("/", validateToken, async (req, res) => {
     let data = req.body;
     // Validate request body
     let validationSchema = yup.object({
-        user_name: yup.string().trim().min(3).max(100).required(),
-        email: yup.string().trim().min(3).max(50).required(),
-        phone: yup.string().trim().min(8).max(16).required(),
-        nric: yup.string().trim().min(8).max(12).required(),
+        user_name: yup.string().trim().min(3).max(100).required('User Name is required'),
+        email: yup.string().trim().email('Invalid email format').required('Email is required'),
+        phone: yup.string().trim().matches(/^[0-9]{8}$/, 'Phone number must be exactly 8 digits').required(),
+        nric: yup.string().trim().matches(/^[STFG]\d{7}[A-Z]$/, 'Invalid NRIC format').required(),
         eventId: yup.number().required(),
     });
     try {
