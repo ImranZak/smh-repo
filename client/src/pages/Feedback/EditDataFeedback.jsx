@@ -111,7 +111,7 @@ function EditDataFeedback() {
                             </Grid>
                             <Grid item xs={8}>
                                 <TextField fullWidth margin="dense" autoComplete="off" label="Name" name="name"
-                                    value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.name && Boolean(formik.errors.name)} helperText={formik.touched.name && formik.errors.name} />
+                                    value={formik.values.name} />
                             </Grid>
 
                             <Grid item xs={4}>

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { DataFeedback } = require('../models');
+const { DataFeedback, User } = require('../models');
 const { Op } = require("sequelize");
 
 const yup = require("yup");
@@ -10,6 +10,7 @@ const yup = require("yup");
 
 router.post("/", async (req, res) => {
     let data = req.body;
+    
     // Validate request body 
     let validationSchema = yup.object(
         {
@@ -21,6 +22,13 @@ router.post("/", async (req, res) => {
     );
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
+
+        // Fetch the user from the database
+        const user = await User.findOne({ where: { name: data.name } });
+        if (!user) {
+            return res.status(400).json({ error: 'The name does not match the account.' });
+        }
+
         // Process valid data
         let result = await DataFeedback.create(data);
         res.json(result);
