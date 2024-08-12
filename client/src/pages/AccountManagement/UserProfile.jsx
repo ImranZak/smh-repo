@@ -4,7 +4,6 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik'; 
 import * as yup from 'yup';
 import http from '../../http';
-import ChangePassword from './ChangePassword.jsx'
 
 // FIX: Nullable values conflicting with form input values (this page and dashboard update page)
 // TODO: Make validationSchema accept empty string values (using regex?)

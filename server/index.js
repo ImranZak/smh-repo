@@ -62,6 +62,15 @@ app.use('/staff', staffRoute)
 app.use('/marker', markerRoute)
 app.use('/sendquizemail', sendquizemailRoute)
 
+// This middleware will catch all undefined API routes and return a JSON error response
+app.use((req, res, next) => {
+    if (req.url.startsWith('/api/')) {
+        res.status(404).json({ error: 'API route not found' });
+    } else {
+        next();
+    }
+});
+
 console.log('Routes have been set up.');
 
 const db = require('./models');

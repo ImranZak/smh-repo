@@ -13,9 +13,7 @@ exports.getAllFriends = async (req, res) => {
                     { userId },
                     { friendId: userId }
                 ],
-                status: {
-                    [Op.or]: ['accepted', 'pending'] 
-                }
+                status: 'accepted'
             },
             include: [
                 {
@@ -44,15 +42,12 @@ exports.getAllFriends = async (req, res) => {
             };
         });
 
-        console.log('All Friends and Pending Requests:', formattedFriends); // Log the formatted friends list
-
         res.json(formattedFriends);
     } catch (error) {
         console.error('Error fetching friends:', error.message);
         res.status(500).json({ message: 'Failed to fetch friends. Please try again later.' });
     }
 };
-
 
 exports.getFriendRequests = async (req, res) => {
     try {
@@ -76,8 +71,6 @@ exports.getFriendRequests = async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch friend requests. Please try again later.' });
     }
 };
-
-
 
 // Add a friend request
 exports.addFriend = async (req, res) => {
@@ -124,8 +117,6 @@ exports.addFriend = async (req, res) => {
         res.status(500).json({ message: 'Failed to add friend request. Please try again later.' });
     }
 };
-
-
 
 // Accept a friend request
 exports.acceptFriendRequest = async (req, res) => {
