@@ -2,8 +2,19 @@ const { Usage } = require('../models');
 
 exports.createUsage = async (req, res) => {
   try {
-    const { date, type, amount } = req.body;
-    const userId = req.body.userId || 1;  // Replace 1 with actual logic to get the user ID, if needed
+    const { date, type, amount, userId } = req.body;
+
+    if (!date || !type || !amount || !userId) {
+      return res.status(400).json({ message: "All fields (date, type, amount, userId) are required." });
+    }
+
+    if (!['energy', 'water'].includes(type)) {
+      return res.status(400).json({ message: "Invalid type. Must be 'energy' or 'water'." });
+    }
+
+    if (isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ message: "Amount must be a positive number." });
+    }
 
     console.log("Creating usage with data:", { date, type, amount, userId });
 
@@ -14,6 +25,7 @@ exports.createUsage = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 exports.getAllUsage = async (req, res) => {
   try {

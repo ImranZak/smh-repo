@@ -34,9 +34,16 @@ const DataEntry = () => {
     if (!dateString.match(regex)) return false;
 
     const date = new Date(dateString);
-    const timestamp = date.getTime();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);  // Set to midnight to compare dates only
 
+    if (date > today) {
+      return false;  // Date is in the future
+    }
+
+    const timestamp = date.getTime();
     if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
+
     return dateString === date.toISOString().split('T')[0];
   };
 
@@ -44,7 +51,7 @@ const DataEntry = () => {
     e.preventDefault();
 
     if (!isValidDate(date)) {
-      setError('Please enter a valid date.');
+      setError('Please enter a date that is before today at least.');
       return;
     }
 
@@ -52,18 +59,22 @@ const DataEntry = () => {
       const usageData = {
         date,
         type,
-        amount: parseFloat(usage),  // Use "amount" instead of "usage" to match your model
+        amount: parseFloat(usage),
+        userId: 1,  // Replace with actual user ID if available
       };
 
+      console.log('Submitting data:', usageData);
+
       await axios.post('http://localhost:3001/api/usage', usageData);
+
       fetchEntries();
       setDate('');
       setType('energy');
       setUsage('');
       setError('');
     } catch (error) {
-      console.error('Error submitting data:', error.response || error);
-      setError('Failed to submit data. Please try again.');
+      console.error('Error submitting data:', error.response?.data || error);
+      setError('Failed to submit data. Please check your input and try again.');
     }
   };
 
@@ -78,9 +89,15 @@ const DataEntry = () => {
 
   const handleUpdateData = async (id, field, value) => {
     try {
+      if (field === 'date' && !isValidDate(value)) {
+        setError('Please enter a valid date that is not in the future.');
+        return;
+      }
+
       const updatedData = { [field]: field === 'amount' ? parseFloat(value) : value };
       await axios.put(`http://localhost:3001/api/usage/${id}`, updatedData);
       fetchEntries();
+      setError('');
     } catch (error) {
       console.error('Error updating data:', error);
     }

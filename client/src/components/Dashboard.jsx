@@ -114,28 +114,34 @@ const Dashboard = () => {
     setLayout(newLayout);
   };
 
-  const handleClearData = async () => {
-    try {
-      await axios.delete(`http://localhost:3001/api/usage`);
-      setData([]);
-      alert('Data cleared successfully');
-    } catch (error) {
-      console.error('Error clearing data:', error);
-    }
+  const handleClearGraphs = () => {
+    setCharts([]);
+    setLayout([]);
+    localStorage.removeItem(`dashboardLayout-${user.id}`);
+    localStorage.removeItem(`dashboardCharts-${user.id}`);
+    alert('Graphs cleared successfully');
   };
 
   const handleSaveLayout = () => {
-    localStorage.setItem(`dashboardLayout-${user.id}`, JSON.stringify(layout));
-    localStorage.setItem(`dashboardCharts-${user.id}`, JSON.stringify(charts));
-    alert('Layout saved successfully');
+    if (user && user.id) {
+      localStorage.setItem(`dashboardLayout-${user.id}`, JSON.stringify(layout));
+      localStorage.setItem(`dashboardCharts-${user.id}`, JSON.stringify(charts));
+      alert('Layout saved successfully');
+    } else {
+      console.error('User is not defined or user.id is missing.');
+    }
   };
 
   useEffect(() => {
-    const savedLayout = localStorage.getItem(`dashboardLayout-${user.id}`);
-    const savedCharts = localStorage.getItem(`dashboardCharts-${user.id}`);
-    if (savedLayout && savedCharts) {
-      setLayout(JSON.parse(savedLayout));
-      setCharts(JSON.parse(savedCharts));
+    if (user && user.id) {
+      const savedLayout = localStorage.getItem(`dashboardLayout-${user.id}`);
+      const savedCharts = localStorage.getItem(`dashboardCharts-${user.id}`);
+      if (savedLayout && savedCharts) {
+        setLayout(JSON.parse(savedLayout));
+        setCharts(JSON.parse(savedCharts));
+      }
+    } else {
+      console.error('User is not defined or user.id is missing.');
     }
   }, [user]);
 
@@ -154,9 +160,7 @@ const Dashboard = () => {
           </Button>
         </Grid>
         <Grid item>
-          {isStaff && (
-            <Button variant="contained" color="success" onClick={handleClearData}>Clear Data</Button>
-          )}
+          <Button variant="contained" color="success" onClick={handleClearGraphs}>Clear Graphs</Button>
         </Grid>
         <Grid item>
           <Button variant="contained" color="success" onClick={handleAddChart}>Add Graph</Button>
@@ -165,14 +169,15 @@ const Dashboard = () => {
           <Button variant="contained" color="success" onClick={handleSaveLayout}>Save Layout</Button>
         </Grid>
       </Grid>
+
       <div className="dashboard-grid">
         <ResponsiveGridLayout
           className="layout"
           layouts={{ lg: layout }}
           breakpoints={{ lg: 1200 }}
           cols={{ lg: 2 }}
-          rowHeight={300} // Adjusted the rowHeight to make charts narrower
-          width={1000}    // Adjusted width to prevent charts from bleeding out
+          rowHeight={300}
+          width={1000}
           compactType={null}
           preventCollision={true}
           isDraggable={true}
