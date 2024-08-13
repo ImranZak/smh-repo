@@ -37,7 +37,7 @@ const signupRoute = require('./routes/signup');
 const userRoute = require('./routes/user');  // User route registered under /api/user
 const staffRoute = require('./routes/staff');
 const markerRoute = require('./routes/marker');
-
+const sendquizemailRoute  = require('./routes/sendquizEmail')
 // Routes from Feedback branch
 const dataFeedback = require('./routes/datafeedback');
 
@@ -60,7 +60,7 @@ app.use("/api/user", userRoute);  // Ensure /api/user handles login, registratio
 app.use("/datafeedback", dataFeedback);
 app.use('/staff', staffRoute);
 app.use('/marker', markerRoute);
-//app.use('/sendquizemail', sendquizemailRoute);
+app.use('/sendquizemail', sendquizemailRoute);
 
 // This middleware will catch all undefined API routes and return a JSON error response
 app.use((req, res, next) => {

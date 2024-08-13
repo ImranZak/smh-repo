@@ -9,13 +9,11 @@ const { validateToken } = require('../middlewares/auth');
 const { sendVerifyEmail } = require('../middlewares/email');
 require('dotenv').config();
 
-
-// 8-10 digits with optional country code
-const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/
-
-// Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces 
+// Regular expressions
+const phoneRegex = /^(?:\+\d{1,3})?\d{8,10}$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/;
 
+// Generate Verification Code
 function generateVerificationCode() {
     return bcrypt.hash((Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111).toString(), 10).toString();
 }
@@ -25,395 +23,293 @@ router.post("/register", async (req, res) => {
     let data = req.body;
 
     // Validate request body 
-    let validationSchema = yup.object({ 
+    const validationSchema = yup.object({ 
         name: yup.string().trim().min(3).max(50).required()
-        .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , ."),
+        .matches(/^[a-zA-Z '-,.]+$/, "Name only allows letters, spaces, and characters: ' - , ."),
         email: yup.string().trim().lowercase().email().max(50).matches(/^(?!.*@smhuser\.com$).+$/, "Invalid email").required(),
         password: yup.string().trim().min(8).max(50).required()
-        .matches(passwordRegex, "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces")
+        .matches(passwordRegex, "Password must have 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces")
     });
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
     } catch (err) {
-        res.status(400).json({ errors: err.errors });
+        return res.status(400).json({ errors: err.errors });
     }
 
-    // Check email 
-    let user = await User.findOne(
-        { where: { email: data.email } 
-    });
-    if (user) {
-        res.status(400).json({ message: "Email already exists." });
-        return;
-    }
+    // Check if email exists
+    try {
+        const user = await User.findOne({ where: { email: data.email } });
+        if (user) {
+            return res.status(400).json({ message: "Email already exists." });
+        }
 
-    // Hash password
-    data.password = await bcrypt.hash(data.password, 10);
-    // Create user
-    let result = await User.create(data);
-    res.json({ message: `Email ${result.email} was registered successfully.` });
+        // Hash password and create user
+        data.password = await bcrypt.hash(data.password, 10);
+        const result = await User.create(data);
+        return res.json({ message: `Email ${result.email} was registered successfully.` });
+    } catch (err) {
+        return res.status(500).json({ message: "Error registering user.", error: err.message });
+    }
 });
-
 
 // Login User
 router.post("/login", async (req, res) => {
     let data = req.body;
 
     // Validate request body
-    let validationSchema = yup.object({
+    const validationSchema = yup.object({
         email: yup.string().trim().lowercase().email().max(50).required(),
         password: yup.string().trim().min(8).max(50).required()
     });
 
     try {
-        data = await validationSchema.validate(data,
-            { abortEarly: false });
+        data = await validationSchema.validate(data, { abortEarly: false });
 
         // Check email and password
-        let errorMsg = "Email or password is not correct.";
-        let user = await User.findOne({
-            where: { email: data.email }
-        });
+        const user = await User.findOne({ where: { email: data.email } });
         if (!user) {
-            res.status(400).json({ message: errorMsg });
-            return;
-        }
-        let match = await bcrypt.compare(data.password, user.password);
-        if (!match) {
-            res.status(400).json({ message: errorMsg });
-            return;
+            return res.status(400).json({ message: "Email or password is not correct." });
         }
 
-        // Return user info
-        let userInfo = {
-            id: user.id,
-            email: user.email,
-            name: user.name
-        };
-        let accessToken = sign(userInfo, process.env.APP_SECRET, 
-            { expiresIn: process.env.TOKEN_EXPIRES_IN });
-        res.json({
-            accessToken: accessToken,
-            user: userInfo
-        });
-    }
-    catch (err) {
-        res.status(400).json({ errors: err.errors });
-        return;
+        const match = await bcrypt.compare(data.password, user.password);
+        if (!match) {
+            return res.status(400).json({ message: "Email or password is not correct." });
+        }
+
+        // Return user info and access token
+        const userInfo = { id: user.id, email: user.email, name: user.name };
+        const accessToken = sign(userInfo, process.env.APP_SECRET, { expiresIn: process.env.TOKEN_EXPIRES_IN });
+
+        return res.json({ accessToken, user: userInfo });
+    } catch (err) {
+        return res.status(400).json({ message: "Validation error", errors: err.errors });
     }
 });
 
 // Authenticate User
 router.get("/auth", validateToken, (req, res) => {
-    let userInfo = {
+    const userInfo = {
         id: req.user.id,
         email: req.user.email,
         name: req.user.name,
     };
-    res.json({ 
-        user: userInfo 
-    });
+    return res.json({ user: userInfo });
 });
 
 // Send verification email
 router.post("/verify", async (req, res) => {
-    const verificationCode = Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111;
-    const email = req.body.email;
+    const { email } = req.body;
+
     try {
+        const verificationCode = Math.floor(Math.random() * (1000000 - 111111 + 1)) + 111111;
         const hashedVerificationCode = await bcrypt.hash(verificationCode.toString(), 10);
-        await User.update({ verificationCode: hashedVerificationCode }, {
-            where: { email: email }
-        });
+        
+        await User.update({ verificationCode: hashedVerificationCode }, { where: { email } });
         await sendVerifyEmail(email, verificationCode);
-        res.status(200).send('Email sent');
+
+        return res.status(200).send('Email sent');
     } catch (error) {
-        res.status(500).send(`Error sending email: ${error}`);
+        return res.status(500).send(`Error sending email: ${error.message}`);
     }
 });
 
 // Verify user
 router.put("/verify/:id", async (req, res) => {
     const id = req.params.id;
-    let user = await User.findByPk(id);
-    // Check id not found
-    if (!user) {
-        res.sendStatus(404);
-        return;
-    }
+    const { verificationCode } = req.body;
 
-    let data = req.body;
     try {
-        let match = await bcrypt.compare(data.verificationCode, user.verificationCode);
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.sendStatus(404);
+        }
+
+        const match = await bcrypt.compare(verificationCode, user.verificationCode);
         if (!match) {
-            res.status(400).json({ message: "Verification code is incorrect" });
-            return;
+            return res.status(400).json({ message: "Verification code is incorrect" });
         }
-        let num = await User.update({ verified: true }, {
-            where: { id: id }
-        });
-        if (num == 1) {
-            res.json({
-                message: "User was verified successfully."
-            });
-        }
-        else {
-            res.status(400).json({
-                message: `Cannot update user with id ${id}. `
-            });
-        }
+
+        await User.update({ verified: true }, { where: { id } });
+        return res.json({ message: "User was verified successfully." });
     } catch (error) {
-        res.status(500).send(`Error verifying user: ${error}`);
+        return res.status(500).send(`Error verifying user: ${error.message}`);
     }
 });
 
 // Unverify user
 router.put("/unverify/:id", async (req, res) => {
     const id = req.params.id;
-    let user = await User.findByPk(id);
-    // Check id not found
-    if (!user) {
-        res.sendStatus(404);
-        return;
-    }
+
     try {
-        let num = await User.update({ verified: false }, {
-            where: { id: id }
-        });
-        if (num == 1) {
-            res.json({
-                message: "User was unverified successfully."
-            });
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.sendStatus(404);
         }
-        else {
-            res.status(400).json({
-                message: `Cannot update user with id ${id}. `
-            });
-        }
+
+        await User.update({ verified: false }, { where: { id } });
+        return res.json({ message: "User was unverified successfully." });
     } catch (error) {
-        res.status(500).send(`Error unverifying user: ${error}`);
+        return res.status(500).send(`Error unverifying user: ${error.message}`);
     }
 });
 
 // Get All Users (With Optional Search Query)
 router.get("/", async (req, res) => {
-    let condition = {};
-    let search = req.query.search;
+    const condition = {};
+    const search = req.query.search;
+
     if (search) {
         condition[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
             { email: { [Op.like]: `%${search}%` } },
             { phoneNumber: { [Op.like]: `%${search}%` } },
             { mailingAddress: { [Op.like]: `%${search}%` } },
-            { password: { [Op.like]: `%${search}%` } },
         ];
     }
     
-    let list = await User.findAll({
-        where: condition,
-        order: [['createdAt', 'ASC']]
-    });
-    res.json(list);
+    try {
+        const list = await User.findAll({
+            where: condition,
+            order: [['createdAt', 'ASC']]
+        });
+        return res.json(list);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching users", error: err.message });
+    }
 });
 
 // Get User By Id
 router.get("/:id", async (req, res) => {
-    let id = req.params.id;
-    let user = await User.findByPk(id);
-    // Check id not found
-    if (!user) {
-        res.sendStatus(404);
-        return;
+    const id = req.params.id;
+
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.sendStatus(404);
+        }
+        return res.json(user);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching user", error: err.message });
     }
-    res.json(user);
 });
 
 // Update User By Id
 router.put("/:id", async (req, res) => {
-    let id = req.params.id;
-    // Check id not found
-    let user = await User.findByPk(id);
-    if (!user) {
-        res.sendStatus(404);
-        return;
-    }
+    const id = req.params.id;
+    const data = req.body;
 
-    let data = req.body;
     // Validate request body
-    let validationSchema = yup.object({
-        name: yup
-            .string()
-            .max(100, 'Name must be at most 100 characters')
-            .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .")
+    const validationSchema = yup.object({
+        name: yup.string().max(100, 'Name must be at most 100 characters')
+            .matches(/^[a-zA-Z '-,.]+$/, "Name only allows letters, spaces, and characters: ' - , .")
             .required('Name is required'),
-        birthDate: yup
-            .date()
-            .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
-            .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
+        birthDate: yup.date().min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
+            .max(new Date().getFullYear() - 12, `Minimum birth year is ${new Date().getFullYear() - 12}`)
             .nullable(),
-        email: yup.string()
-            .email('Invalid email format')
-            .max(100, 'Email must be at most 100 characters')
-            .required('Email is required'),
-        phoneNumber: yup.string()
-            .max(20, 'Phone number must be at most 20 characters')
+        email: yup.string().email('Invalid email format').max(100, 'Email must be at most 100 characters').required('Email is required'),
+        phoneNumber: yup.string().max(20, 'Phone number must be at most 20 characters')
             .matches(phoneRegex, 'Phone number must be 8-10 digits with valid country code if international')
             .nullable(),
-        mailingAddress: yup.string()
-            .max(100, 'Home address must be at most 100 characters')
-            .nullable()
+        mailingAddress: yup.string().max(100, 'Mailing address must be at most 100 characters').nullable(),
     });
-    try {
-        data = await validationSchema.validate(data,
-            { abortEarly: false });
 
-        let num = await User.update(data, {
-            where: { id: id }
-        });
-        if (num == 1) {
-            res.json({
-                message: "User was updated successfully."
-            });
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.sendStatus(404);
         }
-        else {
-            res.status(400).json({
-                message: `Cannot update user with id ${id}.`
-            });
-        }
-    }
-    catch (err) {
-        res.status(400).json({ errors: err.errors });
+
+        const validatedData = await validationSchema.validate(data, { abortEarly: false });
+        await User.update(validatedData, { where: { id } });
+
+        return res.json({ message: "User was updated successfully." });
+    } catch (err) {
+        return res.status(400).json({ errors: err.errors || err.message });
     }
 });
 
 // Change User Password By Id
 router.put("/password/:id", async (req, res) => {
-    let id = req.params.id;
-    // Check id not found
-    let user = await User.findByPk(id);
-    if (!user) {
-        res.sendStatus(404);
-        return;
-    }
-    
-    let data = req.body;
+    const id = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
     // Validate request body
-    let validationSchema = yup.object({
-        currentPassword: yup
-            .string()
-            .trim()
-            .required("Old password is required"),
-        newPassword: yup
-            .string()
-            .trim()
-            .min(8, "Password must be at least 8 characters")
+    const validationSchema = yup.object({
+        currentPassword: yup.string().trim().required("Old password is required"),
+        newPassword: yup.string().trim().min(8, "Password must be at least 8 characters")
             .max(100, "Password must be at most 100 characters")
             .required("New password is required")
-            .matches(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/,
-                "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces"
-            )
+            .matches(passwordRegex, "Password must have 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces")
     });
-    try {
-        data = await validationSchema.validate(data,
-            { abortEarly: false });
 
-        let current_password_match = await bcrypt.compare(data.currentPassword, user.password);
-        if (!current_password_match) {
-            res.status(400).json({ message: "Current password is incorrect" });
-            return;
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.sendStatus(404);
         }
-        let new_password_match = await bcrypt.compare(data.newPassword, user.password);
-        if (new_password_match) {
-            res.status(400).json({ message: "New password cannot match current password" });
-            return;
+
+        const validatedData = await validationSchema.validate({ currentPassword, newPassword }, { abortEarly: false });
+
+        const currentPasswordMatch = await bcrypt.compare(validatedData.currentPassword, user.password);
+        if (!currentPasswordMatch) {
+            return res.status(400).json({ message: "Current password is incorrect" });
         }
-        user.password = await bcrypt.hash(data.newPassword, 10);
-        
-        let num = await User.update({ password: user.password }, {
-            where: { id: id }
-        });
-        if (num == 1) {
-            res.json({
-                message: "User was updated successfully."
-            });
+
+        const newPasswordMatch = await bcrypt.compare(validatedData.newPassword, user.password);
+        if (newPasswordMatch) {
+            return res.status(400).json({ message: "New password cannot match current password" });
         }
-        else {
-            res.status(400).json({
-                message: `Cannot update user with id ${id}. `
-            });
-        }
-    }
-    catch (err) {
-        res.status(400).json({ errors: err.errors });
+
+        user.password = await bcrypt.hash(validatedData.newPassword, 10);
+        await User.update({ password: user.password }, { where: { id } });
+
+        return res.json({ message: "User password was updated successfully." });
+    } catch (err) {
+        return res.status(400).json({ errors: err.errors || err.message });
     }
 });
 
 // Delete User By Id
 router.delete("/:id", async (req, res) => {
-    let id = req.params.id;
-    // Check id not found
-    let user = await User.findByPk(id);
-    if (!user) {
-        res.sendStatus(404);
-        return;
-    }
+    const id = req.params.id;
 
-    let num = await User.destroy({
-        where: { id: id }
-    })
-    if (num == 1) {
-        res.json({
-            message: "User was deleted successfully."
-        });
-    }
-    else {
-        res.status(400).json({
-            message: `Cannot delete user with id ${id}.`
-        });
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.sendStatus(404);
+        }
+
+        await User.destroy({ where: { id } });
+        return res.json({ message: "User was deleted successfully." });
+    } catch (err) {
+        return res.status(500).json({ message: "Error deleting user", error: err.message });
     }
 });
 
 // Delete All Users
 router.delete("/", async (req, res) => {
     try {
-        let userIds = await User.findAll({
-            attributes: ['id']
-        });
+        const userIds = await User.findAll({ attributes: ['id'] });
         
         for (let i = 0; i < userIds.length; i++) {
-            await User.destroy({
-                where: { id: userIds[i].id }
-            });
+            await User.destroy({ where: { id: userIds[i].id } });
         }
-        res.json({
-            message: "All users were deleted successfully."
-        });
+
+        return res.json({ message: "All users were deleted successfully." });
     } catch (err) {
-        res.status(500).json({
-            message: "Failed to delete all users."
-        });
+        return res.status(500).json({ message: "Failed to delete all users.", error: err.message });
     }
 });
 
 // Populate User
 router.post("/populate", async (req, res) => {
     try {
-        let userIds = await User.findAll({
-            attributes: ['id']
-        });
+        const userIds = await User.findAll({ attributes: ['id'] });
         
         for (let i = 0; i < userIds.length; i++) {
-            await User.destroy({
-                where: { id: userIds[i].id }
-            });
+            await User.destroy({ where: { id: userIds[i].id } });
         }
-    } catch (err) {
-        res.status(500).json({
-            message: "Failed to delete all user."
-        });
-        return
-    }
-    try {
+
         const userData = [
             {
                 name: "Mary Jane",
@@ -436,12 +332,10 @@ router.post("/populate", async (req, res) => {
         ];
 
         const result = await User.bulkCreate(userData);
-        res.json(result);
+        return res.json(result);
     } catch (err) {
-        res.status(500).json({
-            message: `${err}: Failed to populate user.`
-        });
+        return res.status(500).json({ message: `${err.message}: Failed to populate user.` });
     }
 });
-
+    
 module.exports = router;

@@ -33,7 +33,7 @@ const StaffAppBar = () => {
             <Link to="/users" className="nav-link">Users</Link>
             <Link to="/ResourceLibraryStaff" className="nav-link">Resource Library</Link>
             <Link to="/quizzesStaff" className="nav-link">Quizzes</Link>
-            <Link to="/dashboard" className="nav-link">Dashboard</Link> {/* Added Dashboard link */}
+            <Link to="/datafeedbackstaff" className="nav-link">User Feedback</Link>
             {user && (
                 <>
                     <IconButton onClick={() => handleProfile()}>

@@ -17,13 +17,13 @@ function Users() {
     };
 
     const getUsers = () => {
-        http.get('/user').then((res) => {
+        http.get('/api/user').then((res) => {
             setUsersList(res.data);
         });
     };
     
     const searchUsers = () => {
-        http.get(`/user?search=${search}`).then((res) => {
+        http.get(`/api/user?search=${search}`).then((res) => {
             setUsersList(res.data);
         });
     };
