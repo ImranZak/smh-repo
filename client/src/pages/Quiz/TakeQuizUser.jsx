@@ -161,7 +161,12 @@ function TakeQuizUser() {
             dateTaken: new Date().toISOString() // Include the current date as dateTaken
         };
         console.log("score number:", score, 'Posting quiz history:', historyData);
-
+        const emailData = {
+            to: user.email,
+            quizTitle: quizDetails.title,
+            score: score, 
+        }
+        http.post('/sendquizemail', emailData)
         http.post(`/api/user/quiz/userhistory/${id}`, historyData)
             .then((res) => {
                 console.log('Quiz history posted:', res.data);

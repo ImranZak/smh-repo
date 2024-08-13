@@ -1,5 +1,5 @@
 const express = require('express');
-const sendEmail = require('../middlewares/email');
+const {sendQuizResultEmail} = require('../middlewares/email');
 const router = express.Router();
 
 // Route that utilizes the email middleware
@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
         return res.status(400).send('Missing required fields');
     }
 
-    sendEmail(to, quizTitle, score)
+    sendQuizResultEmail(to, quizTitle, score)
         .then(() => {
             res.status(200).send('Email sent successfully');
         })
