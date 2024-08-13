@@ -79,6 +79,11 @@ exports.addFriend = async (req, res) => {
         const { userId } = req.params;
         const { friendId } = req.body;
 
+        // Check if user is trying to add themselves as a friend
+        if (parseInt(userId) === parseInt(friendId)) {
+            return res.status(400).json({ message: 'You cannot add yourself as a friend.' });
+        }
+
         if (!friendId) {
             return res.status(400).json({ message: 'Friend ID is required.' });
         }
@@ -116,6 +121,7 @@ exports.addFriend = async (req, res) => {
         res.status(500).json({ message: 'Failed to add friend request. Please try again later.' });
     }
 };
+
 
 // Accept a friend request
 exports.acceptFriendRequest = async (req, res) => {

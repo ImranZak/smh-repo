@@ -6,6 +6,7 @@ const Friends = () => {
     const [friends, setFriends] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResult, setSearchResult] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
     const { user } = useContext(UserContext);
 
     useEffect(() => {
@@ -25,14 +26,33 @@ const Friends = () => {
     };
 
     const searchUser = async () => {
+        if (!searchQuery) {
+            setErrorMessage('Please enter a search query.');
+            return;
+        }
+
+        if (searchQuery.toLowerCase() === user.email.toLowerCase()) {
+            setErrorMessage('You cannot add yourself as a friend.');
+            setSearchResult(null);
+            return;
+        }
+
         try {
             const response = await http.get(`/api/user/search`, {
                 params: { search: searchQuery },
             });
-            setSearchResult(response.data);
+
+            if (response.data) {
+                setSearchResult(response.data);
+                setErrorMessage('');
+            } else {
+                setSearchResult(null);
+                setErrorMessage('User not found.');
+            }
         } catch (error) {
             console.error('Error searching user:', error);
             setSearchResult(null);
+            setErrorMessage('User not found');
         }
     };
 
@@ -41,14 +61,22 @@ const Friends = () => {
             console.error('No friendId provided');
             return;
         }
+
+        // Prevent adding self as a friend
+        if (friendId === user.id) {
+            setErrorMessage('You cannot add yourself as a friend.');
+            return;
+        }
+
         try {
             await http.post(`/api/friends/${user.id}`, { friendId });
             fetchFriends();
+            setErrorMessage('');  // Clear any previous errors
         } catch (error) {
             console.error('Error adding friend:', error);
+            setErrorMessage('Failed to add friend. Please try again.');
         }
     };
-    
 
     const acceptFriendRequest = async (friendRequestId) => {
         try {
@@ -147,14 +175,17 @@ const Friends = () => {
             <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setErrorMessage('');
+                }}
                 placeholder="Enter email or name"
                 style={{
                     marginTop: '10px',
                     padding: '5px',
                     width: 'calc(100% - 22px)',
                     borderRadius: '5px',
-                    border: '1px solid #ccc'
+                    border: errorMessage ? '1px solid red' : '1px solid #ccc'
                 }}
             />
             <button
@@ -172,6 +203,9 @@ const Friends = () => {
             >
                 Search
             </button>
+            {errorMessage && (
+                <p style={{ color: 'red', marginTop: '5px' }}>{errorMessage}</p>
+            )}
             {searchResult && (
                 <div style={{ marginTop: '10px' }}>
                     <p>User found: {searchResult.name} ({searchResult.email})</p>

@@ -74,7 +74,7 @@ app.use((req, res, next) => {
 console.log('Routes have been set up.');
 
 const db = require('./models');
-db.sequelize.sync({force : true})  // Change to true if you want to drop and recreate the database each time.
+db.sequelize.sync({})  // Change to {force : true} if you want to drop and recreate the database each time.
     .then(() => {
         const port = process.env.APP_PORT || 3001;
         app.listen(port, () => {
