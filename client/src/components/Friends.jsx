@@ -18,22 +18,36 @@ const Friends = () => {
         }
     };
 
-    const addFriend = async () => {
+
+    const addFriend = async (friendId) => {
+        if (!friendId) {
+            console.error('No friendId provided');
+            return;
+        }
         try {
-            const response = await axios.post('http://localhost:3001/api/friends', { name: newFriend });
-            setFriends([...friends, response.data]);
-            setNewFriend('');
+            await http.post(`/api/friends/${user.id}`, { friendId });
+            fetchFriends();
         } catch (error) {
             console.error('Error adding friend:', error);
         }
     };
+    
 
-    const deleteFriend = async (id) => {
+    const acceptFriendRequest = async (friendRequestId) => {
         try {
             await axios.delete(`http://localhost:3001/api/friends/${id}`);
             setFriends(friends.filter(friend => friend.id !== id));
         } catch (error) {
-            console.error('Error deleting friend:', error);
+            console.error('Error accepting friend request:', error);
+        }
+    };
+
+    const removeFriend = async (friendshipId) => {
+        try {
+            await http.delete(`/api/friends/${user.id}/${friendshipId}`);
+            fetchFriends();
+        } catch (error) {
+            console.error('Error removing friend:', error);
         }
     };
 

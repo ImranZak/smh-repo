@@ -22,7 +22,7 @@ function UpdateUser() {
     const [loading, setLoading] = useState(true);   
 
     useEffect(() => {
-        http.get(`/user/${id}`).then((res) => {
+        http.get(`/api/user/${id}`).then((res) => {
             console.log(res.data);
             setUser(res.data); 
             setLoading(false);
@@ -33,35 +33,41 @@ function UpdateUser() {
         initialValues: user,
         enableReinitialize: true,
         validationSchema: yup.object({
-            name: yup.string()
-                .max(100, 'Name must be at most 100 characters')
-                .required('Name is required'),
+            name: yup
+                .string()
+                .max(100, "Name must be at most 100 characters")
+                .matches(/^[a-zA-Z '-,.]+$/, "name only allow letters, spaces and characters: ' - , .")
+                .required("Name is required"),
             birthDate: yup
                 .date()
-                .min(new Date().getFullYear() - 100, `Maximum birth year is ${new Date().getFullYear() - 100}`)
-                .max(new Date().getFullYear() - 12, `Minimum birth year is ${(new Date().getFullYear() - 13)}`)
+                .min(new Date().getFullYear() - 100,`Maximum birth year is ${new Date().getFullYear() - 100}`)
+                .max(new Date().getFullYear() - 12,`Minimum birth year is ${new Date().getFullYear() - 13}`)
                 .nullable(),
-            email: yup.string()
-                .email('Invalid email format')
-                .max(100, 'Email must be at most 100 characters')
-                .required('Email is required'),
-            phoneNumber: yup.string()
-                .max(20, 'Phone number must be at most 20 characters')
-                .matches(/^(?:\+\d{1,3})?\d{8,10}$/, 'Phone number must be 8-10 digits with valid country code if international')
+            email: yup
+                .string()
+                .email("Invalid email format")
+                .max(100, "Email must be at most 100 characters")
+                .required("Email is required"),
+            phoneNumber: yup
+                .string()
+                .max(20, "Phone number must be at most 20 characters")
+                .matches(/^(?:\+\d{1,3})?\d{8,10}$/,"Phone number must be 8-10 digits with valid country code if international")
                 .nullable(),
-            mailingAddress: yup.string()
-                .max(100, 'Home address must be at most 100 characters')
+            mailingAddress: yup
+                .string()
+                .max(100, "Home address must be at most 100 characters")
                 .nullable(),
-            password: yup.string()
         }),
         onSubmit: (data) => {
-            http.put(`/user/${id}`, data).then((res) => {
-                console.log(res.data);
-                navigate("/users");
-            }).catch((error) => {
-                console.error("Error submitting form:", error);
-            });
-        }
+            http.put(`/api/user/${id}`, data)
+                .then((res) => {
+                    console.log(res.data);
+                    navigate("/users");
+                })
+                .catch((error) => {
+                    console.error("Error submitting form:", error);
+                });
+        },
     });
 
     return (

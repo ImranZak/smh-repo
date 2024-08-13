@@ -17,7 +17,7 @@ function TakeQuizUser() {
     const [quitModalOpen, setQuitModalOpen] = useState(false);
     const [submitModalOpen, setSubmitModalOpen] = useState(false);
     const [resultModalOpen, setResultModalOpen] = useState(false);
-    const [score, setScore] = useState(0);
+    const [score, setScore] = useState(-1);
     const [totalQuestions, setTotalQuestions] = useState(0);
     const [quizDetails, setQuizDetails] = useState({ title: '', description: '' });
 
@@ -98,7 +98,7 @@ function TakeQuizUser() {
     };
 
     useEffect(() => {
-        if (score > 0) { // Check if score has been calculated before posting
+        if (score >= 0) { // Check if score has been calculated before posting
             postQuizHistory(); // Post the quiz results to the UserQuizHistory endpoint
             setSubmitModalOpen(false);
             setResultModalOpen(true); // Open the result dialog
@@ -130,20 +130,25 @@ function TakeQuizUser() {
 
                 try {
                     const response = await http.post('/marker', {
-                        question: question.question_text,
-                        answer: correctAnswer,
+                        // expectedAnswer: question.question_text,
+                        question_type: question.question_type,
+                        expectedAnswer: correctAnswer,
                         userAnswer: userAnswer
                     });
 
                     if (response.data.isCorrect) {
                         correctAnswers += 1;
                     }
+                    if (response.data.isCorrect) {
+                        correctAnswers += 0;
+                    }
+                    console.log(`iscorrect: ${response.data.isCorrect}`);
                 } catch (error) {
                     console.error('Error checking answer:', error);
                 }
             }
-
             const scorePercentage = (correctAnswers / totalQuestions) * 100;
+            console.log(`scorePercentage: ${scorePercentage}`);
             setScore(scorePercentage);
         } catch (err) {
             console.error('Error calculating score:', err);
@@ -152,36 +157,40 @@ function TakeQuizUser() {
 
     const postQuizHistory = () => {
         const historyData = {
-            quizid: parseInt(id, 10),
-            userid: user.id, // Use user ID from context
-            title: `Quiz ${quizDetails.title}`,
+            quizId: parseInt(id, 10),
+            userId: user.id, // Use user ID from context
+            title: quizDetails.title,
             description: quizDetails.description,
             score: Math.round(score), // Ensure this is an integer between 0 and 100
             dateTaken: new Date().toISOString() // Include the current date as dateTaken
         };
         console.log("score number:", score, 'Posting quiz history:', historyData);
 
-        http.post(`/user/quiz/userhistory/${id}`, historyData)
+        http.post(`/api/user/quiz/userhistory/${id}`, historyData)
             .then((res) => {
                 console.log('Quiz history posted:', res.data);
-                navigate(`/quizzesUser`)
             })
             .catch((err) => {
                 console.error('Error posting quiz history:', err.response ? err.response.data : err);
             });
+        console.log("score number:", score, 'Posting quiz history:', historyData);
         const emailData = {
             to: user.email,
             quizTitle: quizDetails.title,
             score: Math.round(score)
         };
+
+        console.log("Email data:", emailData);
+
         http.post(`/sendquizemail`, emailData)
             .then((res) => {
-                console.log('Quiz history posted:', res.data);
-                navigate(`/quizzesUser`)
+                console.log('Quiz email Sent:', res.data);
+                navigate(`/quizzesUser`);
             })
             .catch((err) => {
-                console.error('Error posting quiz history:', err.response ? err.response.data : err);
+                console.error('Error Sending Email:', err, emailData.to, emailData.quizTitle, emailData.score);
             });
+
     };
 
     const renderQuestionItems = (question) => {
@@ -249,7 +258,7 @@ function TakeQuizUser() {
             >
                 <DialogTitle>Submit Quiz</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Are you sure you want to submit the quiz?</DialogContentText>
+                    <DialogContentText>Are you sure you want to submit the quiz? <br />This might take awhile to process please give us time</DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseSubmitModal} color="primary">Cancel</Button>

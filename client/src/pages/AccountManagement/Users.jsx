@@ -17,13 +17,13 @@ function Users() {
     };
 
     const getUsers = () => {
-        http.get('/user').then((res) => {
+        http.get('/api/user').then((res) => {
             setUsersList(res.data);
         });
     };
     
     const searchUsers = () => {
-        http.get(`/user?search=${search}`).then((res) => {
+        http.get(`/api/user?search=${search}`).then((res) => {
             setUsersList(res.data);
         });
     };
@@ -46,13 +46,12 @@ function Users() {
         setSearch(''); getUsers();
     };
 
-    // Example handlers
     const handleUpdate = (id) => {
         navigate(`/update-user/${id}`)
     };
 
     const deleteUsers = () => {
-        http.delete(`/user/${deleteId}`)
+        http.delete(`/api/user/${deleteId}`)
             .then((res) => {
                 console.log(res.data);
                 handleClose();

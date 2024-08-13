@@ -1,3 +1,4 @@
+// Message.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -7,12 +8,16 @@ module.exports = (sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        userId: {
+        senderId: { // The sender's user ID
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        message: {
-            type: DataTypes.STRING,
+        recipientId: { // The recipient's user ID
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        content: { // The actual message content
+            type: DataTypes.TEXT, // Adjusted to TEXT for potentially longer messages
             allowNull: false,
         },
         createdAt: {
@@ -29,6 +34,11 @@ module.exports = (sequelize) => {
         tableName: 'messages',
         timestamps: true,
     });
+
+    Message.associate = (models) => {
+        Message.belongsTo(models.User, { as: 'sender', foreignKey: 'senderId' });
+        Message.belongsTo(models.User, { as: 'recipient', foreignKey: 'recipientId' });
+    };
 
     return Message;
 };

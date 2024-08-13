@@ -26,7 +26,7 @@ function UserHistoryPage() {
 
     const getUserHistory = () => {
         if (user) {
-            http.get(`/user/quiz/userhistory/${user.id}`).then((res) => {
+            http.get(`/api/user/quiz/userhistory/${user.id}`).then((res) => {
                 const formattedHistory = res.data.map(history => ({
                     ...history,
                     dateTaken: formatDate(history.dateTaken)
@@ -46,8 +46,7 @@ function UserHistoryPage() {
 
     const filteredHistory = historyList.filter(history =>
     (history.id.toString().includes(search) ||
-        history.title.toLowerCase().includes(search.toLowerCase()) ||
-        history.description.toLowerCase().includes(search.toLowerCase()))
+        history.title.toLowerCase().includes(search.toLowerCase()))
     );
 
     return (
@@ -58,7 +57,7 @@ function UserHistoryPage() {
                         User Quiz History
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Input value={search} placeholder="Search by ID, Title or Description" onChange={onSearchChange} />
+                        <Input value={search} placeholder="Search by ID or Title" onChange={onSearchChange} />
                         <IconButton color="primary">
                             <Search />
                         </IconButton>

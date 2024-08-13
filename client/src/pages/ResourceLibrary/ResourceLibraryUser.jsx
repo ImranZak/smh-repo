@@ -32,8 +32,7 @@ function ResourcesUser() {
     const filteredResources = resourcesList.filter(resource =>
         resource.status === 'Active' &&
         (resource.id.toString().includes(search) ||
-        resource.title.toLowerCase().includes(search.toLowerCase()) ||
-        resource.description.toLowerCase().includes(search.toLowerCase())) &&
+            resource.title.toLowerCase().includes(search.toLowerCase())) &&
         (selectedTag ? resource.tag === selectedTag : true)
     );
 
@@ -43,17 +42,13 @@ function ResourcesUser() {
                 Resources
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Input value={search} placeholder="Search by ID, Title or Description"
-                    onChange={onSearchChange} />
-                <IconButton color="primary" onClick={() => { }}>
+                <Input value={search} placeholder="Search by ID or Title" onChange={onSearchChange} />
+                <IconButton color="primary">
                     <Search />
                 </IconButton>
                 <IconButton color="primary" onClick={() => setSearch('')}>
                     <Clear />
                 </IconButton>
-                <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box sx={{ mb: 2 }}>
                 {/* Tag buttons for filtering */}
                 <Button
                     variant={selectedTag === 'waste reduction' ? 'contained' : 'outlined'}

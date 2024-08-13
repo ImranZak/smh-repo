@@ -24,16 +24,13 @@ function SignUp() {
                 .max(100, 'User Name must be at most 100 characters')
                 .required('User Name is required'),
             email: yup.string().trim()   
-                .min(3, 'Email must be at least 3 characters')
-                .max(50, 'Email must be at most 50 characters')
+                .email('Invalid email format')
                 .required('Email is required'),
             phone: yup.string().trim()
-                .min(8, 'Phone number must be at least 8 digits')
-                .max(16, 'Phone number must be at most 16 digits')
+                .matches(/^[0-9]{8}$/, 'Phone number must be exactly 8 digits')
                 .required('Phone number is required'),
             nric: yup.string().trim()
-                .min(8, 'NRIC must be at least 8 characters')
-                .max(12, 'NRIC must be at most 12 characters')
+                .matches(/^[STFG]\d{7}[A-Z]$/, 'Invalid NRIC format')
                 .required('NRIC is required'),
         }),
         onSubmit: (data) => {
@@ -45,7 +42,7 @@ function SignUp() {
                 .then((res) => {
                     console.log(res.data);
                     toast.success('Sign Up Successful!');
-                    navigate("/events");
+                    navigate("/signupconfirm");
                 })
                 .catch((error) => {
                     // Check if error response exists

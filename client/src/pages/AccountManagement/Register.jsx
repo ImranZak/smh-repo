@@ -15,6 +15,7 @@ function Register() {
             email: "",
             password: "",
             confirmPassword: "",
+            verified: false
         },
         validationSchema: yup.object({
             name: yup
@@ -32,7 +33,7 @@ function Register() {
                 .trim()
                 .email("Enter a valid email")
                 .max(100, "Email must be at most 100 characters")
-                .required("Email is required"),
+                .required("Email is required"), 
             password: yup
                 .string()
                 .trim()
@@ -40,8 +41,8 @@ function Register() {
                 .max(100, "Password must be at most 100 characters")
                 .required("Password is required")
                 .matches(
-                    /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
-                    "Password at least 1 letter and 1 number"
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\S]{8,100}$/,
+                    "Min 8 characters, 1 uppercase, 1 lowercase, 1 digit, no whitespaces"
                 ),
             confirmPassword: yup
                 .string()
@@ -53,13 +54,12 @@ function Register() {
             data.name = data.name.trim();
             data.email = data.email.trim().toLowerCase();
             data.password = data.password.trim();
-            http.post("/user/register", data)
+            http.post("/api/user/register", data)
                 .then((res) => {
                     console.log(res.data);
                     navigate("/login");
                 })
                 .catch(function (err) {
-                    // FIXTHIS: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
                     toast.error(`${err.response.data.message || err.response.data.errors}`);
                 });
         },

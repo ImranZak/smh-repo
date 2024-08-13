@@ -31,8 +31,7 @@ function QuizzesStaff() {
 
     const filteredQuizzes = quizzesList.filter(quiz =>
         (quiz.id.toString().includes(search) ||
-            quiz.title.toLowerCase().includes(search.toLowerCase()) ||
-            quiz.description.toLowerCase().includes(search.toLowerCase())) &&
+            quiz.title.toLowerCase().includes(search.toLowerCase())) &&
         (selectedTag ? quiz.tag === selectedTag : true)
     );
 
@@ -42,7 +41,7 @@ function QuizzesStaff() {
                 Quizzes
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Input value={search} placeholder="Search by ID, Title or Description" onChange={onSearchChange} />
+                <Input value={search} placeholder="Search by ID or Title" onChange={onSearchChange} />
                 <IconButton color="primary">
                     <Search />
                 </IconButton>
