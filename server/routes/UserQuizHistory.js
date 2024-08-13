@@ -6,28 +6,28 @@ const { Op } = require("sequelize");
 const yup = require('yup');
 const sendQuizResultEmail = require('../middlewares/email');
 
-router.post('/userhistory/:quizid', async (req, res) => {
+router.post('/userhistory/:quizId', async (req, res) => {
     let data = req.body;
-    const { quizid } = req.params;
-    const { userid, title, description, score, dateTaken } = data;
+    const { quizId } = req.params;
+    const { userId, title, description, score, dateTaken } = data;
 
     try {
-        const userInfo = await User.findByPk(userid);
+        const userInfo = await User.findByPk(userId);
         if (!userInfo) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         let validationSchema = yup.object({
-            quizid: yup.number().integer().required(),
-            userid: yup.number().integer().required(),
+            quizId: yup.number().integer().required(),
+            userId: yup.number().integer().required(),
             title: yup.string().trim().max(100).required(),
             description: yup.string().trim().required(),
             score: yup.number().integer().min(0).max(100).required(),
             dateTaken: yup.date().required()
         });
 
-        data = await validationSchema.validate({ quizid, userid, title, description, score, dateTaken }, { abortEarly: false });
-        data.quizid = parseInt(quizid, 10);
+        data = await validationSchema.validate({ quizId, userId, title, description, score, dateTaken }, { abortEarly: false });
+        data.quizid = parseInt(quizId, 10);
 
         console.log('Data to be inserted:', data); // Log data to be inserted
         await UserQuizHistory.create(data);

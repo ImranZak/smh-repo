@@ -55,11 +55,9 @@ router.post('/', async (req, res) => {
     const { question_type, expectedAnswer, userAnswer } = req.body;
     console.log("Received data:", req.body);
     if (question_type === 'multiple_choice') {
-        if (expectedAnswer === userAnswer) {
-            res.json({ isCorrect: true });
-        } else {
-            res.json({ isCorrect: false });
-        }
+        const isCorrect = expectedAnswer === userAnswer;
+        console.log('Is Correct:', isCorrect);
+        res.json({ isCorrect });
     }
     else {
         try {

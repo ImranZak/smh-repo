@@ -1,13 +1,22 @@
 const express = require('express');
-const {sendQuizResultEmail} = require('../middlewares/email');
+const { sendQuizResultEmail } = require('../middlewares/email');
 const router = express.Router();
 
 // Route that utilizes the email middleware
 router.post('/', (req, res) => {
     const { to, quizTitle, score } = req.body;
 
-    if (!to || !quizTitle || !score) {
-        return res.status(400).send('Missing required fields');
+    // Log the incoming request data
+    console.log('Received data:', { to, quizTitle, score });
+
+    // Check for missing fields
+    if (!to || !quizTitle || score === undefined) {
+        return res.status(400).json({
+            error: 'Missing required fields',
+            to: to,
+            quizTitle: quizTitle,
+            score: score
+        });
     }
 
     sendQuizResultEmail(to, quizTitle, score)
