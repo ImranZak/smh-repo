@@ -1,51 +1,60 @@
 import React, { useState } from 'react'
-import { Box, Typography, TextField, Button, Grid, backdropClasses, Rating } from '@mui/material';
-
+import { Box, Typography, TextField, Button, Grid } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import http from '../../http';
-
 import { useNavigate } from 'react-router-dom';
-
 import './DataFeedbacks.css';
 
 function AddDatafeedback() {
 
     const navigate = useNavigate();
-
     const [rating, setRating] = useState(5); // State to keep track of rating
 
-    const formik = useFormik(
-        {
-            initialValues:
-                { name: "", ranking: 5, best: "", improvement: "" },
-            validationSchema: yup.object({
-                name: yup.string().trim().min(3, 'Name must be at least 3 characters')
-                    .max(80, 'Name must be at most 100 characters')
-                    .required('name is required'),
-                ranking: yup.number() // Ensure ranking is a number
-                    .integer('Ranking must be an integer'),
-                best: yup.string().trim().min(3, 'Your best portion must be at least 3 characters')
-                    .max(500, 'Your best portion must be at most 500 characters')
-                    .required('Description is required'),
-                improvement: yup.string().trim().min(3, 'Your feedback must be at least 3 characters')
-                    .max(500, 'Your feedback must be at most 500 characters')
-                    .required('Description is required')
-            }),
-            onSubmit: (data) => {
-                data.name = data.name.trim();
-                data.ranking = data.ranking;
-                data.best = data.best.trim();
-                data.improvement = data.improvement.trim();
-                console.log("Data to be sent:", data);
-                http.post('/datafeedback', data)
-                    .then((res) => {
-                        console.log(res.data);
-                        navigate("/datafeedback")
-                    });
-            }
+    const formik = useFormik({
+        initialValues: {
+            name: "",
+            ranking: 5,
+            best: "",
+            improvement: ""
+        },
+        validationSchema: yup.object({
+            name: yup.string().trim().min(3, 'Name must be at least 3 characters')
+                .max(80, 'Name must be at most 80 characters')
+                .required('Name is required'),
+            ranking: yup.number() // Ensure ranking is a number
+                .min(0, 'Ranking must be at least 0')
+                .max(5, 'Ranking must be at most 5')
+                .required('Ranking is required'),
+            best: yup.string().trim().min(3, 'Your best portion must be at least 3 characters')
+                .max(500, 'Your best portion must be at most 500 characters')
+                .required('Best portion is required'),
+            improvement: yup.string().trim().min(3, 'Your feedback must be at least 3 characters')
+                .max(500, 'Your feedback must be at most 500 characters')
+                .required('Improvement is required')
+        }),
+        onSubmit: (data) => {
+            data.name = data.name.trim();
+            data.best = data.best.trim();
+            data.improvement = data.improvement.trim();
+            console.log("Data to be sent:", data);
+            http.post('/datafeedback', data)
+                .then((res) => {
+                    console.log(res.data);
+                    navigate("/datafeedback");
+                })
+                .catch((err) => {
+                    if (err.response && err.response.data) {
+                        // Log or display the error message from the server
+                        console.error("Error from server:", err.response.data.errors);
+                        // Optionally, display this error to the user in the UI
+                        alert(`Error: ${err.response.data.errors.join(', ')}`);
+                    } else {
+                        console.error("Unknown error occurred:", err);
+                    }
+                });
         }
-    );
+    });
 
     // Function to handle star click
     const handleStarClick = (starIndex) => {
@@ -69,7 +78,6 @@ function AddDatafeedback() {
         return stars;
     };
 
-
     return (
         <div style={{ width: '100%', backgroundColor: 'white' }}>
             <Box sx={{ flexGrow: 1 }}>
@@ -87,7 +95,9 @@ function AddDatafeedback() {
                             </Grid>
                             <Grid item xs={8}>
                                 <TextField fullWidth margin="dense" autoComplete="off" label="Name" name="name"
-                                    value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.name && Boolean(formik.errors.name)} helperText={formik.touched.name && formik.errors.name} />
+                                    value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                    error={formik.touched.name && Boolean(formik.errors.name)}
+                                    helperText={formik.touched.name && formik.errors.name} />
                             </Grid>
 
                             <Grid item xs={4}>
@@ -107,7 +117,9 @@ function AddDatafeedback() {
                             </Grid>
                             <Grid item xs={8}>
                                 <TextField fullWidth margin="dense" autoComplete="off" multiline minRows={2} label="Best Features" name="best"
-                                    value={formik.values.best} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.best && Boolean(formik.errors.best)} helperText={formik.touched.best && formik.errors.best} />
+                                    value={formik.values.best} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                    error={formik.touched.best && Boolean(formik.errors.best)}
+                                    helperText={formik.touched.best && formik.errors.best} />
                             </Grid>
 
                             <Grid item xs={4}>
@@ -115,22 +127,21 @@ function AddDatafeedback() {
                             </Grid>
                             <Grid item xs={8}>
                                 <TextField fullWidth margin="dense" autoComplete="off" multiline minRows={2} label="Improvements" name="improvement"
-                                    value={formik.values.improvement} onChange={formik.handleChange} onBlur={formik.handleBlur} error={formik.touched.improvement && Boolean(formik.errors.improvement)} helperText={formik.touched.improvement && formik.errors.improvement} />
+                                    value={formik.values.improvement} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                    error={formik.touched.improvement && Boolean(formik.errors.improvement)}
+                                    helperText={formik.touched.improvement && formik.errors.improvement} />
                             </Grid>
                             <div className='feedback-buttons' style={{ textAlign: 'right', alignContent: 'right' }}>
                                 <Grid item xs={12} >
                                     <Button variant="contained" style={{ backgroundColor: '#208130', alignContent: 'right' }} type="submit">Submit</Button>
                                 </Grid>
                             </div>
-
                         </Grid>
                     </Box>
                 </div>
-
             </Box>
         </div>
-
-    )
+    );
 }
 
-export default AddDatafeedback
+export default AddDatafeedback;

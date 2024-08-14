@@ -77,6 +77,7 @@ const UserAppBar = () => {
               </MenuItem>
             </Menu>
             <Link to="/feedback" className="nav-link">Feedback</Link>
+            <Link to="/faq" className="nav-link">FAQ</Link>
             <Button
               className="nav-link"
               aria-controls="menu"
